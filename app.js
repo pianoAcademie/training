@@ -1603,6 +1603,36 @@ function repondreDictee(correct, corrects, total) {
   btnSuivant.textContent = (finExamen || finExamenNote) ? 'Voir mes résultats →' : 'Question suivante →';
 }
 
+// ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
+// Fonctions appelées via onclick="..." dans le HTML ou dans des chaînes template
+window.validerPrenom            = validerPrenom;
+window.ouvrirProfil             = ouvrirProfil;
+window.fermerProfil             = fermerProfil;
+window.sauvegarderProfil        = sauvegarderProfil;
+window.reinitialiserProgression = reinitialiserProgression;
+window.allerEleveAccueil        = allerEleveAccueil;
+window.allerAdminLogin          = allerAdminLogin;
+window.afficherEcran            = afficherEcran;
+window.choisirMode              = choisirMode;
+window.changerTemps             = changerTemps;
+window.retourDepuisQuiz         = retourDepuisQuiz;
+window.afficherResultats        = afficherResultats;
+window.passerQuestion           = passerQuestion;
+window.btnSuivantClick          = btnSuivantClick;
+window.rejouer                  = rejouer;
+window.retourAccueil            = retourAccueil;
+window.demarrerExamenNote       = demarrerExamenNote;
+window.retourChapitresDepuisExamen = retourChapitresDepuisExamen;
+window.verifierMdp              = verifierMdp;
+window.deconnecterAdmin         = deconnecterAdmin;
+window.renderAdminNav           = renderAdminNav;
+window.lancerPreview            = lancerPreview;
+window.retourNiveaux            = retourNiveaux;
+window.retourMatieres           = retourMatieres;
+window.retourChapitres          = retourChapitres;
+window.lireDictee               = lireDictee;
+window.validerDictee            = validerDictee;
+
 // ── INIT ACCUEIL ──
 window.addEventListener('DOMContentLoaded', () => {
   initVoixFR();
