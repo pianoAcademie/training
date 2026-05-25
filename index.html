@@ -1,13 +1,372 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>training</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathEntraîn — Site d'entraînement en maths</title>
+  <link rel="stylesheet" href="style.css?v=18" />
+</head>
+<body>
+
+  <header>
+    <h1>MathEntraîn</h1>
+    <p id="header-sous-titre">Entraîne-toi à ton rythme — les questions s'adaptent à ton niveau</p>
+    <button id="btn-profil" class="btn-profil" onclick="ouvrirProfil()" style="display:none" title="Mon profil">
+      <span id="profil-avatar">?</span>
+    </button>
+  </header>
+
+  <!-- ══ PANNEAU PROFIL ══ -->
+  <div id="profil-panel" class="profil-panel">
+    <div class="profil-overlay" onclick="fermerProfil()"></div>
+    <div class="profil-drawer">
+      <div class="profil-drawer-header">
+        <h3>Mon profil</h3>
+        <button class="profil-fermer" onclick="fermerProfil()">✕</button>
+      </div>
+
+      <div id="profil-avatar-grand" class="profil-avatar-grand">?</div>
+      <div id="profil-nom-affiche" class="profil-nom-affiche"></div>
+
+      <div class="profil-section">
+        <span class="profil-label">Changer mon prénom</span>
+        <div class="profil-input-row">
+          <input type="text" id="profil-input-prenom" class="input-mdp" placeholder="Nouveau prénom..." onkeydown="if(event.key==='Enter') sauvegarderProfil()" />
+          <button class="btn-primaire" onclick="sauvegarderProfil()">OK</button>
+        </div>
+      </div>
+
+      <div class="profil-section profil-stats">
+        <span class="profil-label">Ma progression globale</span>
+        <div class="profil-stat-ligne">
+          <span>XP total gagné</span>
+          <strong id="profil-xp-total">0 XP</strong>
+        </div>
+        <div class="profil-stat-ligne">
+          <span>Niveau global</span>
+          <strong id="profil-palier">🌱 Débutant</strong>
+        </div>
+        <div class="profil-stat-ligne">
+          <span>Chapitres pratiqués</span>
+          <strong id="profil-nb-chapitres">0</strong>
+        </div>
+      </div>
+
+      <button class="profil-reset-btn" onclick="reinitialiserProgression()">
+        🗑 Réinitialiser ma progression
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification level-up (globale) -->
+  <div id="levelup-notif" class="levelup-notif">
+    <div id="levelup-emoji" class="levelup-emoji"></div>
+    <div class="levelup-titre">Niveau supérieur !</div>
+    <div id="levelup-label" class="levelup-label"></div>
+  </div>
+
+  <!-- ══ ÉCRAN PRÉNOM ══ -->
+  <div id="ecran-prenom" class="ecran actif">
+    <div class="carte-prenom">
+      <div class="prenom-icone">👋</div>
+      <h2 class="prenom-titre">Bienvenue sur MathEntraîn !</h2>
+      <p class="prenom-sous">Comment tu t'appelles ?</p>
+      <input
+        type="text"
+        id="input-prenom"
+        placeholder="Ton prénom..."
+        class="input-prenom"
+        onkeydown="if(event.key==='Enter') validerPrenom()"
+        autocomplete="off"
+      />
+      <p id="erreur-prenom" class="erreur-mdp" style="display:none">Entre ton prénom pour continuer.</p>
+      <button class="btn-primaire" style="width:100%;margin-top:16px" onclick="validerPrenom()">
+        C'est parti ! →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN LANDING (choix du rôle) ══ -->
+  <div id="ecran-landing" class="ecran">
+    <div class="titre-section">
+      <h2>Qui es-tu ?</h2>
+      <p>Choisis ton espace pour continuer</p>
+    </div>
+    <div class="grille-roles">
+      <div class="carte-role" onclick="allerEleveAccueil()">
+        <span class="role-icone">🎓</span>
+        <h3>Je suis élève</h3>
+        <p>Accéder aux exercices d'entraînement</p>
+      </div>
+      <div class="carte-role carte-role-admin" onclick="allerAdminLogin()">
+        <span class="role-icone">🔐</span>
+        <h3>Administration</h3>
+        <p>Gérer les questions et consulter le contenu</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN ACCUEIL ÉLÈVE ══ -->
+  <div id="ecran-accueil" class="ecran">
+    <div class="nav-retour">
+      <button class="btn-retour" onclick="afficherEcran('ecran-landing')">← Retour</button>
+    </div>
+    <div class="titre-section">
+      <h2 id="accueil-titre">Choisis ton niveau</h2>
+      <p id="accueil-sous-titre">Sélectionne d'abord ton mode d'entraînement</p>
+    </div>
+
+    <!-- Sélecteur de mode -->
+    <div class="mode-selector">
+      <button id="btn-mode-examen" class="btn-mode actif" onclick="choisirMode('examen')">
+        ⏱ Mode Chrono &nbsp;·&nbsp; 10 questions minutées
+      </button>
+      <button id="btn-mode-libre" class="btn-mode" onclick="choisirMode('libre')">
+        ∞ Entraînement libre &nbsp;·&nbsp; sans limite ni chrono
+      </button>
+    </div>
+
+    <!-- Sélecteur de durée (Mode Chrono uniquement) -->
+    <div id="chrono-picker" class="chrono-picker">
+      <span class="chrono-picker-label">⏱ Temps par question :</span>
+      <div class="chrono-controls">
+        <button class="chrono-btn" onclick="changerTemps(-5)">−</button>
+        <span id="chrono-valeur" class="chrono-valeur">30s</span>
+        <button class="chrono-btn" onclick="changerTemps(+5)">+</button>
+      </div>
+    </div>
+
+    <!-- Sélecteur prof virtuel -->
+    <div class="prof-selector-zone">
+      <span class="prof-selector-label">🎭 Prof virtuel :</span>
+      <div id="prof-selector" class="prof-selector"></div>
+    </div>
+
+    <!-- Fil d'Ariane dynamique -->
+    <div id="breadcrumb-zone" class="breadcrumb-matiere" style="display:none"></div>
+
+    <div id="grille-themes" class="grille-themes"></div>
+  </div>
+
+  <!-- ══ ÉCRAN QUIZ ══ -->
+  <div id="ecran-quiz" class="ecran">
+
+    <div class="nav-retour">
+      <button id="btn-retour-quiz" class="btn-retour" onclick="retourDepuisQuiz()">← Choisir un autre thème</button>
+    </div>
+
+    <div class="quiz-header">
+      <span id="quiz-theme-nom" class="quiz-theme"></span>
+      <div class="quiz-header-droite">
+        <span id="quiz-compteur" class="quiz-compteur"></span>
+        <button id="btn-terminer" class="btn-terminer" onclick="afficherResultats()" style="display:none">
+          Terminer la session
+        </button>
+      </div>
+    </div>
+
+    <div class="barre-progression" id="barre-progression-zone">
+      <div id="barre-remplie" class="barre-remplie" style="width: 0%"></div>
+    </div>
+
+    <!-- Chronomètre (mode examen uniquement) -->
+    <div id="timer-zone" class="timer-zone" style="display:none">
+      <div class="timer-infos">
+        <span class="timer-label">⏱ Temps restant</span>
+        <span id="timer-secondes" class="timer-secondes">45s</span>
+      </div>
+      <div class="timer-barre-fond">
+        <div id="timer-barre" class="timer-barre"></div>
+      </div>
+    </div>
+
+    <span id="badge-niveau" class="badge-niveau niveau-1">⭐ Niveau 1 — Facile</span>
+
+    <!-- Bouton Passer (mode aperçu admin uniquement) -->
+    <div id="zone-passer" style="display:none">
+      <button class="btn-passer" onclick="passerQuestion()">Passer cette question →</button>
+    </div>
+
+    <div class="carte-question">
+      <p id="texte-question" class="texte-question"></p>
+      <div id="options" class="options"></div>
+      <div id="explication" class="boite-explication"></div>
+
+      <!-- Zone dictée -->
+      <div id="zone-dictee" class="zone-dictee" style="display:none">
+        <button id="btn-ecouter" class="btn-ecouter" onclick="lireDictee()">🔊 Écouter la phrase</button>
+        <textarea id="dictee-input" class="dictee-input" placeholder="Écris ici ce que tu entends…" style="display:none" rows="3" onkeydown="if(event.ctrlKey && event.key==='Enter') validerDictee()"></textarea>
+        <button id="btn-valider-dictee" class="btn-valider-dictee" onclick="validerDictee()" style="display:none">✅ Valider ma réponse</button>
+        <div id="dictee-resultat" class="dictee-resultat"></div>
+      </div>
+
+      <!-- Bulle du prof virtuel -->
+      <div id="prof-bulle" class="prof-bulle" style="display:none">
+        <span id="prof-bulle-avatar" class="prof-bulle-avatar"></span>
+        <div class="prof-bulle-corps">
+          <div id="prof-bulle-nom" class="prof-bulle-nom"></div>
+          <p id="prof-bulle-msg" class="prof-bulle-msg"></p>
+        </div>
+      </div>
+
+      <button
+        id="btn-suivant"
+        class="btn-suivant"
+        onclick="btnSuivantClick()"
+      >
+        Question suivante →
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ ÉCRAN RÉSULTATS ══ -->
+  <div id="ecran-resultat" class="ecran">
+    <div class="carte-resultat">
+
+      <div class="score-cercle">
+        <span id="score-chiffre" class="score-chiffre">0%</span>
+        <span class="score-label">Score final</span>
+      </div>
+
+      <p id="message-resultat" class="message-resultat"></p>
+      <p id="sous-message" class="sous-message"></p>
+
+      <div class="recap-niveaux">
+        <div class="recap-item">
+          <div id="nb-bonnes" class="nombre vert">0</div>
+          <div class="libelle">Bonnes réponses</div>
+        </div>
+        <div class="recap-item">
+          <div id="nb-mauvaises" class="nombre rouge">0</div>
+          <div class="libelle">Mauvaises réponses</div>
+        </div>
+        <div class="recap-item">
+          <div id="temps-ecoule" class="nombre bleu">—</div>
+          <div class="libelle">Temps total</div>
+        </div>
+      </div>
+
+      <!-- XP résultats -->
+      <div class="xp-resultat">
+        <div class="xp-session-gain">+<span id="xp-session-nb">0</span> XP gagnés cette session</div>
+
+        <!-- Info vitesse session -->
+        <div id="vitesse-zone" class="bonus-temps-zone" style="display:none">
+          <span id="vitesse-label" class="bonus-temps-label"></span>
+          <span id="vitesse-xp" class="bonus-temps-xp"></span>
+        </div>
+
+        <div id="xp-niveau-resultat" class="xp-niveau-resultat-label"></div>
+        <div class="xp-barre-fond xp-barre-resultat-fond">
+          <div id="xp-barre-resultat" class="xp-barre"></div>
+        </div>
+        <div id="xp-progression-texte" class="xp-progression-texte"></div>
+      </div>
+
+      <div class="boutons-fin">
+        <button class="btn-primaire" onclick="rejouer()">
+          Recommencer — <span id="nom-theme-fin"></span>
+        </button>
+        <button class="btn-secondaire" onclick="retourAccueil()">
+          Changer de thème
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN RÉSULTATS EXAMEN NOTÉ ══ -->
+  <div id="ecran-examen-resultat" class="ecran">
+    <div class="carte-resultat">
+
+      <!-- Note /20 -->
+      <div class="exam-note-cercle">
+        <span id="exam-note-chiffre" class="exam-note-chiffre">0</span>
+        <span class="exam-note-sur">/ 20</span>
+      </div>
+
+      <p id="exam-mention" class="exam-mention"></p>
+      <p class="exam-sous-titre">Examen — <span id="exam-theme-nom"></span></p>
+
+      <!-- Résultats par niveau -->
+      <div class="exam-section">
+        <h3 class="exam-section-titre">📊 Résultats par niveau</h3>
+        <div id="exam-stats-niveaux" class="exam-stats-niveaux"></div>
+      </div>
+
+      <!-- Points forts / à améliorer -->
+      <div class="exam-bilan">
+        <div class="exam-bilan-col">
+          <div class="exam-bilan-titre vert">✅ Points forts</div>
+          <div id="exam-points-forts" class="exam-tags"></div>
+        </div>
+        <div class="exam-bilan-col">
+          <div class="exam-bilan-titre rouge">⚠️ À améliorer</div>
+          <div id="exam-points-faibles" class="exam-tags"></div>
+        </div>
+      </div>
+
+      <!-- Temps -->
+      <div class="recap-niveaux" style="margin-bottom:28px">
+        <div class="recap-item">
+          <div id="exam-temps" class="nombre bleu">—</div>
+          <div class="libelle">Temps total</div>
+        </div>
+      </div>
+
+      <div class="boutons-fin">
+        <button class="btn-primaire" onclick="demarrerExamenNote(etat.theme)">
+          Refaire l'examen
+        </button>
+        <button class="btn-secondaire" onclick="retourChapitresDepuisExamen()">
+          Choisir un autre chapitre
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN ADMIN LOGIN ══ -->
+  <div id="ecran-admin-login" class="ecran">
+    <div class="nav-retour">
+      <button class="btn-retour" onclick="afficherEcran('ecran-landing')">← Retour</button>
+    </div>
+    <div class="carte-login">
+      <div class="login-icone">🔐</div>
+      <h2 class="login-titre">Espace Administration</h2>
+      <p class="login-sous">Entrez le mot de passe pour accéder</p>
+      <div class="login-champ">
+        <input
+          type="password"
+          id="input-mdp"
+          placeholder="Mot de passe"
+          class="input-mdp"
+          onkeydown="if(event.key==='Enter') verifierMdp()"
+        />
+        <p id="erreur-mdp" class="erreur-mdp" style="display:none">Mot de passe incorrect.</p>
+        <button class="btn-primaire" style="width:100%;margin-top:16px" onclick="verifierMdp()">
+          Accéder →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN ADMIN PANEL ══ -->
+  <div id="ecran-admin" class="ecran">
+    <div class="admin-topbar">
+      <h2 class="admin-titre">Administration — Questions</h2>
+      <button class="btn-deconnexion" onclick="deconnecterAdmin()">Déconnexion</button>
+    </div>
+
+    <!-- Onglets thèmes -->
+    <div id="admin-onglets" class="admin-onglets"></div>
+
+    <!-- Contenu thème sélectionné -->
+    <div id="admin-contenu" class="admin-contenu"></div>
+  </div>
+
+  <script src="questions.js?v=18"></script>
+  <script src="app.js?v=21"></script>
+</body>
 </html>

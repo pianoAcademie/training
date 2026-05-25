@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "PowerShell(gh --version 2>&1)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python *)",
+      "Bash(where python3 *)",
+      "Bash(where node *)",
+      "Bash(python3 -c \"import sys,json; lines=sys.stdin.read\\(\\).strip\\(\\).split\\('\\\\n'\\); [print\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\)[:500] if isinstance\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\),str\\) else ''\\) for l in lines[-10:] if l]\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(Get-Content \"C:\\\\Users\\\\jeanf\\\\OneDrive\\\\Bureau\\\\pre pilot\\\\questions.js\")",
+      "Bash(Measure-Object -Line)",
+      "Bash(wc -l \"/mnt/c/Users/jeanf/OneDrive/Bureau/pre pilot/questions.js\")"
+    ]
+  }
+}
