@@ -151,57 +151,71 @@ header p {
 /* ── PROF VIRTUEL — SÉLECTEUR ── */
 .prof-selector-zone {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .prof-selector-label {
   font-size: 0.85rem;
   font-weight: 600;
   color: #64748b;
-  white-space: nowrap;
 }
 
 .prof-selector {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
 }
 
 .prof-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 99px;
-  border: 2px solid #e2e8f0;
+  padding: 14px 10px 12px;
+  border-radius: 14px;
+  border: 2.5px solid #e2e8f0;
   background: white;
   cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #475569;
-  transition: all 0.15s ease;
+  text-align: center;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .prof-btn:hover {
   border-color: var(--pc, #4f46e5);
-  color: var(--pc, #4f46e5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .prof-btn.actif {
   border-color: var(--pc, #4f46e5);
   background: var(--pc, #4f46e5);
   color: white;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--pc, #4f46e5) 35%, transparent);
 }
 
 .prof-btn-emoji {
-  font-size: 1rem;
+  font-size: 2rem;
+  line-height: 1;
 }
 
 .prof-btn-nom {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.prof-btn.actif .prof-btn-nom,
+.prof-btn.actif .prof-btn-desc {
+  color: white;
+}
+
+.prof-btn-desc {
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.3;
 }
 
 /* ── PROF VIRTUEL — BULLE ── */
@@ -568,6 +582,63 @@ header p {
   text-align: center;
 }
 .bandeau-focus strong { color: #92400e; }
+
+/* ── SOUS-CHAPITRES ── */
+.grille-sous-chapitres {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.carte-sous-chapitre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 14px 16px;
+  border-radius: 16px;
+  border: 2.5px solid color-mix(in srgb, var(--sc, #4f46e5) 30%, transparent);
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.carte-sous-chapitre:hover {
+  border-color: var(--sc, #4f46e5);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--sc, #4f46e5) 20%, transparent);
+}
+
+.carte-tout-chapitre {
+  border-style: dashed;
+  background: #f8fafc;
+}
+
+.carte-tout-chapitre:hover {
+  background: white;
+}
+
+.sous-chap-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.sous-chap-titre {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.sous-chap-desc {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.3;
+}
 
 /* ── DICTÉE ── */
 .zone-dictee {
@@ -1490,6 +1561,50 @@ header p {
   font-size: 0.78rem;
   color: #94a3b8;
   margin-top: 4px;
+}
+
+/* Visibilité chapitres */
+.chapitre-visibilite-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+.chapitre-cache {
+  opacity: 0.5;
+  background: #f1f5f9 !important;
+  border-style: dashed !important;
+}
+.chapitre-cache .theme-titre {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+.chapitre-visibilite-badge { font-size: 0.7rem; color: #64748b; margin-top: 5px; display: block; }
+.chapitre-cache .chapitre-visibilite-badge { color: #dc2626; font-weight: 700; }
+.btn-toggle-visibilite {
+  margin-top: 10px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #475569;
+  transition: all 0.15s;
+  width: 100%;
+}
+.btn-toggle-visibilite:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.chapitre-cache .btn-toggle-visibilite {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+.chapitre-cache .btn-toggle-visibilite:hover {
+  background: #bbf7d0;
 }
 
 /* Contenu admin */

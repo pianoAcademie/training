@@ -207,8 +207,11 @@ function renderProfSelector() {
     const btn = document.createElement('button');
     btn.className = 'prof-btn' + (prof.id === profActuel ? ' actif' : '');
     btn.style.setProperty('--pc', prof.couleur);
-    btn.innerHTML = `<span class="prof-btn-emoji">${prof.emoji}</span><span class="prof-btn-nom">${prof.nom}</span>`;
-    btn.title = prof.description;
+    btn.innerHTML = `
+      <span class="prof-btn-emoji">${prof.emoji}</span>
+      <span class="prof-btn-nom">${prof.nom}</span>
+      <span class="prof-btn-desc">${prof.description}</span>
+    `;
     btn.onclick = () => choisirProf(prof.id);
     zone.appendChild(btn);
   });
@@ -983,7 +986,8 @@ function rejouer() {
 }
 
 function retourAccueil() {
-  chapitreOuvert = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   afficherEcran('ecran-accueil');
   renderAccueil();
 }
@@ -1025,6 +1029,25 @@ function deconnecterAdmin() {
 let adminNiveauOuvert   = null;
 let adminMatiereOuverte = null;
 let adminChapitreOuvert = null;
+
+// ── VISIBILITÉ CHAPITRES (admin) ──
+function chargerChapitresCaches() {
+  const raw = localStorage.getItem('mathentrain_chapitres_caches');
+  return raw ? JSON.parse(raw) : [];
+}
+function sauvegarderChapitresCaches(ids) {
+  localStorage.setItem('mathentrain_chapitres_caches', JSON.stringify(ids));
+}
+function estChapitreCache(id) {
+  return chargerChapitresCaches().includes(id);
+}
+function basculerVisibiliteChapitre(id) {
+  const caches = chargerChapitresCaches();
+  const idx = caches.indexOf(id);
+  if (idx === -1) caches.push(id); else caches.splice(idx, 1);
+  sauvegarderChapitresCaches(caches);
+  renderAdminNav();
+}
 
 function construireAdminPanel() {
   adminNiveauOuvert   = null;
@@ -1153,15 +1176,24 @@ function renderAdminNav() {
       const th = questionsBank[id];
       if (!th) return;
       const total = (th[1]?.length || 0) + (th[2]?.length || 0) + (th[3]?.length || 0);
+      const cache = estChapitreCache(id);
       const carte = document.createElement('div');
-      carte.className = 'carte-theme admin-carte-chapitre';
+      carte.className = 'carte-theme admin-carte-chapitre' + (cache ? ' chapitre-cache' : '');
       carte.style.setProperty('--tc', th.couleur || mat.couleur);
       carte.innerHTML = `
         <span class="theme-emoji">${th.emoji || mat.emoji}</span>
         <h3 class="theme-titre">${th.nom}</h3>
         <p class="theme-nb-questions">${total} questions · ${th[1]?.length || 0}F / ${th[2]?.length || 0}M / ${th[3]?.length || 0}D</p>
+        <span class="chapitre-visibilite-badge">${cache ? '🙈 Caché aux élèves' : '👁 Visible'}</span>
       `;
+      // Clic sur la carte → ouvrir le chapitre
       carte.onclick = () => { adminChapitreOuvert = id; renderAdminNav(); };
+      // Bouton bascule visibilité (stoppe la propagation)
+      const btnToggle = document.createElement('button');
+      btnToggle.className = 'btn-toggle-visibilite';
+      btnToggle.textContent = cache ? '✅ Afficher' : '🙈 Cacher';
+      btnToggle.onclick = (e) => { e.stopPropagation(); basculerVisibiliteChapitre(id); };
+      carte.appendChild(btnToggle);
       grille.appendChild(carte);
     });
     contenu.appendChild(grille);
@@ -1258,9 +1290,10 @@ const NIVEAUX = [
     matieres: ['maths', 'francais', 'svt', 'physique', 'histoire', 'anglais'] },
 ];
 
-let niveauOuvert   = null;
-let matiereOuverte = null;
-let chapitreOuvert = null;
+let niveauOuvert      = null;
+let matiereOuverte    = null;
+let chapitreOuvert    = null;
+let sousChapitreOuvert = null; // ID effectif passé à choisirTheme (null = pas encore choisi)
 
 function renderAccueil() {
   const grille     = document.getElementById('grille-themes');
@@ -1345,7 +1378,8 @@ function renderAccueil() {
     sousTitre.textContent = 'Choisis un chapitre à entraîner';
     grille.className      = 'grille-themes';
 
-    const chapitres = (mat.chapitresParNiveau && mat.chapitresParNiveau[niveauOuvert]) || mat.chapitres;
+    const chapitres = ((mat.chapitresParNiveau && mat.chapitresParNiveau[niveauOuvert]) || mat.chapitres)
+      .filter(id => !estChapitreCache(id));
     chapitres.forEach(themeId => {
       const theme = questionsBank[themeId];
       if (!theme) return;
@@ -1377,11 +1411,11 @@ function renderAccueil() {
       grille.appendChild(carte);
     });
 
-  // ── Niveau 4 : TYPE (Exercices | Examen noté) ──
-  } else {
-    const niv   = NIVEAUX.find(n => n.id === niveauOuvert);
-    const mat   = MATIERES.find(m => m.id === matiereOuverte);
-    const theme = questionsBank[chapitreOuvert];
+  // ── Niveau 3.5 : SOUS-CHAPITRES ──
+  } else if (sousChapitreOuvert === null && questionsBank[chapitreOuvert]?.sousChapitres?.length > 0) {
+    const niv    = NIVEAUX.find(n => n.id === niveauOuvert);
+    const mat    = MATIERES.find(m => m.id === matiereOuverte);
+    const chap   = questionsBank[chapitreOuvert];
 
     breadcrumb.style.display = 'flex';
     breadcrumb.innerHTML = `
@@ -1391,15 +1425,69 @@ function renderAccueil() {
       <span class="breadcrumb-sep">›</span>
       <button class="breadcrumb-retour" onclick="retourChapitres()">${mat.nom}</button>
       <span class="breadcrumb-sep">›</span>
-      <span class="breadcrumb-courant">${theme.nom}</span>
+      <span class="breadcrumb-courant">${chap.emoji} ${chap.nom}</span>
+    `;
+    titre.textContent     = chap.nom;
+    sousTitre.textContent = 'Choisis un sous-chapitre ou entraîne-toi sur tout';
+    grille.className      = 'grille-sous-chapitres';
+
+    // Carte « Tout le chapitre »
+    const carteTout = document.createElement('div');
+    carteTout.className = 'carte-sous-chapitre carte-tout-chapitre';
+    carteTout.style.setProperty('--sc', chap.couleur || '#4f46e5');
+    const totalQ = (chap[1]?.length||0)+(chap[2]?.length||0)+(chap[3]?.length||0);
+    carteTout.innerHTML = `
+      <span class="sous-chap-emoji">📚</span>
+      <h3 class="sous-chap-titre">Tout le chapitre</h3>
+      <p class="sous-chap-desc">${totalQ} questions — tous les sujets mélangés</p>
+    `;
+    carteTout.onclick = () => ouvrirSousChapitre(chapitreOuvert);
+    grille.appendChild(carteTout);
+
+    // Cartes sous-chapitres
+    chap.sousChapitres.forEach(scId => {
+      const sc = questionsBank[scId];
+      if (!sc) return;
+      const nbQ = (sc[1]?.length||0)+(sc[2]?.length||0)+(sc[3]?.length||0);
+      const carte = document.createElement('div');
+      carte.className = 'carte-sous-chapitre';
+      carte.style.setProperty('--sc', sc.couleur || chap.couleur || '#4f46e5');
+      carte.innerHTML = `
+        <span class="sous-chap-emoji">${sc.emoji}</span>
+        <h3 class="sous-chap-titre">${sc.nom}</h3>
+        <p class="sous-chap-desc">${nbQ} questions</p>
+      `;
+      carte.onclick = () => ouvrirSousChapitre(scId);
+      grille.appendChild(carte);
+    });
+
+  // ── Niveau 4 : TYPE (Exercices | Examen noté) ──
+  } else {
+    const themeId = sousChapitreOuvert || chapitreOuvert;
+    const niv   = NIVEAUX.find(n => n.id === niveauOuvert);
+    const mat   = MATIERES.find(m => m.id === matiereOuverte);
+    const chap  = questionsBank[chapitreOuvert];
+    const theme = questionsBank[themeId];
+    const estSousChapitre = sousChapitreOuvert && sousChapitreOuvert !== chapitreOuvert;
+
+    breadcrumb.style.display = 'flex';
+    breadcrumb.innerHTML = `
+      <button class="breadcrumb-retour" onclick="retourNiveaux()">🎓 Tous les niveaux</button>
+      <span class="breadcrumb-sep">›</span>
+      <button class="breadcrumb-retour" onclick="retourMatieres()">${niv.nom}</button>
+      <span class="breadcrumb-sep">›</span>
+      <button class="breadcrumb-retour" onclick="retourChapitres()">${mat.nom}</button>
+      <span class="breadcrumb-sep">›</span>
+      ${estSousChapitre ? `<button class="breadcrumb-retour" onclick="retourSousChapitres()">${chap.emoji} ${chap.nom}</button><span class="breadcrumb-sep">›</span>` : ''}
+      <span class="breadcrumb-courant">${theme.emoji} ${theme.nom}</span>
     `;
     titre.textContent     = theme.nom;
     sousTitre.textContent = 'Comment veux-tu travailler ?';
     grille.className      = 'grille-types';
 
     // Carte Exercices — avec recommandation si examen déjà fait
-    const focus  = niveauFocusExamen(chapitreOuvert);
-    const perfEx = chargerPerfExamen(chapitreOuvert);
+    const focus  = niveauFocusExamen(themeId);
+    const perfEx = chargerPerfExamen(themeId);
     const labelsNivCourt = { 1: 'Facile ⭐', 2: 'Moyen ⭐⭐', 3: 'Difficile ⭐⭐⭐' };
 
     let badgeExHtml, descExHtml;
@@ -1426,9 +1514,8 @@ function renderAccueil() {
     carteEx.addEventListener('mouseenter', () => carteEx.style.borderColor = '#4f46e5');
     carteEx.addEventListener('mouseleave', () => carteEx.style.borderColor = '#4f46e5' + '33');
     carteEx.style.borderColor = '#4f46e5' + '33';
-    carteEx.onclick = () => choisirTheme(chapitreOuvert);
+    carteEx.onclick = () => choisirTheme(themeId);
 
-    // Carte Examen noté
     const carteExam = document.createElement('div');
     carteExam.className = 'carte-type';
     carteExam.style.setProperty('--tc', '#dc2626');
@@ -1441,7 +1528,7 @@ function renderAccueil() {
     carteExam.addEventListener('mouseenter', () => carteExam.style.borderColor = '#dc2626');
     carteExam.addEventListener('mouseleave', () => carteExam.style.borderColor = '#dc2626' + '33');
     carteExam.style.borderColor = '#dc2626' + '33';
-    carteExam.onclick = () => demarrerExamenNote(chapitreOuvert);
+    carteExam.onclick = () => demarrerExamenNote(themeId);
 
     grille.appendChild(carteEx);
     grille.appendChild(carteExam);
@@ -1449,42 +1536,60 @@ function renderAccueil() {
 }
 
 function ouvrirNiveau(id) {
-  niveauOuvert  = id;
-  matiereOuverte = null;
+  niveauOuvert       = id;
+  matiereOuverte     = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   renderAccueil();
 }
 
 function ouvrirMatiere(id) {
-  matiereOuverte = id;
-  chapitreOuvert = null;
+  matiereOuverte     = id;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   renderAccueil();
 }
 
 function ouvrirChapitre(id) {
-  chapitreOuvert = id;
+  chapitreOuvert     = id;
+  sousChapitreOuvert = null;
+  renderAccueil();
+}
+
+function ouvrirSousChapitre(id) {
+  sousChapitreOuvert = id;
   renderAccueil();
 }
 
 function retourNiveaux() {
-  niveauOuvert   = null;
-  matiereOuverte = null;
-  chapitreOuvert = null;
+  niveauOuvert       = null;
+  matiereOuverte     = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   renderAccueil();
 }
 
 function retourMatieres() {
-  matiereOuverte = null;
-  chapitreOuvert = null;
+  matiereOuverte     = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   renderAccueil();
 }
 
 function retourChapitres() {
-  chapitreOuvert = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
+  renderAccueil();
+}
+
+function retourSousChapitres() {
+  sousChapitreOuvert = null;
   renderAccueil();
 }
 
 function retourChapitresDepuisExamen() {
-  chapitreOuvert = null;
+  chapitreOuvert     = null;
+  sousChapitreOuvert = null;
   afficherEcran('ecran-accueil');
   renderAccueil();
 }
@@ -1632,6 +1737,9 @@ window.retourMatieres           = retourMatieres;
 window.retourChapitres          = retourChapitres;
 window.lireDictee               = lireDictee;
 window.validerDictee            = validerDictee;
+window.basculerVisibiliteChapitre = basculerVisibiliteChapitre;
+window.ouvrirSousChapitre         = ouvrirSousChapitre;
+window.retourSousChapitres        = retourSousChapitres;
 
 // ── INIT ACCUEIL ──
 window.addEventListener('DOMContentLoaded', () => {
