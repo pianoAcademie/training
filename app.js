@@ -1266,7 +1266,8 @@ const MATIERES = [
   { id: 'francais', nom: 'Français',        emoji: '📝', couleur: '#16a34a',
     chapitres: ['francais', 'francaisConjugaison', 'francaisLitterature'],
     chapitresParNiveau: {
-      '6eme': ['francais6Lecture', 'francais6Ecriture', 'francais6Grammaire', 'francais6Conjugaison', 'francais6Orthographe', 'francais6Vocabulaire', 'francais6Dictee']
+      '6eme': ['francais6Lecture', 'francais6Ecriture', 'francais6Grammaire', 'francais6Conjugaison', 'francais6Orthographe', 'francais6Vocabulaire', 'francais6Dictee'],
+      '5eme': ['francais5Lecture', 'francais5Ecriture', 'francais5Grammaire', 'francais5Conjugaison', 'francais5Orthographe', 'francais5Vocabulaire', 'francais5Dictee']
     }
   },
   { id: 'svt',      nom: 'SVT',             emoji: '🌿', couleur: '#15803d',
