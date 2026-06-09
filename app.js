@@ -1260,7 +1260,8 @@ const MATIERES = [
   { id: 'maths',    nom: 'Mathématiques',  emoji: '📐', couleur: '#4f46e5',
     chapitres: ['fractions', 'pourcentages', 'equations', 'geometrie'],
     chapitresParNiveau: {
-      '6eme': ['maths6Nombres', 'maths6Geometrie', 'maths6Grandeurs', 'maths6Proportionnalite']
+      '6eme': ['maths6Nombres', 'maths6Geometrie', 'maths6Grandeurs', 'maths6Proportionnalite'],
+      '5eme': ['maths5Nombres', 'maths5Geometrie', 'maths5Algebre', 'maths5Proportionnalite']
     }
   },
   { id: 'francais', nom: 'Français',        emoji: '📝', couleur: '#16a34a',
@@ -1271,13 +1272,29 @@ const MATIERES = [
     }
   },
   { id: 'svt',      nom: 'SVT',             emoji: '🌿', couleur: '#15803d',
-    chapitres: ['svt', 'svtEcologie', 'svtGenetique'] },
+    chapitres: ['svt', 'svtEcologie', 'svtGenetique'],
+    chapitresParNiveau: {
+      '5eme': ['svt5Corps', 'svt5Terre', 'svt5Vivant']
+    }
+  },
   { id: 'physique', nom: 'Physique-Chimie', emoji: '⚗️', couleur: '#dc2626',
-    chapitres: ['physiqueChimie', 'chimie', 'physiqueEnergie'] },
+    chapitres: ['physiqueChimie', 'chimie', 'physiqueEnergie'],
+    chapitresParNiveau: {
+      '5eme': ['physique5Electricite', 'physique5Lumiere', 'physique5Matiere']
+    }
+  },
   { id: 'histoire', nom: 'Histoire',        emoji: '🏛️', couleur: '#b45309',
-    chapitres: ['histoire', 'histoireAncienne', 'histoireModerne'] },
+    chapitres: ['histoire', 'histoireAncienne', 'histoireModerne'],
+    chapitresParNiveau: {
+      '5eme': ['histoire5MoyenAge', 'histoire5Renaissance', 'histoire5Geo']
+    }
+  },
   { id: 'anglais',  nom: 'Anglais',         emoji: '💬', couleur: '#1d4ed8',
-    chapitres: ['anglaisVocab', 'anglasCivilisation', 'anglais'] },
+    chapitres: ['anglaisVocab', 'anglasCivilisation', 'anglais'],
+    chapitresParNiveau: {
+      '5eme': ['anglais5Vocab', 'anglais5Grammar', 'anglais5Civilisation']
+    }
+  },
 ];
 
 const NIVEAUX = [
