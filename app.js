@@ -438,7 +438,7 @@ function niveauDepartXP(theme) {
 }
 
 // ── PLANCHER DE DIFFICULTÉ PAR CLASSE ──
-const PLANCHER_CLASSE = { '6eme': 1, '5eme': 1, '4eme': 1, '3eme': 2 };
+const PLANCHER_CLASSE = { '6eme': 1, '5eme': 1, '4eme': 1, '3eme': 2, 'seconde': 2 };
 
 // ── PERF EXAMEN NOTÉ (localStorage) ──
 function sauvegarderPerfExamen(themeId, parNiveau) {
@@ -1261,7 +1261,8 @@ const MATIERES = [
     chapitres: ['fractions', 'pourcentages', 'equations', 'geometrie'],
     chapitresParNiveau: {
       '6eme': ['maths6Nombres', 'maths6Geometrie', 'maths6Grandeurs', 'maths6Proportionnalite'],
-      '5eme': ['maths5Nombres', 'maths5Geometrie', 'maths5Algebre', 'maths5Proportionnalite']
+      '5eme': ['maths5Nombres', 'maths5Geometrie', 'maths5Algebre', 'maths5Proportionnalite'],
+      'seconde': ['maths2Nombres', 'maths2Fonctions', 'maths2Geometrie', 'maths2Stats']
     }
   },
   { id: 'francais', nom: 'Français',        emoji: '📝', couleur: '#16a34a',
@@ -1306,6 +1307,8 @@ const NIVEAUX = [
     matieres: ['maths', 'francais', 'svt', 'physique', 'histoire', 'anglais'] },
   { id: '3eme', nom: '3ème', emoji: '📕', couleur: '#ef4444',
     matieres: ['maths', 'francais', 'svt', 'physique', 'histoire', 'anglais'] },
+  { id: 'seconde', nom: 'Seconde', emoji: '🔵', couleur: '#7c3aed',
+    matieres: ['maths'] },
 ];
 
 let niveauOuvert      = null;
