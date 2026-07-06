@@ -1262,7 +1262,7 @@ const MATIERES = [
     chapitresParNiveau: {
       '6eme': ['maths6Nombres', 'maths6Geometrie', 'maths6Grandeurs', 'maths6Proportionnalite'],
       '5eme': ['maths5Nombres', 'maths5Geometrie', 'maths5Algebre', 'maths5Proportionnalite'],
-      'seconde': ['maths2Nombres', 'maths2Fonctions', 'maths2Geometrie', 'maths2Stats']
+      'seconde': ['maths2Nombres', 'maths2Geometrie', 'maths2Fonctions', 'maths2Stats', 'maths2Algo']
     }
   },
   { id: 'francais', nom: 'Français',        emoji: '📝', couleur: '#16a34a',

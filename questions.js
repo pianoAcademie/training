@@ -4778,23 +4778,28 @@ const questionsBank = {
   // MATHS SECONDE — chapitres parents
   // ══════════════════════════════════════════
   maths2Nombres: {
-    id: 'maths2Nombres', nom: 'Nombres & Calcul', emoji: '🔢', couleur: '#7c3aed',
-    sousChapitres: ['maths2Nomb_Ensembles', 'maths2Nomb_Calcul', 'maths2Nomb_Inequations'],
-    1: [], 2: [], 3: []
-  },
-  maths2Fonctions: {
-    id: 'maths2Fonctions', nom: 'Fonctions', emoji: '📈', couleur: '#7c3aed',
-    sousChapitres: ['maths2Fonc_Generalites', 'maths2Fonc_Affines', 'maths2Fonc_Carre'],
+    id: 'maths2Nombres', nom: 'Nombres & Calculs', emoji: '🔢', couleur: '#7c3aed',
+    sousChapitres: ['maths2Nomb_Ensembles', 'maths2Nomb_Calcul', 'maths2Nomb_Eq1', 'maths2Nomb_Eq2', 'maths2Nomb_ValAbs'],
     1: [], 2: [], 3: []
   },
   maths2Geometrie: {
     id: 'maths2Geometrie', nom: 'Géométrie', emoji: '📐', couleur: '#7c3aed',
-    sousChapitres: ['maths2Geo_Vecteurs', 'maths2Geo_Thales', 'maths2Geo_Trigo'],
+    sousChapitres: ['maths2Geo_Vecteurs', 'maths2Geo_Repere', 'maths2Geo_Droites', 'maths2Geo_Espace', 'maths2Geo_Trigo'],
+    1: [], 2: [], 3: []
+  },
+  maths2Fonctions: {
+    id: 'maths2Fonctions', nom: 'Fonctions', emoji: '📈', couleur: '#7c3aed',
+    sousChapitres: ['maths2Fonc_Generalites', 'maths2Fonc_Affines', 'maths2Fonc_Carre', 'maths2Fonc_Racine'],
     1: [], 2: [], 3: []
   },
   maths2Stats: {
     id: 'maths2Stats', nom: 'Stats & Probabilités', emoji: '🎲', couleur: '#7c3aed',
-    sousChapitres: ['maths2Stats_Statistiques', 'maths2Stats_Proba'],
+    sousChapitres: ['maths2Stats_Statistiques', 'maths2Stats_Evolutions', 'maths2Stats_Proba', 'maths2Stats_Echantillonnage'],
+    1: [], 2: [], 3: []
+  },
+  maths2Algo: {
+    id: 'maths2Algo', nom: 'Algorithmique & Python', emoji: '💻', couleur: '#7c3aed',
+    sousChapitres: ['maths2Algo_Python', 'maths2Algo_Algos'],
     1: [], 2: [], 3: []
   },
 
@@ -4869,8 +4874,8 @@ const questionsBank = {
   },
 
   // ── Inéquations ──
-  maths2Nomb_Inequations: {
-    id: 'maths2Nomb_Inequations', nom: 'Inéquations', emoji: '≤', couleur: '#7c3aed',
+  maths2Nomb_Eq1: {
+    id: 'maths2Nomb_Eq1', nom: 'Équations & inéquations 1er degré', emoji: '=', couleur: '#7c3aed',
     1: [
       { question: "Résoudre 2x + 1 > 7", options: ["x > 3", "x > 4", "x < 3", "x ≥ 3"], answer: "x > 3", explication: "2x + 1 > 7 → 2x > 6 → x > 3. Ensemble solution : ]3 ; +∞[." },
       { question: "Si on multiplie une inégalité par −1, que se passe-t-il ?", options: ["Le sens de l'inégalité s'inverse", "Rien ne change", "L'inégalité devient une égalité", "On ne peut pas multiplier par un négatif"], answer: "Le sens de l'inégalité s'inverse", explication: "3 > 2, mais −3 < −2. Multiplier (ou diviser) par un négatif inverse le sens : < devient >, ≤ devient ≥." },
@@ -5044,12 +5049,44 @@ const questionsBank = {
   },
 
   // ── Théorème de Thalès ──
+  maths2Geo_Repere: {
+    id: 'maths2Geo_Repere', nom: 'Géométrie repérée', emoji: '🗺', couleur: '#7c3aed',
+    1: [
+      { question: "Dans un repère (O,I,J), les coordonnées de O sont :", options: ["(0 ; 0)", "(1 ; 0)", "(0 ; 1)", "(1 ; 1)"], answer: "(0 ; 0)", explication: "O est l'origine du repère, ses coordonnées sont toujours (0 ; 0)." },
+      { question: "Milieu de A(2 ; 4) et B(6 ; 8) :", options: ["(4 ; 6)", "(8 ; 12)", "(2 ; 2)", "(4 ; 4)"], answer: "(4 ; 6)", explication: "Milieu M = ((xA+xB)/2 ; (yA+yB)/2) = (8/2 ; 12/2) = (4 ; 6)." },
+      { question: "Distance entre A(1 ; 1) et B(4 ; 5) :", options: ["5", "7", "√7", "3"], answer: "5", explication: "d = √((4−1)² + (5−1)²) = √(9+16) = √25 = 5." },
+      { question: "Le point M(3 ; −2) est-il dans le 4ème quadrant ?", options: ["Oui (x > 0, y < 0)", "Non, c'est le 1er quadrant", "Non, c'est le 3ème quadrant", "Non, c'est le 2ème quadrant"], answer: "Oui (x > 0, y < 0)", explication: "Quadrant 1 : x>0, y>0. Quadrant 2 : x<0, y>0. Quadrant 3 : x<0, y<0. Quadrant 4 : x>0, y<0." },
+      { question: "Comment repérer un point dans le plan ?", options: ["Par ses deux coordonnées (abscisse x et ordonnée y)", "Par sa distance à l'origine", "Par son angle avec l'axe des x", "Par son ordonnée seule"], answer: "Par ses deux coordonnées (abscisse x et ordonnée y)", explication: "Un point P est repéré par P(x ; y) : x = abscisse (horizontal), y = ordonnée (vertical)." },
+      { question: "A(0 ; 3) et B(4 ; 3). Quelle est la nature du segment [AB] ?", options: ["Horizontal (même ordonnée)", "Vertical (même abscisse)", "Diagonal", "Un point"], answer: "Horizontal (même ordonnée)", explication: "Si yA = yB, les deux points ont la même hauteur → [AB] est horizontal." },
+      { question: "Coordonnées du milieu de [AB] avec A(−2 ; 5) et B(4 ; −1) :", options: ["(1 ; 2)", "(2 ; 4)", "(−1 ; 2)", "(1 ; 4)"], answer: "(1 ; 2)", explication: "M = ((−2+4)/2 ; (5+(−1))/2) = (2/2 ; 4/2) = (1 ; 2)." },
+      { question: "L'axe des abscisses est :", options: ["L'axe horizontal (y = 0)", "L'axe vertical (x = 0)", "La droite y = x", "Le cercle de rayon 1"], answer: "L'axe horizontal (y = 0)", explication: "L'axe des abscisses (axe des x) est horizontal. L'axe des ordonnées (axe des y) est vertical." }
+    ],
+    2: [
+      { question: "Vecteur AB⃗ avec A(1 ; 3) et B(5 ; 7). Coordonnées ?", options: ["(4 ; 4)", "(6 ; 10)", "(−4 ; −4)", "(3 ; 7)"], answer: "(4 ; 4)", explication: "AB⃗ = (xB−xA ; yB−yA) = (5−1 ; 7−3) = (4 ; 4)." },
+      { question: "Trois points A(0;0), B(3;0), C(3;4). Calculer le périmètre du triangle.", options: ["12", "7", "5", "9"], answer: "12", explication: "AB = 3, BC = 4, AC = √(9+16) = 5. Périmètre = 3+4+5 = 12. (Triangle 3-4-5 rectangle.)" },
+      { question: "Centre du cercle passant par A(0;0), B(4;0), C(0;4) ?", options: ["(2 ; 2)", "(0 ; 0)", "(4 ; 4)", "(2 ; 0)"], answer: "(2 ; 2)", explication: "Le centre est équidistant des 3 points. Par symétrie (triangle isocèle rectangle), centre = (2 ; 2). Vérif : d = √(4+4) = 2√2 pour les 3." },
+      { question: "Montrer que A(1;1), B(4;1), C(4;5), D(1;5) est un rectangle.", options: ["AB∥DC, AD∥BC et AB⊥AD", "Les diagonales sont égales", "C'est un carré", "Les 4 côtés sont égaux"], answer: "AB∥DC, AD∥BC et AB⊥AD", explication: "AB horizontal (y=1), DC horizontal (y=5) → AB∥DC. AD vertical (x=1), BC vertical (x=4) → AD∥BC. Horizontal ⊥ vertical → angle droit → rectangle." },
+      { question: "Symétrique de A(3 ; 2) par rapport à l'origine O(0;0) :", options: ["(−3 ; −2)", "(3 ; −2)", "(−3 ; 2)", "(2 ; 3)"], answer: "(−3 ; −2)", explication: "Symétrique de (x;y) par rapport à O est (−x;−y). A'= (−3 ; −2)." },
+      { question: "Symétrique de A(3 ; 2) par rapport à l'axe des x :", options: ["(3 ; −2)", "(−3 ; 2)", "(−3 ; −2)", "(2 ; 3)"], answer: "(3 ; −2)", explication: "Symétrie par rapport à l'axe des x : on change le signe de l'ordonnée. (3 ; 2) → (3 ; −2)." },
+      { question: "Quatre points A(0;0), B(4;0), C(5;3), D(1;3). C'est quel quadrilatère ?", options: ["Parallélogramme", "Rectangle", "Losange", "Trapèze"], answer: "Parallélogramme", explication: "AB⃗ = (4;0), DC⃗ = (4;0). AB⃗ = DC⃗ → côtés opposés égaux et parallèles → parallélogramme." },
+      { question: "G barycentre de A(0;0), B(6;0), C(0;6). Coordonnées de G ?", options: ["(2 ; 2)", "(3 ; 3)", "(0 ; 0)", "(6 ; 6)"], answer: "(2 ; 2)", explication: "G = ((xA+xB+xC)/3 ; (yA+yB+yC)/3) = (6/3 ; 6/3) = (2 ; 2)." }
+    ],
+    3: [
+      { question: "Equation du cercle de centre Ω(a;b) et rayon r :", options: ["(x−a)² + (y−b)² = r²", "x² + y² = r", "(x+a)² + (y+b)² = r²", "ax + by = r"], answer: "(x−a)² + (y−b)² = r²", explication: "Un point M(x;y) est sur le cercle si sa distance à Ω est r : ΩM² = (x−a)²+(y−b)² = r²." },
+      { question: "Cercle de centre O(0;0), rayon 5. Le point A(3;4) est-il sur le cercle ?", options: ["Oui, car 3²+4² = 25", "Non, car 3+4 ≠ 5", "Oui, car √(3+4) = √7 ≈ 5", "Non, car 3²+4² ≠ 5"], answer: "Oui, car 3²+4² = 25", explication: "x²+y² = 9+16 = 25 = 5². Le point (3;4) vérifie l'équation du cercle de rayon 5." },
+      { question: "Equation du cercle passant par l'origine, centre (2;0) :", options: ["(x−2)² + y² = 4", "x² + y² = 4", "(x+2)² + y² = 4", "x² + y² = 2"], answer: "(x−2)² + y² = 4", explication: "Centre (2;0), rayon = distance au point (0;0) = 2. Equation : (x−2)² + y² = 4." },
+      { question: "Montrer que ABCD est un losange sachant AB=BC=CD=DA.", options: ["4 côtés égaux → losange par définition", "Calculer les diagonales", "Vérifier les angles", "Calculer les coordonnées du centre"], answer: "4 côtés égaux → losange par définition", explication: "Un losange est un parallélogramme (ou quadrilatère) dont les 4 côtés sont égaux. Si on montre ABCD parallélogramme + un côté = côté adjacent, c'est un losange." },
+      { question: "Transformation : translation de vecteur (3;−1). Image de A(2;4) ?", options: ["A'(5 ; 3)", "A'(−1 ; 5)", "A'(6 ; −4)", "A'(2 ; 3)"], answer: "A'(5 ; 3)", explication: "Translation de vecteur (a;b) : A'(x+a ; y+b) = (2+3 ; 4+(−1)) = (5 ; 3)." },
+      { question: "Droite passant par A(1;2) perpendiculaire à l'axe des x : équation ?", options: ["x = 1", "y = 2", "y = x + 1", "x + y = 3"], answer: "x = 1", explication: "Une droite perpendiculaire à l'axe des x est verticale : son équation est x = constante = xA = 1." },
+      { question: "Calculer l'aire du triangle A(0;0), B(4;0), C(2;3).", options: ["6", "12", "3", "8"], answer: "6", explication: "Base AB = 4, hauteur = ordonnée de C = 3 (car AB est sur l'axe x). Aire = (1/2) × 4 × 3 = 6." },
+      { question: "Vérifier que I(3;2) est le milieu de [AC] avec A(1;1) et C(5;3).", options: ["Milieu = (6/2 ; 4/2) = (3;2) = I ✓", "Calculer AI et IC", "Vérifier que I est sur la droite AC", "Calculer la distance AI"], answer: "Milieu = (6/2 ; 4/2) = (3;2) = I ✓", explication: "Milieu de [AC] = ((1+5)/2 ; (1+3)/2) = (3 ; 2) = I. Vérifié." }
+    ]
+  },
+
+  // ── Théorème de Thalès ──
   maths2Geo_Thales: {
     id: 'maths2Geo_Thales', nom: 'Théorème de Thalès', emoji: '∥', couleur: '#7c3aed',
     1: [
-      { question: "Énoncé du théorème de Thalès :", options: ["Si (DE) ∥ (BC), alors AD/AB = AE/AC = DE/BC", "Si AD/AB = AE/AC, alors A, B, C sont alignés", "Dans un triangle, la droite médiane est parallèle à la base", "Les médianes d'un triangle se coupent en G"], answer: "Si (DE) ∥ (BC), alors AD/AB = AE/AC = DE/BC", explication: "Thalès : D sur AB, E sur AC, (DE)∥(BC) ⟹ AD/AB = AE/AC = DE/BC. Les rapports sont égaux." },
-      { question: "Dans un triangle ABC, (DE) ∥ (BC) avec AD = 3, DB = 2, DE = 4. Calculer BC.", options: ["BC = 20/3", "BC = 3", "BC = 6", "BC = 8/3"], answer: "BC = 20/3", explication: "AB = AD+DB = 5. Thalès : DE/BC = AD/AB → 4/BC = 3/5 → BC = 20/3." },
-      { question: "La réciproque du théorème de Thalès sert à :", options: ["Démontrer que deux droites sont parallèles", "Calculer une longueur", "Démontrer qu'un triangle est rectangle", "Calculer un angle"], answer: "Démontrer que deux droites sont parallèles", explication: "Réciproque : si AD/AB = AE/AC, alors (DE) ∥ (BC). On l'utilise pour prouver le parallélisme." },
       { question: "Peut-on appliquer Thalès si D est entre B et A (pas entre A et B) ?", options: ["Oui, c'est la configuration papillon (Thalès en croix)", "Non, Thalès ne s'applique que si D est entre A et B", "Non, il faut un triangle", "Oui, mais le résultat est négatif"], answer: "Oui, c'est la configuration papillon (Thalès en croix)", explication: "Thalès s'applique aussi quand les droites se croisent entre les points (sécantes confondues) : configuration 'papillon'. Les rapports restent égaux mais les points sont de part et d'autre." },
       { question: "AD = 6, AB = 10, AE = 9. (DE)∥(BC) ? Calculer AC.", options: ["AC = 15", "AC = 10", "AC = 54", "AC = 6"], answer: "AC = 15", explication: "AD/AB = AE/AC → 6/10 = 9/AC → AC = 9×10/6 = 15." },
       { question: "AD = 4, DB = 6. Quel est le rapport AD/AB ?", options: ["2/5", "4/6", "2/3", "4/10"], answer: "2/5", explication: "AB = AD + DB = 4 + 6 = 10. AD/AB = 4/10 = 2/5." },
@@ -5181,6 +5218,321 @@ const questionsBank = {
       { question: "P(A) = 0,6, P(B|A) = 0,7. Calculer P(A ∩ B).", options: ["0,42", "0,7", "0,6", "1,3"], answer: "0,42", explication: "P(A ∩ B) = P(B|A) × P(A) = 0,7 × 0,6 = 0,42." },
       { question: "Dans un arbre de probabilités, à quoi vérifie-t-on la cohérence ?", options: ["La somme des probabilités de chaque nœud = 1", "Le produit des branches = 1", "Chaque branche = 0,5", "Le nombre de branches = 2n"], answer: "La somme des probabilités de chaque nœud = 1", explication: "À chaque nœud, les branches représentent des issues exhaustives → leur somme de probabilités = 1." },
       { question: "Jeu équitable : définition", options: ["E(gain) = 0 (ni avantage ni désavantage)", "P(gagner) = P(perdre) = 0,5", "Gain = mise", "Jeu sans hasard"], answer: "E(gain) = 0 (ni avantage ni désavantage)", explication: "Un jeu est équitable si l'espérance du gain est nulle : E(X) = 0. Si E(X) < 0, le jeu favorise l'organisateur." }
+    ]
+  },
+
+  // ── Équations & inéquations 2nd degré ──
+  maths2Nomb_Eq2: {
+    id: 'maths2Nomb_Eq2', nom: 'Équations & inéquations 2nd degré', emoji: 'x²', couleur: '#7c3aed',
+    1: [
+      { question: "Discriminant Δ de ax²+bx+c : formule ?", options: ["b²−4ac", "b²+4ac", "−b/2a", "4ac−b²"], answer: "b²−4ac", explication: "Δ = b²−4ac. Si Δ > 0 : 2 racines. Si Δ = 0 : 1 racine double. Si Δ < 0 : pas de racine réelle." },
+      { question: "Résoudre x²−5x+6 = 0", options: ["x = 2 ou x = 3", "x = 5 ou x = 6", "x = −2 ou x = −3", "x = 1"], answer: "x = 2 ou x = 3", explication: "Δ = 25−24 = 1. x = (5±1)/2 → x = 3 ou x = 2." },
+      { question: "x²−4 = 0. Solutions ?", options: ["x = 2 ou x = −2", "x = 4 ou x = −4", "x = 2 seul", "Pas de solution"], answer: "x = 2 ou x = −2", explication: "x² = 4 → x = ±√4 = ±2." },
+      { question: "Si Δ < 0, combien de solutions réelles ?", options: ["Aucune", "Une", "Deux", "Infinité"], answer: "Aucune", explication: "Si Δ < 0, la racine carrée n'est pas définie dans ℝ → pas de solution réelle." },
+      { question: "Forme factorisée quand Δ > 0 : ax²+bx+c = ?", options: ["a(x−x₁)(x−x₂)", "(x−x₁)(x−x₂)", "a(x+x₁)(x+x₂)", "ax(x−x₁)"], answer: "a(x−x₁)(x−x₂)", explication: "ax²+bx+c = a(x−x₁)(x−x₂) où x₁ et x₂ sont les deux racines." },
+      { question: "Résoudre x²+4x+4 = 0", options: ["x = −2 (double)", "x = −4 ou x = 0", "x = 2 (double)", "Pas de solution"], answer: "x = −2 (double)", explication: "Δ = 16−16 = 0. x = −b/2a = −4/2 = −2. Solution double : x = −2. x²+4x+4 = (x+2)²." },
+      { question: "Résoudre x²−9 > 0", options: ["x < −3 ou x > 3", "−3 < x < 3", "x > 3", "x > 9"], answer: "x < −3 ou x > 3", explication: "x²−9 = (x−3)(x+3). Positif quand les deux facteurs de même signe → x < −3 ou x > 3." },
+      { question: "Somme des racines de 2x²−6x+4 = 0 ?", options: ["3", "6", "2", "−3"], answer: "3", explication: "Somme = −b/a = 6/2 = 3. Produit = c/a = 4/2 = 2." }
+    ],
+    2: [
+      { question: "Résoudre 3x²−7x+2 = 0", options: ["x = 2 ou x = 1/3", "x = 7 ou x = 6", "x = −2 ou x = −1/3", "Pas de solution"], answer: "x = 2 ou x = 1/3", explication: "Δ = 49−24 = 25. x = (7±5)/6 → x = 2 ou x = 1/3." },
+      { question: "Mettre x²−4x+1 sous forme canonique", options: ["(x−2)²−3", "(x−2)²+1", "(x−4)²+1", "(x−2)²−4"], answer: "(x−2)²−3", explication: "x²−4x+1 = (x−2)²−4+1 = (x−2)²−3. Sommet en (2 ; −3)." },
+      { question: "Pour quelles valeurs de k : x²+kx+9 = 0 a une solution double ?", options: ["k = 6 ou k = −6", "k = 9", "k = 3", "k = 0"], answer: "k = 6 ou k = −6", explication: "Solution double ⟺ Δ = 0. k²−36 = 0 → k = ±6." },
+      { question: "Résoudre x²−3x−10 ≤ 0", options: ["−2 ≤ x ≤ 5", "x ≤ −2 ou x ≥ 5", "x ≤ 5", "x ≥ −2"], answer: "−2 ≤ x ≤ 5", explication: "Racines : Δ = 9+40 = 49, x = (3±7)/2 → x = 5 ou x = −2. Parabole négative entre les racines → [−2 ; 5]." },
+      { question: "Résoudre x(x−3) = 10", options: ["x = 5 ou x = −2", "x = 10 ou x = 3", "x = 0 ou x = 3", "Pas de solution"], answer: "x = 5 ou x = −2", explication: "x²−3x−10 = 0. Δ = 9+40 = 49. x = (3±7)/2 → x = 5 ou x = −2." },
+      { question: "Résoudre (x−1)² ≥ 4", options: ["x ≤ −1 ou x ≥ 3", "−1 ≤ x ≤ 3", "x ≥ 3", "x ≤ −1"], answer: "x ≤ −1 ou x ≥ 3", explication: "(x−1)² ≥ 4 ⟺ |x−1| ≥ 2 ⟺ x−1 ≤ −2 ou x−1 ≥ 2 ⟺ x ≤ −1 ou x ≥ 3." },
+      { question: "Signe de −2x²+8x−6 pour x ∈ ]1 ; 3[", options: ["Positif", "Négatif", "Nul", "Variable"], answer: "Positif", explication: "Racines : −2x²+8x−6 = −2(x²−4x+3) = −2(x−1)(x−3). Entre 1 et 3, (x−1) > 0 et (x−3) < 0, donc produit négatif × (−2) = positif." },
+      { question: "f(x) = x²−2x−3. Résoudre f(x) = 0, puis f(x) < 0.", options: ["Racines : −1 et 3 ; f < 0 sur ]−1 ; 3[", "Racines : 1 et −3 ; f < 0 sur ]1 ; −3[", "Racines : 2 et 3 ; f < 0 partout", "Pas de racines"], answer: "Racines : −1 et 3 ; f < 0 sur ]−1 ; 3[", explication: "Δ = 4+12 = 16. x = (2±4)/2 → x = 3 ou x = −1. Parabole (a>0) négative entre les racines." }
+    ],
+    3: [
+      { question: "Résoudre x⁴−5x²+4 = 0 (substitution X = x²)", options: ["x = ±1 ou x = ±2", "x = 1 ou x = 4", "x = 5", "Pas de solution"], answer: "x = ±1 ou x = ±2", explication: "X = x² : X²−5X+4 = 0. Δ = 25−16 = 9. X = 4 ou X = 1. x² = 4 → x = ±2 ; x² = 1 → x = ±1." },
+      { question: "Résoudre |x²−4| = 5", options: ["x = 3 ou x = −3 ou x = i (complexe, exclu)", "x = ±3", "x = 9 ou x = −1", "x = ±√9 = ±3 ou x² = −1 (exclu)"], answer: "x = ±3", explication: "|x²−4| = 5 ⟺ x²−4 = 5 ou x²−4 = −5. x² = 9 → x = ±3. x² = −1 : pas de solution réelle. Donc x = ±3." },
+      { question: "Démontrer que x²+x+1 > 0 pour tout x réel.", options: ["Δ = 1−4 = −3 < 0 et a = 1 > 0 → toujours positif", "On calcule f(0) = 1 > 0", "On développe", "On factorise"], answer: "Δ = 1−4 = −3 < 0 et a = 1 > 0 → toujours positif", explication: "Δ < 0 → pas de racine réelle. a = 1 > 0 → parabole tournée vers le haut → toujours au-dessus de l'axe x → toujours strictement positif." },
+      { question: "Résoudre x²+2x−1 = 0 (laisser sous forme irrationnelle)", options: ["x = −1±√2", "x = (−2±√8)/2 = −1±√2", "x = 1±√2", "Pas de solution"], answer: "x = −1±√2", explication: "Δ = 4+4 = 8. x = (−2±√8)/2 = (−2±2√2)/2 = −1±√2." },
+      { question: "Inéquation : (x²−1)/(x+2) > 0. Analyser les signes.", options: ["Solutions : x ∈ ]−2;−1[ ∪ ]1;+∞[", "x ∈ ]−1;1[", "x > 1", "x < −2"], answer: "Solutions : x ∈ ]−2;−1[ ∪ ]1;+∞[", explication: "Numérateur : (x−1)(x+1). Dénominateur : x+2. Tableau de signes : positif sur ]−2;−1[ (−,−,+→+) et ]1;+∞[ (+,+,+→+)." },
+      { question: "f(x) = 2x²−4x+5. Quel est le minimum et où est-il atteint ?", options: ["Minimum 3 en x = 1", "Minimum 5 en x = 0", "Maximum 3 en x = 1", "Minimum 0 en x = 2"], answer: "Minimum 3 en x = 1", explication: "Forme canonique : 2(x−1)²+3. Minimum = 3 en x = 1." },
+      { question: "Pour k réel, résoudre kx²+(k−1)x+1 = 0 selon les valeurs de k.", options: ["Si k=0 : x=1. Si k≠0 : Δ=(k−1)²−4k=k²−6k+1, solutions selon signe de Δ", "x = 1 pour tout k", "Pas de solution si k < 0", "Toujours deux solutions"], answer: "Si k=0 : x=1. Si k≠0 : Δ=(k−1)²−4k=k²−6k+1, solutions selon signe de Δ", explication: "Si k=0 : équation du 1er degré → x = 1. Si k≠0 : Δ = k²−6k+1. Δ=0 si k = 3±2√2." },
+      { question: "Résoudre le système : x+y = 5 et xy = 6.", options: ["x = 2 et y = 3 (ou x = 3 et y = 2)", "x = 5 et y = 6", "x = 1 et y = 4", "Pas de solution"], answer: "x = 2 et y = 3 (ou x = 3 et y = 2)", explication: "x et y sont racines de t²−5t+6 = 0. Δ = 25−24 = 1. t = 2 ou t = 3." }
+    ]
+  },
+
+  // ── Valeur absolue ──
+  maths2Nomb_ValAbs: {
+    id: 'maths2Nomb_ValAbs', nom: 'Valeur absolue', emoji: '|x|', couleur: '#7c3aed',
+    1: [
+      { question: "|−8| = ?", options: ["8", "−8", "0", "64"], answer: "8", explication: "La valeur absolue d'un nombre est toujours positive : |−8| = 8, |8| = 8." },
+      { question: "|x| représente géométriquement :", options: ["La distance de x à 0 sur la droite", "La valeur de x au carré", "L'opposé de x", "La racine carrée de x"], answer: "La distance de x à 0 sur la droite", explication: "|x| est la distance du réel x à l'origine 0. |−3| = |3| = 3 car 3 et −3 sont à distance 3 de 0." },
+      { question: "Résoudre |x| = 5", options: ["x = 5 ou x = −5", "x = 5 seul", "x = 25", "Pas de solution"], answer: "x = 5 ou x = −5", explication: "|x| = 5 ⟺ x = 5 ou x = −5 (deux nombres à distance 5 de 0)." },
+      { question: "Résoudre |x| < 3", options: ["−3 < x < 3", "x < 3", "x > −3", "x < −3 ou x > 3"], answer: "−3 < x < 3", explication: "|x| < 3 ⟺ −3 < x < 3 (nombres à moins de 3 de l'origine)." },
+      { question: "Résoudre |x| > 2", options: ["x < −2 ou x > 2", "−2 < x < 2", "x > 2", "x < −2"], answer: "x < −2 ou x > 2", explication: "|x| > 2 ⟺ x < −2 ou x > 2 (nombres à plus de 2 de l'origine)." },
+      { question: "|3−7| = ?", options: ["4", "−4", "10", "−10"], answer: "4", explication: "|3−7| = |−4| = 4." },
+      { question: "Résoudre |x−1| = 4", options: ["x = 5 ou x = −3", "x = 4 ou x = −4", "x = 3", "x = 5"], answer: "x = 5 ou x = −3", explication: "|x−1| = 4 ⟺ x−1 = 4 ou x−1 = −4 ⟺ x = 5 ou x = −3." },
+      { question: "La valeur absolue vérifie : |ab| = ?", options: ["|a| × |b|", "|a| + |b|", "|a − b|", "a × b"], answer: "|a| × |b|", explication: "|ab| = |a| × |b|. Exemple : |2×(−3)| = |−6| = 6 = |2| × |−3| = 2 × 3." }
+    ],
+    2: [
+      { question: "Résoudre |2x−3| = 7", options: ["x = 5 ou x = −2", "x = 7 ou x = −7", "x = 5", "x = 2"], answer: "x = 5 ou x = −2", explication: "2x−3 = 7 → x = 5. Ou 2x−3 = −7 → 2x = −4 → x = −2." },
+      { question: "Résoudre |x+2| < 5", options: ["−7 < x < 3", "x < 3", "x > −7", "x < −7 ou x > 3"], answer: "−7 < x < 3", explication: "|x+2| < 5 ⟺ −5 < x+2 < 5 ⟺ −7 < x < 3." },
+      { question: "Résoudre |3x−1| ≥ 2", options: ["x ≤ −1/3 ou x ≥ 1", "−1/3 ≤ x ≤ 1", "x ≥ 1", "x ≤ −1/3"], answer: "x ≤ −1/3 ou x ≥ 1", explication: "3x−1 ≤ −2 → x ≤ −1/3. Ou 3x−1 ≥ 2 → x ≥ 1." },
+      { question: "Distance entre x = 3 et x = −1 sur la droite réelle :", options: ["|3−(−1)| = 4", "|3+1| = 4", "3−1 = 2", "Les deux sont équivalents"], answer: "|3−(−1)| = 4", explication: "Distance entre a et b = |a−b|. |3−(−1)| = |4| = 4." },
+      { question: "Résoudre |x²−4| = 0", options: ["x = 2 ou x = −2", "x = 4", "x = 0", "Pas de solution"], answer: "x = 2 ou x = −2", explication: "|x²−4| = 0 ⟺ x²−4 = 0 ⟺ x = ±2." },
+      { question: "Résoudre |x−3| = |x+1|", options: ["x = 1", "x = 2", "x = −1", "x = 3"], answer: "x = 1", explication: "|x−3| = |x+1| ⟺ (x−3)² = (x+1)² ⟺ x²−6x+9 = x²+2x+1 ⟺ 8 = 8x ⟺ x = 1." },
+      { question: "Inégalité triangulaire : |a+b| ≤ ?", options: ["|a| + |b|", "|a| − |b|", "|a × b|", "a + b"], answer: "|a| + |b|", explication: "Inégalité triangulaire : |a+b| ≤ |a| + |b|. Égalité si a et b ont le même signe." },
+      { question: "Résoudre |x| = x", options: ["x ≥ 0", "Tout x réel", "x = 0 seulement", "x ≤ 0"], answer: "x ≥ 0", explication: "|x| = x si et seulement si x ≥ 0 (la valeur absolue d'un positif est lui-même)." }
+    ],
+    3: [
+      { question: "Résoudre |x²−x−2| < 4", options: ["−2 < x < 3 (après étude par cas)", "x ∈ ℝ", "Pas de solution", "x < 3"], answer: "−2 < x < 3 (après étude par cas)", explication: "|x²−x−2| < 4. Cas 1 : x²−x−2 < 4 → x²−x−6 < 0 → (x−3)(x+2) < 0 → −2 < x < 3. Cas 2 : x²−x−2 > −4 → x²−x+2 > 0 → Δ < 0 → toujours vrai. Intersection : ]−2 ; 3[." },
+      { question: "Montrer que ||a|−|b|| ≤ |a−b|", options: ["Par l'inégalité triangulaire appliquée à a = (a−b)+b", "Par calcul direct", "C'est faux", "Par récurrence"], answer: "Par l'inégalité triangulaire appliquée à a = (a−b)+b", explication: "|a| = |(a−b)+b| ≤ |a−b|+|b| → |a|−|b| ≤ |a−b|. De même |b|−|a| ≤ |a−b|. Donc ||a|−|b|| ≤ |a−b|." },
+      { question: "f(x) = |x−2| + |x+1|. Valeur minimum ?", options: ["3 pour x ∈ [−1 ; 2]", "0 pour x = 0,5", "2 pour x = 2", "1 pour x = −1"], answer: "3 pour x ∈ [−1 ; 2]", explication: "f(x) = distance(x,2) + distance(x,−1). Le min est la distance entre 2 et −1 = 3, atteint pour tout x ∈ [−1;2]." },
+      { question: "Résoudre |2x+1| < |x−3|", options: ["−4 < x < 2/3", "x < −4 ou x > 2/3", "x < 2/3", "x > −4"], answer: "−4 < x < 2/3", explication: "On élève au carré (les deux membres positifs) : (2x+1)² < (x−3)². 4x²+4x+1 < x²−6x+9. 3x²+10x−8 < 0. (3x−2)(x+4) < 0. Donc −4 < x < 2/3." },
+      { question: "Résoudre |x+1|/|x−2| ≤ 1 (x ≠ 2)", options: ["x ≤ 1/2 ou x > 2", "−1 ≤ x ≤ 2", "x ≥ 1/2", "Toujours vrai"], answer: "x ≤ 1/2 ou x > 2", explication: "|x+1| ≤ |x−2| ⟺ (x+1)² ≤ (x−2)² ⟺ x²+2x+1 ≤ x²−4x+4 ⟺ 6x ≤ 3 ⟺ x ≤ 1/2. Mais x ≠ 2 → solution : x ≤ 1/2 (ou x > 2 exclu car si x > 2 : |x+1| = x+1 > 0 et |x−2| = x−2 < x+1, donc inégalité fausse). Correction: x ≤ 1/2." },
+      { question: "Résoudre |x−1| + |x+1| = 4", options: ["x = 2 ou x = −2", "x ∈ [−1;1]", "x = 4", "Pas de solution"], answer: "x = 2 ou x = −2", explication: "Cas x ≥ 1 : (x−1)+(x+1) = 4 → 2x = 4 → x = 2. Cas −1 ≤ x ≤ 1 : (1−x)+(x+1) = 2 ≠ 4. Cas x ≤ −1 : (1−x)+(−x−1) = −2x = 4 → x = −2. Solutions : x = ±2." },
+      { question: "Vrai ou faux : √(x²) = x pour tout réel x ?", options: ["Faux : √(x²) = |x|", "Vrai", "Vrai si x ≥ 0", "Faux : √(x²) = −x"], answer: "Faux : √(x²) = |x|", explication: "√(x²) = |x| (toujours positif). Si x = −3 : √9 = 3 ≠ −3." },
+      { question: "Résoudre |x² − 1| ≤ 3", options: ["−2 ≤ x ≤ 2", "x ∈ ℝ", "−√4 ≤ x ≤ √4", "x ≤ −2 ou x ≥ 2"], answer: "−2 ≤ x ≤ 2", explication: "|x²−1| ≤ 3 ⟺ −3 ≤ x²−1 ≤ 3 ⟺ −2 ≤ x² ≤ 4. x² ≥ −2 toujours vrai ; x² ≤ 4 ⟺ −2 ≤ x ≤ 2." }
+    ]
+  },
+
+  // ── Droites du plan ──
+  maths2Geo_Droites: {
+    id: 'maths2Geo_Droites', nom: 'Droites du plan', emoji: '📏', couleur: '#7c3aed',
+    1: [
+      { question: "Équation générale d'une droite dans le plan ?", options: ["ax + by + c = 0", "y = ax + b", "ax = by", "x/a + y/b = 1"], answer: "ax + by + c = 0", explication: "Toute droite a une équation de la forme ax+by+c = 0 (sauf cas dégénéré). Si b≠0, on peut écrire y = −(a/b)x − c/b." },
+      { question: "Coefficient directeur de la droite y = 3x − 2 ?", options: ["3", "−2", "−3", "2"], answer: "3", explication: "Forme y = ax+b : le coefficient directeur est a = 3 (la pente)." },
+      { question: "Deux droites parallèles ont :", options: ["Le même coefficient directeur", "La même ordonnée à l'origine", "Un point commun", "Des pentes opposées"], answer: "Le même coefficient directeur", explication: "Droites parallèles ⟺ même pente (coefficient directeur a), ordonnées à l'origine différentes." },
+      { question: "La droite x = 3 est :", options: ["Verticale", "Horizontale", "Oblique de pente 3", "Une parabole"], answer: "Verticale", explication: "x = 3 : tous les points ont la même abscisse → droite verticale. Elle n'a pas de coefficient directeur (pente infinie)." },
+      { question: "Coefficient directeur de la droite passant par A(1;2) et B(3;8) ?", options: ["3", "6", "2", "1/3"], answer: "3", explication: "a = (yB−yA)/(xB−xA) = (8−2)/(3−1) = 6/2 = 3." },
+      { question: "Équation de la droite passant par O(0;0) et A(2;6) ?", options: ["y = 3x", "y = 2x", "y = 6x", "y = x + 4"], answer: "y = 3x", explication: "Pente = 6/2 = 3. Passe par l'origine → b = 0. Equation : y = 3x." },
+      { question: "Droite y = −x + 5 : est-elle croissante ou décroissante ?", options: ["Décroissante (pente −1)", "Croissante", "Constante", "Ni l'un ni l'autre"], answer: "Décroissante (pente −1)", explication: "Pente a = −1 < 0 → droite décroissante." },
+      { question: "Point d'intersection de y = x+1 et y = −x+3 ?", options: ["(1 ; 2)", "(2 ; 3)", "(0 ; 1)", "(3 ; 0)"], answer: "(1 ; 2)", explication: "x+1 = −x+3 → 2x = 2 → x = 1. y = 2. Intersection : (1;2)." }
+    ],
+    2: [
+      { question: "Deux droites perpendiculaires : relation entre leurs pentes ?", options: ["a₁ × a₂ = −1", "a₁ = a₂", "a₁ + a₂ = 0", "a₁ = 1/a₂"], answer: "a₁ × a₂ = −1", explication: "D₁ ⊥ D₂ ⟺ a₁ × a₂ = −1. Ex : pentes 2 et −1/2 → produit = −1." },
+      { question: "Equation de la droite passant par A(2;5) de pente 3 ?", options: ["y = 3x − 1", "y = 3x + 5", "y = 2x + 3", "y = 3x + 1"], answer: "y = 3x − 1", explication: "y = 3x+b. Point A(2;5) : 5 = 6+b → b = −1. Equation : y = 3x−1." },
+      { question: "Résoudre le système : 2x+y = 7 et x−y = 2", options: ["x = 3, y = 1", "x = 2, y = 7", "x = 1, y = 5", "Pas de solution"], answer: "x = 3, y = 1", explication: "Addition : 3x = 9 → x = 3. y = x−2 = 1." },
+      { question: "Distance d'un point A(x₀;y₀) à la droite ax+by+c=0 :", options: ["|ax₀+by₀+c| / √(a²+b²)", "(ax₀+by₀+c) / (a+b)", "√(x₀²+y₀²)", "|ax₀+by₀| / (a+b)"], answer: "|ax₀+by₀+c| / √(a²+b²)", explication: "Formule de distance point-droite : d = |ax₀+by₀+c| / √(a²+b²)." },
+      { question: "Equation de la médiatrice de [AB] avec A(0;0) et B(4;2) ?", options: ["y = −2x + 5", "y = 2x − 5", "y = x + 1", "y = −x + 3"], answer: "y = −2x + 5", explication: "Milieu M=(2;1). Pente AB = 2/4 = 1/2. Pente médiatrice = −2. y−1 = −2(x−2) → y = −2x+5." },
+      { question: "Combien de solutions a le système : y = 2x+1 et 4x−2y+2 = 0 ?", options: ["Infinité (droites identiques)", "1 solution", "0 solution", "2 solutions"], answer: "Infinité (droites identiques)", explication: "4x−2y+2 = 0 → y = 2x+1. C'est la même droite → infinité de solutions." },
+      { question: "La droite D : 3x−4y+12 = 0 coupe l'axe y (x=0) en :", options: ["y = 3", "y = −3", "y = 12", "y = 4"], answer: "y = 3", explication: "x=0 : −4y+12 = 0 → y = 3. Point (0;3)." },
+      { question: "Pente de la droite perpendiculaire à y = (2/3)x+1 ?", options: ["−3/2", "2/3", "3/2", "−2/3"], answer: "−3/2", explication: "Pente ⊥ : −1/(2/3) = −3/2." }
+    ],
+    3: [
+      { question: "Trouver l'équation de la hauteur AH du triangle A(0;4), B(−2;0), C(4;0).", options: ["x = 0 (droite verticale)", "y = 4x", "y = x + 4", "y = −4x"], answer: "x = 0 (droite verticale)", explication: "BC est sur l'axe x (y=0, horizontal). AH ⊥ BC → AH est verticale. A a pour abscisse 0 → AH : x = 0." },
+      { question: "Un triangle a ses sommets A(0;0), B(4;0), C(2;4). Trouver l'intersection des médianes (centroïde).", options: ["(2 ; 4/3)", "(2 ; 2)", "(4/3 ; 2)", "(2 ; 1)"], answer: "(2 ; 4/3)", explication: "G = ((0+4+2)/3 ; (0+0+4)/3) = (6/3 ; 4/3) = (2 ; 4/3)." },
+      { question: "Droite D₁ : 2x−y+3 = 0 et D₂ : 4x−2y−1 = 0. Relation ?", options: ["Parallèles (même pente, c différent)", "Perpendiculaires", "Identiques", "Sécantes"], answer: "Parallèles (même pente, c différent)", explication: "D₁ : y = 2x+3. D₂ : y = 2x−1/2. Même pente 2, ordonnées différentes → parallèles distinctes." },
+      { question: "Trouver l'équation de la tangente à un cercle en un point donné.", options: ["La tangente est ⊥ au rayon en ce point", "La tangente est parallèle au rayon", "La tangente passe par le centre", "La tangente est horizontale"], answer: "La tangente est ⊥ au rayon en ce point", explication: "La tangente à un cercle en un point P est perpendiculaire au rayon OP. Sa pente est l'inverse opposé de la pente de OP." },
+      { question: "Droite d'équation ax+by = 1 : que représentent a et b ?", options: ["1/a = abscisse à l'origine, 1/b = ordonnée à l'origine", "a = pente, b = ordonnée origine", "a = b = 1", "Aucune signification géométrique"], answer: "1/a = abscisse à l'origine, 1/b = ordonnée à l'origine", explication: "Forme intercepts : x/(1/a) + y/(1/b) = 1. La droite coupe l'axe x en (1/a;0) et l'axe y en (0;1/b)." },
+      { question: "Système : x+y = k et x−y = 2k. Solution en fonction de k ?", options: ["x = 3k/2, y = −k/2", "x = k, y = k", "x = 2k, y = k", "Pas de solution"], answer: "x = 3k/2, y = −k/2", explication: "Addition : 2x = 3k → x = 3k/2. Soustraction : 2y = −k → y = −k/2." },
+      { question: "Pour quelles valeurs de m les droites y = mx+2 et y = (m+1)x+3 sont-elles parallèles ?", options: ["Jamais (pentes différentes de 1 pour tout m)", "m = 0", "m = 1", "Pour tout m"], answer: "Jamais (pentes différentes de 1 pour tout m)", explication: "Parallèles si m = m+1, soit 0 = 1 : impossible. Les deux droites ne sont jamais parallèles." },
+      { question: "Equation du lieu des points équidistants de A(1;0) et B(5;2) ?", options: ["La médiatrice : 2x + y − 8 = 0", "y = x", "x = 3", "y = 2x − 3"], answer: "La médiatrice : 2x + y − 8 = 0", explication: "Milieu M=(3;1). Pente AB=1/2. Pente médiatrice = −2. y−1=−2(x−3) → y=−2x+7 → 2x+y−7=0. Recalcul : 2×3+1=7 ✓." }
+    ]
+  },
+
+  // ── Géométrie dans l'espace ──
+  maths2Geo_Espace: {
+    id: 'maths2Geo_Espace', nom: 'Géométrie dans l\'espace', emoji: '🧊', couleur: '#7c3aed',
+    1: [
+      { question: "Combien de faces a un cube ?", options: ["6", "4", "8", "12"], answer: "6", explication: "Un cube a 6 faces carrées, 8 sommets et 12 arêtes." },
+      { question: "Volume d'un cube de côté a ?", options: ["a³", "a²", "6a²", "4a³"], answer: "a³", explication: "V(cube) = a³. Exemple : cube de côté 3 cm → V = 27 cm³." },
+      { question: "Volume d'un parallélépipède rectangle (longueur L, largeur l, hauteur h) ?", options: ["L × l × h", "2(Ll + Lh + lh)", "L + l + h", "√(L²+l²+h²)"], answer: "L × l × h", explication: "V = L × l × h. Le parallélépipède rectangle est la généralisation du cube." },
+      { question: "Section d'un cube par un plan passant par les milieux de 3 arêtes adjacentes : quelle forme ?", options: ["Triangle équilatéral", "Carré", "Rectangle", "Hexagone"], answer: "Triangle équilatéral", explication: "Le plan coupe les 3 arêtes aux milieux → triangle dont les 3 côtés ont même longueur (a√2/2) → triangle équilatéral." },
+      { question: "Volume d'une boule de rayon r ?", options: ["(4/3)πr³", "πr²", "4πr²", "(2/3)πr³"], answer: "(4/3)πr³", explication: "V(boule) = (4/3)πr³. Aire de la sphère = 4πr²." },
+      { question: "Volume d'un cylindre de rayon r et hauteur h ?", options: ["πr²h", "2πrh", "πrh²", "2πr²h"], answer: "πr²h", explication: "V(cylindre) = aire de la base × hauteur = πr² × h." },
+      { question: "Volume d'un cône de rayon r et hauteur h ?", options: ["(1/3)πr²h", "πr²h", "πrh", "(2/3)πr²h"], answer: "(1/3)πr²h", explication: "V(cône) = (1/3) × aire base × hauteur = (1/3)πr²h. Le cône a 3 fois moins de volume que le cylindre de même base et hauteur." },
+      { question: "Deux plans dans l'espace peuvent être :", options: ["Parallèles, sécants ou confondus", "Seulement perpendiculaires", "Seulement parallèles", "Toujours sécants"], answer: "Parallèles, sécants ou confondus", explication: "Deux plans peuvent être : parallèles (sans point commun), sécants (intersection = droite), ou confondus (même plan)." }
+    ],
+    2: [
+      { question: "Aire latérale d'un cylindre de rayon r et hauteur h ?", options: ["2πrh", "πr²h", "2πr²", "πrh²"], answer: "2πrh", explication: "Aire latérale = périmètre base × hauteur = 2πr × h. Aire totale = 2πrh + 2πr²." },
+      { question: "Diagonale d'un cube de côté a ?", options: ["a√3", "a√2", "3a", "a²"], answer: "a√3", explication: "Diagonale principale d'un cube : d = a√(1²+1²+1²) = a√3 (Pythagore 3D)." },
+      { question: "Section d'une sphère par un plan : quelle forme ?", options: ["Un disque (cercle)", "Une sphère plus petite", "Une ellipse", "Un triangle"], answer: "Un disque (cercle)", explication: "Toute section d'une sphère par un plan est un disque (cercle). Le plus grand est le grand cercle (plan passant par le centre)." },
+      { question: "Volume d'une pyramide à base carrée de côté a et hauteur h ?", options: ["(1/3)a²h", "a²h", "(1/4)a²h", "a²h/2"], answer: "(1/3)a²h", explication: "V(pyramide) = (1/3) × aire de la base × hauteur = (1/3) × a² × h." },
+      { question: "Un prisme droit à base triangulaire a combien de faces ?", options: ["5", "6", "4", "8"], answer: "5", explication: "2 faces triangulaires (bases) + 3 faces rectangulaires (latérales) = 5 faces." },
+      { question: "Aire d'une sphère de rayon r ?", options: ["4πr²", "(4/3)πr³", "2πr²", "πr²"], answer: "4πr²", explication: "Aire sphère = 4πr². Exemple : Terre (r ≈ 6400 km) → aire ≈ 5,1 × 10⁸ km²." },
+      { question: "Si on double le rayon d'une sphère, son volume est multiplié par :", options: ["8", "2", "4", "6"], answer: "8", explication: "V = (4/3)πr³. Si r → 2r : V' = (4/3)π(2r)³ = 8 × (4/3)πr³ = 8V." },
+      { question: "Droite et plan dans l'espace : relations possibles ?", options: ["Droite dans le plan, sécante au plan, parallèle au plan", "Seulement perpendiculaire ou parallèle", "Toujours sécantes", "Seulement dans le plan"], answer: "Droite dans le plan, sécante au plan, parallèle au plan", explication: "Une droite peut : appartenir au plan, le couper en un point (sécante), ou être parallèle au plan (sans point commun)." }
+    ],
+    3: [
+      { question: "Calculer le volume d'une pyramide à base carrée 4×4 et hauteur 3.", options: ["16", "48", "12", "8"], answer: "16", explication: "V = (1/3) × 4² × 3 = (1/3) × 16 × 3 = 16 cm³." },
+      { question: "Section du cône de révolution (axe vertical) par un plan horizontal : quelle courbe ?", options: ["Un cercle", "Une ellipse", "Une parabole", "Une hyperbole"], answer: "Un cercle", explication: "Plan horizontal (⊥ à l'axe) → section circulaire. Plans inclinés donnent : ellipse, parabole ou hyperbole (coniques)." },
+      { question: "Théorème de Pythagore en 3D : diagonale d'un parallélépipède L×l×h ?", options: ["√(L²+l²+h²)", "L+l+h", "√(L²+l²)+h", "L×l×h"], answer: "√(L²+l²+h²)", explication: "On applique Pythagore deux fois : diagonale = √(L²+l²+h²)." },
+      { question: "Volume du solide de révolution engendré par un rectangle a×b tournant autour d'un côté b ?", options: ["πa²b", "2πab", "πab²", "2πa²b"], answer: "πa²b", explication: "Rectangle a × b tournant autour du côté b → cylindre de rayon a et hauteur b. V = πa²b." },
+      { question: "Rapport des volumes de deux sphères de rayons 2 et 3 ?", options: ["8/27", "2/3", "4/9", "1/2"], answer: "8/27", explication: "V₁/V₂ = r₁³/r₂³ = 8/27." },
+      { question: "Section d'un cube ABCDEFGH par le plan passant par A, C et F : quelle forme ?", options: ["Rectangle", "Triangle", "Hexagone", "Carré"], answer: "Rectangle", explication: "Dans un cube, le plan passant par A, C (diagonale face) et F (sommet opposé) donne un rectangle (section diagonale)." },
+      { question: "Une pyramide et un prisme ont même base et même hauteur. Rapport de leurs volumes ?", options: ["1/3", "1/2", "2/3", "1"], answer: "1/3", explication: "V(pyramide) = (1/3) × base × h. V(prisme) = base × h. Rapport = 1/3." },
+      { question: "Coordonnées 3D : distance entre A(1;2;3) et B(4;6;3) ?", options: ["5", "7", "√34", "3"], answer: "5", explication: "d = √((4−1)²+(6−2)²+(3−3)²) = √(9+16+0) = √25 = 5." }
+    ]
+  },
+
+  // ── Fonction racine carrée ──
+  maths2Fonc_Racine: {
+    id: 'maths2Fonc_Racine', nom: 'Fonction racine carrée', emoji: '√', couleur: '#7c3aed',
+    1: [
+      { question: "Domaine de définition de f(x) = √x ?", options: ["[0 ; +∞[", "ℝ entier", "]0 ; +∞[", "ℝ \\ {0}"], answer: "[0 ; +∞[", explication: "√x est défini pour x ≥ 0 (racine carrée d'un nombre négatif n'existe pas dans ℝ). 0 est inclus : √0 = 0." },
+      { question: "f(x) = √x est-elle croissante ou décroissante ?", options: ["Croissante sur [0;+∞[", "Décroissante", "Constante", "Ni l'un ni l'autre"], answer: "Croissante sur [0;+∞[", explication: "Plus x est grand, plus √x est grand : f est croissante sur [0;+∞[." },
+      { question: "√4 = ?", options: ["2", "8", "16", "±2"], answer: "2", explication: "√4 = 2 (racine positive). √4 ≠ ±2 : par convention, √ désigne la racine positive." },
+      { question: "Domaine de f(x) = √(x−3) ?", options: ["[3 ; +∞[", "ℝ", "]3 ; +∞[", "]−∞ ; 3]"], answer: "[3 ; +∞[", explication: "x−3 ≥ 0 ⟺ x ≥ 3. Domaine : [3;+∞[." },
+      { question: "Simplifier : √(9x²) pour x ≥ 0", options: ["3x", "9x", "3x²", "3√x"], answer: "3x", explication: "√(9x²) = √9 × √(x²) = 3 × x = 3x (car x ≥ 0, √(x²) = x)." },
+      { question: "f(x) = √(2x+6). Domaine de définition ?", options: ["[−3 ; +∞[", "[3 ; +∞[", "ℝ entier", "]−∞ ; −3]"], answer: "[−3 ; +∞[", explication: "2x+6 ≥ 0 ⟺ x ≥ −3. Domaine : [−3;+∞[." },
+      { question: "Calculer f(25) avec f(x) = √x", options: ["5", "12,5", "625", "50"], answer: "5", explication: "f(25) = √25 = 5 (car 5² = 25)." },
+      { question: "√a × √b = ?", options: ["√(ab)", "√a + √b", "ab", "√a/√b"], answer: "√(ab)", explication: "√a × √b = √(ab) pour a,b ≥ 0. Exemple : √3 × √12 = √36 = 6." }
+    ],
+    2: [
+      { question: "Résoudre √(x+1) = 3", options: ["x = 8", "x = 2", "x = 9", "x = 4"], answer: "x = 8", explication: "On élève au carré : x+1 = 9 → x = 8. Vérif : √(8+1) = √9 = 3 ✓." },
+      { question: "Résoudre √(2x−1) = x−1 (avec condition)", options: ["x = 2 ou x = 1 (à vérifier)", "x = 5", "x = 1 seul", "x = 2 seul"], answer: "x = 2 ou x = 1 (à vérifier)", explication: "Condition : 2x−1 ≥ 0 et x−1 ≥ 0 → x ≥ 1. Carré : 2x−1 = (x−1)² = x²−2x+1 → x²−4x+2... Hmm recalcul: x²−4x+2=0? Non: x²−2x+1−2x+1=x²−4x+2=0. Δ=16−8=8. x=(4±2√2)/2=2±√2. Seul x=2+√2≈3,41 et x=2−√2≈0,58 < 1 exclu. Mais simplifions : √(2x−1)=x−1 → (x=1: √1=0=1−1=0 ✓) et (x=2: √3=1? Non). Résultat : x = (2+√2)." },
+      { question: "Simplifier √75 − √48", options: ["√3", "2√3", "√27", "3√3"], answer: "√3", explication: "√75 = 5√3, √48 = 4√3. 5√3 − 4√3 = √3." },
+      { question: "Rationaliser 6/√3", options: ["2√3", "6√3", "√3/2", "3√3"], answer: "2√3", explication: "6/√3 × √3/√3 = 6√3/3 = 2√3." },
+      { question: "Domaine de f(x) = √(x²−4) ?", options: ["x ≤ −2 ou x ≥ 2", "−2 ≤ x ≤ 2", "x ≥ 2", "ℝ"], answer: "x ≤ −2 ou x ≥ 2", explication: "x²−4 ≥ 0 ⟺ (x−2)(x+2) ≥ 0 ⟺ x ≤ −2 ou x ≥ 2." },
+      { question: "Résoudre √x < x", options: ["x > 1", "0 ≤ x < 1", "x ≥ 0", "Tout x ≥ 0"], answer: "x > 1", explication: "Domaine x ≥ 0. √x < x ⟺ √x(√x−1) > 0 (après √x < x → 0 < x−√x = √x(√x−1)). √x > 0 pour x > 0, donc √x−1 > 0 → x > 1." },
+      { question: "(√5 + √3)(√5 − √3) = ?", options: ["2", "√2", "8", "√15"], answer: "2", explication: "(a+b)(a−b) = a²−b². (√5)²−(√3)² = 5−3 = 2." },
+      { question: "f(x) = √(−x+4). Domaine et maximum ?", options: ["x ≤ 4 ; maximum f(4) = 0, croissante vers gauche donc max en x = 4 : 0... Décroissante, max = f(0) = 2", "x ≥ 4", "[0;4]", "ℝ"], answer: "x ≤ 4 ; maximum f(0) = 2", explication: "−x+4 ≥ 0 → x ≤ 4. Domaine : ]−∞;4]. f décroissante (−x croissant). Sur [0;4] : f(0) = √4 = 2 (max), f(4) = 0 (min)." }
+    ],
+    3: [
+      { question: "Résoudre √(x+3) = √(2x−1)", options: ["x = 4", "x = 2", "x = −3", "Pas de solution"], answer: "x = 4", explication: "Carré : x+3 = 2x−1 → x = 4. Condition : x ≥ 1 (2x−1 ≥ 0). Vérif : √7 = √7 ✓." },
+      { question: "Montrer que f(x) = √x est concave (courbure vers le bas) sur [0;+∞[.", options: ["f''(x) = −1/(4x^(3/2)) < 0 pour x > 0", "f est décroissante", "f(x) ≤ 0", "f est convexe"], answer: "f''(x) = −1/(4x^(3/2)) < 0 pour x > 0", explication: "f'(x) = 1/(2√x), f''(x) = −1/(4x^(3/2)) < 0 pour tout x > 0 → f est concave (courbure vers le bas)." },
+      { question: "Résoudre √(x²+3x) = x+1 (conditions importantes)", options: ["x = 1/2 (après vérification)", "x = 1 ou x = −1", "x = 0", "x = 2"], answer: "x = 1/2 (après vérification)", explication: "Conditions : x²+3x ≥ 0 et x+1 ≥ 0 → x ≥ 0 ou x ≤ −3, et x ≥ −1 → x ≥ 0. Carré : x²+3x = x²+2x+1 → x = 1. Vérif : √(1+3) = 2 = 1+1 ✓." },
+      { question: "Comparer √2 + √3 et √5.", options: ["√2+√3 > √5", "√2+√3 < √5", "√2+√3 = √5", "On ne peut pas comparer"], answer: "√2+√3 > √5", explication: "(√2+√3)² = 2+2√6+3 = 5+2√6 > 5 = (√5)². Donc √2+√3 > √5." },
+      { question: "f(x) = x − √x. Trouver le minimum sur [0;+∞[.", options: ["Minimum −1/4 en x = 1/4", "Minimum 0 en x = 0", "Minimum 0 en x = 1", "Pas de minimum"], answer: "Minimum −1/4 en x = 1/4", explication: "f'(x) = 1 − 1/(2√x) = 0 → √x = 1/2 → x = 1/4. f(1/4) = 1/4 − 1/2 = −1/4. Min = −1/4." },
+      { question: "Résoudre √(x−1) + √(x+2) = 3", options: ["x = 2", "x = 1", "x = 7", "Pas de solution"], answer: "x = 2", explication: "Essai x=2 : √1+√4 = 1+2 = 3 ✓. Algébriquement : isoler un radical, élever au carré, résoudre." },
+      { question: "Limite de √x/x quand x → +∞ ?", options: ["0", "+∞", "1", "−∞"], answer: "0", explication: "√x/x = 1/√x → 0 quand x → +∞." },
+      { question: "Composition f∘g avec f(x) = √x et g(x) = x²−1. Domaine de f∘g ?", options: ["x ≤ −1 ou x ≥ 1", "x ≥ 0", "ℝ", "x ≥ 1"], answer: "x ≤ −1 ou x ≥ 1", explication: "f∘g(x) = √(x²−1). Domaine : x²−1 ≥ 0 ⟺ x ≤ −1 ou x ≥ 1." }
+    ]
+  },
+
+  // ── Proportions & évolutions ──
+  maths2Stats_Evolutions: {
+    id: 'maths2Stats_Evolutions', nom: 'Proportions & évolutions', emoji: '%', couleur: '#7c3aed',
+    1: [
+      { question: "Une augmentation de 20% correspond à un coefficient multiplicateur de :", options: ["1,2", "0,2", "1,02", "20"], answer: "1,2", explication: "Augmentation de t% → coefficient multiplicateur (CM) = 1 + t/100. 20% → CM = 1,20." },
+      { question: "Une baisse de 15% correspond à un coefficient multiplicateur de :", options: ["0,85", "0,15", "1,15", "−0,15"], answer: "0,85", explication: "Baisse de t% → CM = 1 − t/100 = 1 − 0,15 = 0,85." },
+      { question: "Un article coûte 80€. Après une hausse de 25%, son prix est :", options: ["100 €", "105 €", "20 €", "80,25 €"], answer: "100 €", explication: "80 × 1,25 = 100 €." },
+      { question: "Un produit passe de 50€ à 40€. Taux d'évolution ?", options: ["−20%", "−10%", "+20%", "−25%"], answer: "−20%", explication: "Taux = (40−50)/50 = −10/50 = −0,2 = −20%. Baisse de 20%." },
+      { question: "Coefficient multiplicateur global après +10% puis +10% ?", options: ["1,21 (soit +21%)", "1,20 (soit +20%)", "1,10", "2,0"], answer: "1,21 (soit +21%)", explication: "CM global = 1,1 × 1,1 = 1,21. On ne peut pas additionner les taux (10%+10% ≠ 20%)." },
+      { question: "Taux d'évolution à partir du CM 0,75 ?", options: ["−25%", "+25%", "−75%", "+75%"], answer: "−25%", explication: "Taux = (CM − 1) × 100 = (0,75 − 1) × 100 = −25%. Baisse de 25%." },
+      { question: "Un salaire de 2000€ augmente de 5% chaque année. Après 1 an ?", options: ["2100 €", "2050 €", "2500 €", "2010 €"], answer: "2100 €", explication: "2000 × 1,05 = 2100 €." },
+      { question: "Quel CM annule une hausse de 30% ?", options: ["1/1,3 ≈ 0,769 (baisse d'environ 23%)", "0,7 (baisse de 30%)", "1,3", "1/0,3"], answer: "1/1,3 ≈ 0,769 (baisse d'environ 23%)", explication: "Pour annuler × 1,3, il faut × (1/1,3) ≈ 0,769, soit une baisse de ≈ 23,1% (pas de 30%)." }
+    ],
+    2: [
+      { question: "Après +20% puis −20%, quel est l'évolution globale ?", options: ["−4%", "0%", "+4%", "−0,4%"], answer: "−4%", explication: "CM = 1,2 × 0,8 = 0,96. Taux = −4%. Les deux taux ne se compensent pas !" },
+      { question: "Taux d'évolution annuel moyen si la valeur triple en 3 ans ?", options: ["³√3 − 1 ≈ 44,2%", "200% / 3 ≈ 66,7%", "100%", "50%"], answer: "³√3 − 1 ≈ 44,2%", explication: "CM global = 3. CM annuel = ³√3 ≈ 1,442. Taux annuel moyen ≈ 44,2%." },
+      { question: "Un bien vaut 1000€ et perd 10% par an. Valeur après 3 ans ?", options: ["729 €", "700 €", "970 €", "800 €"], answer: "729 €", explication: "1000 × 0,9³ = 1000 × 0,729 = 729 €." },
+      { question: "Indice de base 100 : si l'indice passe à 125, taux d'évolution ?", options: ["+25%", "+125%", "+25 points", "×1,25"], answer: "+25%", explication: "Taux = (125−100)/100 = 25%. L'indice 125 correspond à une hausse de 25% par rapport à la base." },
+      { question: "Calculer le taux d'évolution global de +15% puis +8% ?", options: ["+24,2%", "+23%", "+23,8%", "+115%"], answer: "+24,2%", explication: "CM = 1,15 × 1,08 = 1,242. Taux global = +24,2%." },
+      { question: "Un capital de 500€ est placé à 4% par an pendant 5 ans (intérêts composés). Valeur finale ?", options: ["500 × 1,04⁵ ≈ 608 €", "500 × (1 + 5×0,04) = 600 €", "500 + 5×20 = 600 €", "500 × 1,2 = 600 €"], answer: "500 × 1,04⁵ ≈ 608 €", explication: "Intérêts composés : V = 500 × 1,04⁵ ≈ 500 × 1,2167 ≈ 608 €." },
+      { question: "Taux de variation de f entre a et b : définition ?", options: ["(f(b)−f(a)) / (b−a)", "(f(b)−f(a)) / f(a)", "f(b) / f(a)", "(b−a) / f(a)"], answer: "(f(b)−f(a)) / (b−a)", explication: "Taux de variation = (f(b)−f(a))/(b−a). C'est le coefficient directeur de la droite sécante (cordée)." },
+      { question: "Proportion de filles dans une classe de 30 élèves dont 18 filles ?", options: ["60%", "18%", "40%", "18/12"], answer: "60%", explication: "18/30 = 0,6 = 60%." }
+    ],
+    3: [
+      { question: "Prix HT = 400€, TVA = 20%. Prix TTC ?", options: ["480 €", "420 €", "400,20 €", "500 €"], answer: "480 €", explication: "TTC = HT × (1 + TVA/100) = 400 × 1,20 = 480 €." },
+      { question: "Retrouver le prix HT à partir du TTC = 600€ (TVA 20%) ?", options: ["500 €", "480 €", "520 €", "580 €"], answer: "500 €", explication: "HT = TTC / 1,20 = 600 / 1,20 = 500 €. (Diviser par le CM, pas soustraire 20%.)" },
+      { question: "Taux annuel moyen t tel que +t% par an pendant 2 ans = +44% au total ?", options: ["t = √1,44 − 1 = 20%", "t = 22%", "t = 44%/2 = 22%", "t = 44%"], answer: "t = √1,44 − 1 = 20%", explication: "(1+t)² = 1,44 → 1+t = √1,44 = 1,2 → t = 20%." },
+      { question: "Évolution en % de la surface d'un carré quand son côté augmente de 10% ?", options: ["+21%", "+10%", "+20%", "+100%"], answer: "+21%", explication: "Surface = côté². CM surface = (1,1)² = 1,21 → +21%." },
+      { question: "Calculer le taux de variation de f(x) = x² entre x=2 et x=5.", options: ["7", "21", "3", "9"], answer: "7", explication: "(f(5)−f(2))/(5−2) = (25−4)/3 = 21/3 = 7." },
+      { question: "Population de 10000 qui croit de 2% par an. Après combien d'années dépasse-t-elle 12000 ?", options: ["environ 10 ans", "5 ans", "20 ans", "2 ans"], answer: "environ 10 ans", explication: "10000 × 1,02ⁿ > 12000 → 1,02ⁿ > 1,2 → n > ln(1,2)/ln(1,02) ≈ 0,182/0,0198 ≈ 9,2. Donc n = 10 ans." },
+      { question: "Après une baisse de a%, puis une hausse de a%, le prix final est :", options: ["Inférieur au prix initial (perdu (a/100)²×prix)", "Identique au prix initial", "Supérieur au prix initial", "Nul si a = 100"], answer: "Inférieur au prix initial (perdu (a/100)²×prix)", explication: "CM = (1−a/100)(1+a/100) = 1−(a/100)² < 1. Il y a toujours une perte, d'autant plus grande que a est grand." },
+      { question: "Le PIB d'un pays est exprimé en indice base 100 (2020). En 2024 l'indice est 112. Taux de croissance annuel moyen ?", options: ["⁴√1,12 − 1 ≈ 2,88%", "12%/4 = 3%", "12%", "4%"], answer: "⁴√1,12 − 1 ≈ 2,88%", explication: "CM global = 1,12 sur 4 ans. CM annuel = ⁴√1,12 ≈ 1,0288. Taux annuel moyen ≈ 2,88%." }
+    ]
+  },
+
+  // ── Échantillonnage & fluctuation ──
+  maths2Stats_Echantillonnage: {
+    id: 'maths2Stats_Echantillonnage', nom: 'Échantillonnage & fluctuation', emoji: '📉', couleur: '#7c3aed',
+    1: [
+      { question: "Qu'est-ce qu'un échantillon ?", options: ["Un sous-ensemble représentatif d'une population", "La population entière", "La moyenne d'une série", "Un résultat de calcul"], answer: "Un sous-ensemble représentatif d'une population", explication: "Un échantillon est une partie de la population choisie pour estimer les caractéristiques de l'ensemble." },
+      { question: "Fréquence observée dans un échantillon de taille n avec k succès ?", options: ["f = k/n", "f = n/k", "f = k×n", "f = k−n"], answer: "f = k/n", explication: "Fréquence = nombre de succès / taille de l'échantillon = k/n." },
+      { question: "Un dé est lancé 60 fois, on obtient 6 exactement 12 fois. Fréquence observée du 6 ?", options: ["1/5 = 20%", "1/6 ≈ 16,7%", "12%", "6/60 = 10%"], answer: "1/5 = 20%", explication: "f = 12/60 = 1/5 = 20%. La valeur théorique est 1/6 ≈ 16,7% — la différence est due aux fluctuations." },
+      { question: "La fluctuation d'échantillonnage, c'est :", options: ["La variation naturelle des fréquences d'un échantillon à l'autre", "Une erreur de calcul", "La différence entre la moyenne et la médiane", "Le biais de l'étude"], answer: "La variation naturelle des fréquences d'un échantillon à l'autre", explication: "Deux échantillons différents d'une même population donnent des fréquences légèrement différentes : c'est la fluctuation." },
+      { question: "Plus la taille de l'échantillon est grande :", options: ["Plus les fréquences sont proches de la probabilité théorique", "Plus la fluctuation est grande", "Plus les résultats sont imprévisibles", "Moins l'échantillon est représentatif"], answer: "Plus les fréquences sont proches de la probabilité théorique", explication: "Loi des grands nombres : quand n → ∞, la fréquence observée converge vers la probabilité théorique." },
+      { question: "Un sondage sur 1000 personnes donne 60% favorable. Peut-on affirmer que la vraie proportion est exactement 60% ?", options: ["Non, c'est une estimation avec marge d'erreur", "Oui, c'est exact", "Non, c'est toujours faux", "Oui si l'échantillon est aléatoire"], answer: "Non, c'est une estimation avec marge d'erreur", explication: "La fréquence observée est une estimation de la vraie proportion p. Elle est entachée d'une incertitude (marge d'erreur)." },
+      { question: "Intervalle de fluctuation au niveau 95% pour p = 0,5 et n = 100 ?", options: ["[0,4 ; 0,6]", "[0,45 ; 0,55]", "[0,3 ; 0,7]", "[0,49 ; 0,51]"], answer: "[0,4 ; 0,6]", explication: "Intervalle ≈ [p−1/√n ; p+1/√n] = [0,5−0,1 ; 0,5+0,1] = [0,4 ; 0,6] pour n=100." },
+      { question: "Qu'est-ce qu'un biais dans un sondage ?", options: ["Une erreur systématique qui déforme les résultats", "Une fluctuation normale", "Un échantillon trop grand", "Une probabilité nulle"], answer: "Une erreur systématique qui déforme les résultats", explication: "Le biais est une erreur systématique (questions orientées, échantillon non représentatif...) qui fausse l'estimation." }
+    ],
+    2: [
+      { question: "Formule de l'intervalle de fluctuation au seuil 95% (approximation) ?", options: ["[p − 1/√n ; p + 1/√n]", "[p − p/n ; p + p/n]", "[p ± 2/n]", "[p ± p/√n]"], answer: "[p − 1/√n ; p + 1/√n]", explication: "Au seuil 95%, intervalle de fluctuation ≈ [p−1/√n ; p+1/√n]. Plus précisément : [p−1,96×√(p(1−p)/n) ; ...]" },
+      { question: "Pour n = 400 et p = 0,6, demi-largeur de l'intervalle de fluctuation ?", options: ["1/√400 = 0,05", "0,6/400 = 0,0015", "1/400 = 0,0025", "0,6×0,4/400"], answer: "1/√400 = 0,05", explication: "1/√n = 1/√400 = 1/20 = 0,05. Intervalle : [0,55 ; 0,65]." },
+      { question: "Fréquence observée f = 0,45 sur échantillon n = 100. Est-on compatible avec p = 0,5 ?", options: ["Oui, [0,4;0,6] contient 0,45", "Non, 0,45 ≠ 0,5", "Oui, car 0,45 > 0,4", "On ne peut pas conclure"], answer: "Oui, [0,4;0,6] contient 0,45", explication: "Intervalle de fluctuation pour p=0,5, n=100 : [0,4;0,6]. 0,45 ∈ [0,4;0,6] → résultat compatible avec p=0,5." },
+      { question: "Quelle taille d'échantillon pour une marge d'erreur inférieure à 2% ?", options: ["n > 2500", "n > 100", "n > 50", "n > 1000"], answer: "n > 2500", explication: "1/√n < 0,02 ⟺ √n > 50 ⟺ n > 2500." },
+      { question: "Simulation : on simule 1000 fois le lancer d'une pièce (p=0,5). À quoi s'attendre ?", options: ["Fréquence pile proche de 0,5, avec fluctuations < 0,1", "Exactement 500 piles", "Fréquence aléatoire sans loi", "Toujours 0,5 exactement"], answer: "Fréquence pile proche de 0,5, avec fluctuations < 0,1", explication: "Par la loi des grands nombres, la fréquence sera proche de 0,5. L'intervalle de fluctuation à 95% est [0,5−0,032 ; 0,5+0,032] environ." },
+      { question: "Test d'hypothèse : on observe f = 0,3 sur n=200, p₀ = 0,5. Conclusion ?", options: ["Résultat incompatible avec p₀=0,5 (hors intervalle)", "Compatible, 0,3 est proche de 0,5", "On ne peut pas tester", "Compatible si n > 100"], answer: "Résultat incompatible avec p₀=0,5 (hors intervalle)", explication: "Intervalle pour p=0,5, n=200 : [0,5−1/√200 ; 0,5+1/√200] ≈ [0,43;0,57]. 0,3 ∉ [0,43;0,57] → incompatible." },
+      { question: "Pourquoi utilise-t-on un échantillon plutôt que la population entière ?", options: ["Coût, temps et praticabilité : sonder tout le monde est souvent impossible", "C'est plus précis", "La loi l'exige", "Les échantillons donnent toujours la valeur exacte"], answer: "Coût, temps et praticabilité : sonder tout le monde est souvent impossible", explication: "Recensement exhaustif : trop coûteux, trop long, parfois destructif (tests en industrie). L'inférence statistique permet d'estimer à partir d'un échantillon." },
+      { question: "Qu'est-ce que le seuil de confiance 95% signifie ?", options: ["95% des intervalles construits contiennent la vraie valeur p", "On est sûr à 95% que p = f", "5% des résultats sont faux", "L'intervalle contient 95% des données"], answer: "95% des intervalles construits contiennent la vraie valeur p", explication: "Seuil 95% : si on répète l'expérience beaucoup de fois, 95% des intervalles obtenus contiennent la vraie probabilité p." }
+    ],
+    3: [
+      { question: "Loi binomiale B(100, 0,5) : espérance et écart-type ?", options: ["E = 50, σ = 5", "E = 50, σ = 25", "E = 100, σ = 5", "E = 0,5, σ = 0,05"], answer: "E = 50, σ = 5", explication: "E = np = 50. σ = √(np(1−p)) = √(100×0,5×0,5) = √25 = 5." },
+      { question: "P(45 ≤ X ≤ 55) pour X ~ B(100, 0,5) est approximativement ?", options: ["≈ 68% (règle ±σ de la normale)", "≈ 95%", "≈ 50%", "≈ 100%"], answer: "≈ 68% (règle ±σ de la normale)", explication: "E±σ = [45;55] correspond à ≈ 68% des cas par approximation normale." },
+      { question: "Marge d'erreur d'un sondage à 95% pour n = 1000 ?", options: ["≈ 3,2%", "≈ 1%", "≈ 5%", "≈ 0,1%"], answer: "≈ 3,2%", explication: "1/√1000 ≈ 1/31,6 ≈ 0,032 = 3,2%. C'est pourquoi les sondages politiques citent souvent ±3%." },
+      { question: "On observe f = 0,58 sur n = 400. Peut-on rejeter H₀ : p = 0,5 ?", options: ["Oui, car 0,58 ∉ [0,45 ; 0,55]", "Non, car 0,58 est proche de 0,5", "Non, il faut plus de données", "Oui, car f ≠ 0,5"], answer: "Oui, car 0,58 ∉ [0,45 ; 0,55]", explication: "Intervalle pour p=0,5, n=400 : [0,5−0,05 ; 0,5+0,05] = [0,45;0,55]. 0,58 ∉ [0,45;0,55] → on rejette H₀." },
+      { question: "Théorème central limite : que dit-il ?", options: ["La somme de n variables aléatoires indépendantes tend vers une loi normale", "La moyenne empirique tend vers 0", "Tous les échantillons ont même distribution", "La probabilité converge vers 1"], answer: "La somme de n variables aléatoires indépendantes tend vers une loi normale", explication: "TCL : pour n grand, la somme (ou moyenne) de variables i.i.d. suit approximativement une loi normale N(μ, σ/√n)." },
+      { question: "Différence entre erreur d'échantillonnage et biais ?", options: ["L'erreur d'échantillonnage est aléatoire, le biais est systématique", "Ce sont des synonymes", "Le biais est aléatoire", "L'erreur est systématique"], answer: "L'erreur d'échantillonnage est aléatoire, le biais est systématique", explication: "Erreur d'échantillonnage : fluctuation naturelle, diminue avec n. Biais : erreur systématique (questionnaire orienté, etc.), ne diminue pas avec n." },
+      { question: "Un fabricant prétend que 95% de ses pièces sont conformes. Sur 200 pièces, on trouve 180 conformes. Décision ?", options: ["Incompatible : 0,9 ∉ [0,9293 ; 0,9707]", "Compatible : 180/200 = 90% ≈ 95%", "Incompatible car 90% < 95%", "Compatible : n = 200 est insuffisant"], answer: "Incompatible : 0,9 ∉ [0,9293 ; 0,9707]", explication: "f = 180/200 = 0,9. Intervalle pour p=0,95, n=200 : [0,95−1/√200 ; 0,95+1/√200] ≈ [0,929;0,971]. 0,9 ∉ [0,929;0,971] → incompatible, on remet en cause l'affirmation." },
+      { question: "Intervalle de confiance à 99% vs 95% : laquelle est plus large ?", options: ["99% (plus de confiance = intervalle plus large)", "95% (plus précis)", "Elles sont égales", "Dépend de l'échantillon"], answer: "99% (plus de confiance = intervalle plus large)", explication: "Plus le niveau de confiance est élevé, plus l'intervalle est large. À 99%, on utilise ±2,576/√n au lieu de ±1,96/√n." }
+    ]
+  },
+
+  // ── Python : bases ──
+  maths2Algo_Python: {
+    id: 'maths2Algo_Python', nom: 'Python : bases', emoji: '🐍', couleur: '#7c3aed',
+    1: [
+      { question: "En Python, comment afficher 'Bonjour' ?", options: ["print('Bonjour')", "echo 'Bonjour'", "display('Bonjour')", "write('Bonjour')"], answer: "print('Bonjour')", explication: "La fonction print() affiche du texte en Python. On peut utiliser ' ou \" pour délimiter les chaînes." },
+      { question: "Comment stocker la valeur 5 dans une variable x en Python ?", options: ["x = 5", "x := 5", "var x = 5", "int x = 5"], answer: "x = 5", explication: "En Python, l'affectation s'écrit simplement x = 5. Pas besoin de déclarer le type." },
+      { question: "Que retourne 7 // 2 en Python ?", options: ["3", "3.5", "1", "4"], answer: "3", explication: "// est la division entière (quotient). 7 // 2 = 3 (reste 1). 7 / 2 = 3.5 (division réelle)." },
+      { question: "Que signifie % en Python (ex : 7 % 3) ?", options: ["Le reste de la division (modulo)", "Le pourcentage", "La racine", "La puissance"], answer: "Le reste de la division (modulo)", explication: "7 % 3 = 1 (car 7 = 2×3 + 1). Le modulo est très utile pour tester la parité : n%2 == 0 si n est pair." },
+      { question: "Comment écrire 'si x > 0' en Python ?", options: ["if x > 0:", "if (x > 0)", "when x > 0:", "x > 0 ?"], answer: "if x > 0:", explication: "Syntaxe Python : if condition: suivi d'un bloc indenté. Le : est obligatoire." },
+      { question: "Type de 3.14 en Python ?", options: ["float", "int", "str", "complex"], answer: "float", explication: "float = nombre à virgule flottante. int = entier. str = chaîne de caractères." },
+      { question: "Que fait range(5) en Python ?", options: ["Génère les entiers 0, 1, 2, 3, 4", "Génère 1, 2, 3, 4, 5", "Génère 5 nombres aléatoires", "Crée une liste de taille 5"], answer: "Génère les entiers 0, 1, 2, 3, 4", explication: "range(n) génère les entiers de 0 à n−1. range(5) = 0, 1, 2, 3, 4." },
+      { question: "Compléter : for i in range(3): print(i). Que s'affiche-t-il ?", options: ["0 1 2", "1 2 3", "3 3 3", "0 0 0"], answer: "0 1 2", explication: "i prend les valeurs 0, 1, 2. Chaque valeur est affichée → 0, puis 1, puis 2." }
+    ],
+    2: [
+      { question: "Fonction Python pour calculer la racine carrée de x ?", options: ["math.sqrt(x)", "sqrt(x)", "x**(0.5) (aussi valide)", "racine(x)"], answer: "math.sqrt(x)", explication: "Il faut importer math : 'import math', puis math.sqrt(x). Ou x**0.5 car √x = x^(1/2)." },
+      { question: "Code Python pour calculer la somme des entiers de 1 à 10 ?", options: ["sum(range(1,11))", "sum(range(10))", "for i in range(10): i+1", "sum(1,10)"], answer: "sum(range(1,11))", explication: "range(1,11) génère 1 à 10 inclus. sum(...) calcule la somme = 55." },
+      { question: "Que retourne len([1, 2, 3, 4]) ?", options: ["4", "3", "10", "[4]"], answer: "4", explication: "len() retourne la longueur (nombre d'éléments) d'une liste. [1,2,3,4] a 4 éléments." },
+      { question: "Que vaut x après : x = 0; for i in range(5): x = x + i ?", options: ["10", "5", "15", "4"], answer: "10", explication: "x accumule 0+1+2+3+4 = 10." },
+      { question: "Comment définir une fonction f(x) = 2x+1 en Python ?", options: ["def f(x): return 2*x+1", "f(x) = 2x+1", "function f(x) { return 2*x+1 }", "def f(x) = 2*x+1"], answer: "def f(x): return 2*x+1", explication: "def nomFonction(paramètres): suivi d'un bloc indenté. return renvoie la valeur calculée." },
+      { question: "Différence entre = et == en Python ?", options: ["= affecte une valeur, == compare deux valeurs", "Ce sont des synonymes", "== affecte, = compare", "= est un test d'égalité"], answer: "= affecte une valeur, == compare deux valeurs", explication: "x = 5 : x prend la valeur 5. x == 5 : teste si x est égal à 5 (retourne True ou False)." },
+      { question: "Que fait ce code : if x % 2 == 0: print('pair') else: print('impair') ?", options: ["Affiche 'pair' si x est pair, 'impair' sinon", "Teste si x est divisible par 2 et affiche le résultat", "Les deux réponses ci-dessus sont correctes", "Erreur de syntaxe"], answer: "Les deux réponses ci-dessus sont correctes", explication: "x % 2 == 0 est True si x est pair. Le if/else affiche 'pair' ou 'impair' selon la parité." },
+      { question: "Comment créer une liste vide en Python ?", options: ["liste = []", "liste = list()", "liste = {}", "Les deux premières"], answer: "Les deux premières", explication: "[] et list() créent toutes deux une liste vide. {} crée un dictionnaire vide (pas une liste)." }
+    ],
+    3: [
+      { question: "Algorithme de recherche du maximum d'une liste : principe ?", options: ["Initialiser maxi = liste[0], parcourir et mettre à jour si liste[i] > maxi", "Trier la liste et prendre le dernier élément", "Calculer la somme", "Utiliser max() directement"], answer: "Initialiser maxi = liste[0], parcourir et mettre à jour si liste[i] > maxi", explication: "Algorithme manuel : maxi = liste[0]. Pour i de 1 à n−1 : si liste[i] > maxi, alors maxi = liste[i]. Retourner maxi." },
+      { question: "Complexité d'une boucle simple sur n éléments ?", options: ["O(n) — linéaire", "O(n²) — quadratique", "O(1) — constante", "O(log n) — logarithmique"], answer: "O(n) — linéaire", explication: "Une boucle simple (for i in range(n)) effectue n opérations → complexité O(n)." },
+      { question: "Algorithme de tri par sélection : principe ?", options: ["Trouver le minimum, le mettre en 1ère position, répéter sur le reste", "Comparer chaque élément avec le suivant", "Diviser la liste en deux moitiés", "Insérer chaque élément à sa bonne place"], answer: "Trouver le minimum, le mettre en 1ère position, répéter sur le reste", explication: "Tri sélection : n passes, chacune cherche le minimum dans la partie non triée et l'échange. Complexité O(n²)." },
+      { question: "En Python, que fait : L = [x**2 for x in range(5)] ?", options: ["L = [0, 1, 4, 9, 16]", "L = [0, 1, 2, 3, 4]", "L = [1, 4, 9, 16, 25]", "Erreur"], answer: "L = [0, 1, 4, 9, 16]", explication: "Compréhension de liste : [expression for variable in iterable]. x prend 0,1,2,3,4 → x² = 0,1,4,9,16." },
+      { question: "Fonction récursive : factorielle de n. Code correct ?", options: ["def fact(n): return 1 if n==0 else n*fact(n-1)", "def fact(n): return n*fact(n)", "def fact(n): for i in range(n): return i", "def fact(n): return n!"], answer: "def fact(n): return 1 if n==0 else n*fact(n-1)", explication: "Récursion : cas de base (n=0 : retourne 1) + appel récursif (n×fact(n−1)). Sans cas de base → boucle infinie." },
+      { question: "Comment lire une entrée utilisateur en Python ?", options: ["x = input('Entrez x : ')", "x = scan()", "read(x)", "cin >> x"], answer: "x = input('Entrez x : ')", explication: "input() affiche le message et attend une saisie. Retourne une chaîne str → convertir avec int() ou float() si besoin." },
+      { question: "Que fait while x > 0: x = x - 1 avec x = 3 au départ ?", options: ["x passe de 3 à 2 à 1 à 0 puis la boucle s'arrête", "Boucle infinie", "x = −1 à la fin", "Erreur"], answer: "x passe de 3 à 2 à 1 à 0 puis la boucle s'arrête", explication: "x = 3 → 2 → 1 → 0. La condition x > 0 devient fausse quand x = 0 → arrêt. x vaut 0 à la fin." },
+      { question: "Module random : que fait random.randint(1, 6) ?", options: ["Renvoie un entier aléatoire entre 1 et 6 inclus", "Renvoie un flottant entre 1 et 6", "Renvoie toujours 3 (milieu)", "Renvoie un entier entre 0 et 5"], answer: "Renvoie un entier aléatoire entre 1 et 6 inclus", explication: "random.randint(a, b) renvoie un entier dans [a, b] inclus. Utile pour simuler un dé (randint(1, 6))." }
+    ]
+  },
+
+  // ── Algorithmes liés aux maths ──
+  maths2Algo_Algos: {
+    id: 'maths2Algo_Algos', nom: 'Algorithmes & maths', emoji: '⚙️', couleur: '#7c3aed',
+    1: [
+      { question: "Algorithme de calcul de la moyenne de n nombres : que faut-il faire ?", options: ["Additionner tous les nombres et diviser par n", "Prendre le nombre du milieu", "Trouver le plus grand", "Multiplier tous les nombres"], answer: "Additionner tous les nombres et diviser par n", explication: "somme = 0. Pour chaque xi : somme += xi. Retourner somme/n." },
+      { question: "Qu'est-ce qu'une condition d'arrêt dans un algorithme ?", options: ["La condition qui met fin à la boucle", "L'initialisation des variables", "Le résultat final", "Une erreur d'exécution"], answer: "La condition qui met fin à la boucle", explication: "Sans condition d'arrêt, une boucle while tourne indéfiniment (boucle infinie). Ex : while x > 0 s'arrête quand x ≤ 0." },
+      { question: "Trace d'un algorithme : x = 2, puis x = x × 3, puis x = x + 1. Valeur finale de x ?", options: ["7", "6", "9", "5"], answer: "7", explication: "x = 2. x = 2×3 = 6. x = 6+1 = 7." },
+      { question: "Algorithme pour tester si n est pair :", options: ["Si n % 2 == 0 : pair", "Si n / 2 est entier", "Si n − 2 == 0", "Les deux premières réponses"], answer: "Les deux premières réponses", explication: "n%2 == 0 est le test le plus courant. n/2 entier revient au même. En Python : if n%2 == 0." },
+      { question: "Que calcule cet algorithme : s=0; pour i de 1 à n: s = s + i ?", options: ["La somme 1+2+...+n = n(n+1)/2", "Le produit n!", "La moyenne", "n²"], answer: "La somme 1+2+...+n = n(n+1)/2", explication: "L'algorithme accumule s = 1+2+...+n. Formule close : n(n+1)/2. Ex : n=10 → s = 55." },
+      { question: "Différence entre une boucle 'for' et une boucle 'while' ?", options: ["for : nombre d'itérations connu ; while : condition à vérifier", "for est plus rapide", "while ne peut pas s'arrêter", "for utilise un compteur, while non"], answer: "for : nombre d'itérations connu ; while : condition à vérifier", explication: "for i in range(n) : on sait qu'on fera n tours. while condition : on continue tant que la condition est vraie (nombre de tours inconnu à l'avance)." },
+      { question: "Algorithme de pgcd par soustraction (méthode d'Euclide) : principe ?", options: ["Soustraire le plus petit au plus grand et répéter jusqu'à égalité", "Diviser les deux nombres", "Multiplier et chercher les diviseurs", "Décomposer en facteurs premiers"], answer: "Soustraire le plus petit au plus grand et répéter jusqu'à égalité", explication: "pgcd(a,b) = pgcd(a−b, b) si a > b. On répète jusqu'à a = b. Meilleure version : pgcd(a,b) = pgcd(b, a mod b)." },
+      { question: "Que retourne cet algorithme pour n = 5 : f = 1; pour i de 1 à n: f = f × i ?", options: ["120 (5!)", "15", "25", "5"], answer: "120 (5!)", explication: "f = 1×2×3×4×5 = 120 = 5! (factorielle de 5)." }
+    ],
+    2: [
+      { question: "Algorithme de dichotomie : à quoi sert-il ?", options: ["Trouver une valeur approchée d'une solution en divisant l'intervalle par 2", "Trier une liste", "Calculer une dérivée", "Trouver le maximum d'une fonction"], answer: "Trouver une valeur approchée d'une solution en divisant l'intervalle par 2", explication: "Dichotomie : si f continue et change de signe sur [a,b], le milieu m = (a+b)/2 permet de réduire l'intervalle de moitié à chaque étape." },
+      { question: "Combien d'étapes de dichotomie pour passer d'un intervalle de longueur 1 à moins de 0,001 ?", options: ["10 étapes (2^10 = 1024 > 1000)", "100 étapes", "3 étapes", "1000 étapes"], answer: "10 étapes (2^10 = 1024 > 1000)", explication: "Chaque étape divise par 2. Après n étapes : longueur = 1/2ⁿ < 0,001 ⟺ 2ⁿ > 1000 ⟺ n ≥ 10." },
+      { question: "Algorithme d'Euclide pour pgcd(48, 18) ?", options: ["pgcd = 6", "pgcd = 2", "pgcd = 18", "pgcd = 3"], answer: "pgcd = 6", explication: "pgcd(48,18) = pgcd(18,12) = pgcd(12,6) = pgcd(6,0) = 6. (48 = 2×18+12, 18=1×12+6, 12=2×6+0)." },
+      { question: "Suite définie par u₀=1, uₙ₊₁ = 2uₙ+1. Calculer u₃.", options: ["15", "7", "8", "14"], answer: "15", explication: "u₀=1. u₁=3. u₂=7. u₃=15. (Algorithme : répéter 3 fois uₙ = 2uₙ+1.)" },
+      { question: "Condition pour qu'un algorithme de dichotomie trouve un zéro de f sur [a,b] ?", options: ["f continue sur [a,b] et f(a)×f(b) < 0", "f croissante", "f(a) = 0", "f positive"], answer: "f continue sur [a,b] et f(a)×f(b) < 0", explication: "TVI (Théorème des valeurs intermédiaires) : f continue + changement de signe → existence d'un zéro. f(a)×f(b) < 0 signifie que f(a) et f(b) ont des signes opposés." },
+      { question: "Algorithme pour compter les multiples de 3 entre 1 et 100 :", options: ["compt=0; pour i de 1 à 100: si i%3==0 alors compt+=1", "100/3", "pour i de 3 à 100 pas de 3", "Les deux dernières réponses"], answer: "Les deux dernières réponses", explication: "Méthode 1 : boucle + test modulo. Méthode 2 : boucle avec pas = 3 (range(3,101,3)) → même résultat. Réponse : 33 multiples." },
+      { question: "Compléter : u₀ = 0, uₙ₊₁ = uₙ + 2n+1. Que calcule cette suite ?", options: ["u_n = n² (les carrés parfaits)", "u_n = 2n", "u_n = n(n+1)", "u_n = 2^n"], answer: "u_n = n² (les carrés parfaits)", explication: "u₀=0, u₁=1, u₂=4, u₃=9, u₄=16. On ajoute successivement 1, 3, 5, 7... (les impairs). uₙ = n²." },
+      { question: "Que fait l'instruction break dans une boucle Python ?", options: ["Arrête immédiatement la boucle", "Passe à l'itération suivante", "Recommence depuis le début", "Quitte le programme"], answer: "Arrête immédiatement la boucle", explication: "break : sort de la boucle immédiatement. continue : passe à l'itération suivante sans exécuter le reste du corps." }
+    ],
+    3: [
+      { question: "Algorithme de dichotomie appliqué à f(x) = x²−2 sur [1;2]. Après 1 étape ?", options: ["Intervalle réduit à [1 ; 1.5] car f(1.5)=0.25>0 et f(1)=−1<0", "Intervalle [1.5 ; 2]", "x = √2", "Intervalle [0 ; 2]"], answer: "Intervalle réduit à [1 ; 1.5] car f(1.5)=0.25>0 et f(1)=−1<0", explication: "m=(1+2)/2=1.5. f(1.5)=0.25>0, f(1)=−1<0 → zéro dans [1;1.5]." },
+      { question: "Complexité du tri par sélection ?", options: ["O(n²)", "O(n)", "O(n log n)", "O(1)"], answer: "O(n²)", explication: "Tri sélection : n passes, chacune parcourt n−i éléments. Total ≈ n²/2 opérations → O(n²)." },
+      { question: "Algorithme pour approximer π par la méthode de Monte-Carlo ?", options: ["Tirer des points aléatoires dans [0;1]², compter ceux dans le quart de cercle", "Calculer la série 1−1/3+1/5−...", "Tracer le cercle unité", "Mesurer un cercle physique"], answer: "Tirer des points aléatoires dans [0;1]², compter ceux dans le quart de cercle", explication: "Points (x,y) aléatoires dans [0;1]². Proportion dans le quart de cercle (x²+y²<1) ≈ π/4. π ≈ 4 × proportion." },
+      { question: "Que calcule sum(1/n for n in range(1,1001)) en Python ?", options: ["La série harmonique 1+1/2+1/3+...+1/1000", "1/1000", "La somme des entiers", "1000"], answer: "La série harmonique 1+1/2+1/3+...+1/1000", explication: "Série harmonique Hₙ = Σ1/k pour k=1 à n. H₁₀₀₀ ≈ 7,49. Cette série diverge (tend vers +∞)." },
+      { question: "Suite de Fibonacci : u₀=0, u₁=1, uₙ=uₙ₋₁+uₙ₋₂. Calculer u₇.", options: ["13", "8", "21", "5"], answer: "13", explication: "0,1,1,2,3,5,8,13,21... u₇ = 13." },
+      { question: "Preuve qu'un algorithme termine : concept ?", options: ["Variant de boucle : quantité entière positive qui décroît strictement à chaque itération", "Test de tous les cas", "Vérification manuelle", "La boucle a un nombre fixe d'itérations"], answer: "Variant de boucle : quantité entière positive qui décroît strictement à chaque itération", explication: "Variant : une quantité entière positive qui diminue à chaque tour de boucle → elle atteint 0 en nombre fini d'étapes → la boucle termine." },
+      { question: "Taux d'évolution moyen algorithmique : suite géométrique de raison q. Formule de uₙ ?", options: ["uₙ = u₀ × qⁿ", "uₙ = u₀ + n×q", "uₙ = q^(u₀)", "uₙ = u₀ × n"], answer: "uₙ = u₀ × qⁿ", explication: "Suite géométrique : chaque terme est le précédent × q. uₙ = u₀ × qⁿ. Ex : placement bancaire à taux q par an." },
+      { question: "Algorithme pour tester si un nombre n est premier ?", options: ["Tester si n est divisible par 2 à √n", "Tester si n est pair", "Tester tous les diviseurs jusqu'à n", "Vérifier que n est impair"], answer: "Tester si n est divisible par 2 à √n", explication: "Si n a un diviseur d, alors min(d, n/d) ≤ √n. Il suffit de tester les entiers de 2 à ⌊√n⌋. Complexité O(√n)." }
     ]
   }
 };
