@@ -105,11 +105,13 @@ const PROFS = [
   {
     id: 'none', nom: 'Solo', emoji: '🎧', couleur: '#64748b',
     description: 'Pas de commentaire',
+    pitch: 1.0, rate: 1.0,
     correct: [], incorrect: [], timeout: []
   },
   {
     id: 'dubois', nom: 'M. Dubois', emoji: '😤', couleur: '#7c3aed',
     description: 'Le sarcastique classique',
+    pitch: 0.72, rate: 0.87,
     correct: [
       'C\'était de la chance, profites-en.',
       'Même toi tu y arrives parfois.',
@@ -140,6 +142,7 @@ const PROFS = [
   {
     id: 'bruno', nom: 'Coach Bruno', emoji: '💪', couleur: '#dc2626',
     description: 'Le coach qui crie',
+    pitch: 1.15, rate: 1.28,
     correct: [
       'COUP DE BOL ! Recommence et prouve-le !',
       'Chance de débutant ! J\'ai l\'œil sur toi !',
@@ -166,6 +169,7 @@ const PROFS = [
   {
     id: 'aria', nom: 'ARIA', emoji: '🤖', couleur: '#0d9488',
     description: 'L\'IA condescendante',
+    pitch: 1.05, rate: 0.80,
     correct: [
       'Résultat : correct. Probabilité de fluke : 61%. Mérite : discutable.',
       'Réponse correcte détectée. Ne vous en félicitez pas.',
@@ -191,7 +195,36 @@ const PROFS = [
   }
 ];
 
-let profActuel = localStorage.getItem('mathentrain_prof') || 'none';
+let profActuel     = localStorage.getItem('mathentrain_prof') || 'none';
+let voixProfActive = localStorage.getItem('mathentrain_voix_prof') !== 'false';
+
+let _voixFR = null;
+
+function _chargerVoixFR() {
+  const voix = window.speechSynthesis.getVoices();
+  _voixFR = voix.find(v => v.lang === 'fr-FR')
+         || voix.find(v => v.lang.startsWith('fr'))
+         || null;
+}
+
+function parlerProf(msg, prof) {
+  if (!voixProfActive || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  if (!_voixFR) _chargerVoixFR();
+  const u = new SpeechSynthesisUtterance(msg);
+  u.lang   = 'fr-FR';
+  u.pitch  = prof.pitch ?? 1.0;
+  u.rate   = prof.rate  ?? 1.0;
+  if (_voixFR) u.voice = _voixFR;
+  window.speechSynthesis.speak(u);
+}
+
+function toggleVoixProf() {
+  voixProfActive = !voixProfActive;
+  localStorage.setItem('mathentrain_voix_prof', voixProfActive);
+  if (!voixProfActive) window.speechSynthesis && window.speechSynthesis.cancel();
+  renderProfSelector();
+}
 
 function choisirProf(id) {
   profActuel = id;
@@ -215,6 +248,16 @@ function renderProfSelector() {
     btn.onclick = () => choisirProf(prof.id);
     zone.appendChild(btn);
   });
+
+  // Bouton muet/voix (masqué si prof = Solo)
+  if (profActuel !== 'none') {
+    const btnVoix = document.createElement('button');
+    btnVoix.className = 'btn-voix-prof' + (voixProfActive ? ' actif' : '');
+    btnVoix.title = voixProfActive ? 'Couper la voix du prof' : 'Activer la voix du prof';
+    btnVoix.innerHTML = voixProfActive ? '🔊 Voix activée' : '🔇 Voix coupée';
+    btnVoix.onclick = toggleVoixProf;
+    zone.appendChild(btnVoix);
+  }
 }
 
 function afficherMessageProf(type) {
@@ -235,6 +278,7 @@ function afficherMessageProf(type) {
   bulle.classList.remove('prof-bulle-anim');
   void bulle.offsetWidth;
   bulle.classList.add('prof-bulle-anim');
+  parlerProf(msg, prof);
 }
 
 // ── SYSTÈME XP ──
@@ -1765,6 +1809,8 @@ window.retourSousChapitres        = retourSousChapitres;
 // ── INIT ACCUEIL ──
 window.addEventListener('DOMContentLoaded', () => {
   initVoixFR();
+  _chargerVoixFR();
+  if (!_voixFR) window.speechSynthesis && window.speechSynthesis.addEventListener('voiceschanged', _chargerVoixFR, { once: true });
   renderAccueil();
   renderProfSelector();
   // Afficher le picker chrono (Mode Chrono actif par défaut)
