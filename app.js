@@ -1842,6 +1842,7 @@ function repondreDictee(correct, corrects, total) {
 window.authSwitchTab            = authSwitchTab;
 window.authSoumettre            = authSoumettre;
 window.authGoogle               = authGoogle;
+window.seDeconnecter            = seDeconnecter;
 window.validerPrenom            = validerPrenom;
 window.ouvrirProfil             = ouvrirProfil;
 window.fermerProfil             = fermerProfil;
@@ -1872,6 +1873,14 @@ window.validerDictee            = validerDictee;
 window.basculerVisibiliteChapitre = basculerVisibiliteChapitre;
 window.ouvrirSousChapitre         = ouvrirSousChapitre;
 window.retourSousChapitres        = retourSousChapitres;
+
+// ── DÉCONNEXION ──
+async function seDeconnecter() {
+  fermerProfil();
+  prenomEleve = '';
+  localStorage.clear();
+  await fbDeconnexion();
+}
 
 // ── AUTH SCREEN ──
 let _authTab = 'connexion';
