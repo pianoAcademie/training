@@ -49,15 +49,33 @@ function mettreAJourHeader() {
 }
 
 function mettreAJourBtnProfil() {
-  const btn    = document.getElementById('btn-profil');
-  const avatar = document.getElementById('profil-avatar');
-  if (!btn || !avatar) return;
-  if (prenomEleve) {
-    btn.style.display = 'flex';
-    avatar.textContent = prenomEleve.charAt(0).toUpperCase();
-  } else {
-    btn.style.display = 'none';
+  const btn = document.getElementById('btn-profil');
+  if (!btn) return;
+  btn.style.display = prenomEleve ? 'flex' : 'none';
+  mettreAJourAvatarUI();
+}
+
+function mettreAJourAvatarUI() {
+  const url = localStorage.getItem('mathentrain_avatar');
+  const spanAvatar = document.getElementById('profil-avatar');
+  if (spanAvatar) {
+    spanAvatar.innerHTML = url
+      ? `<img src="${url}" class="profil-avatar-img" alt="">`
+      : (prenomEleve ? prenomEleve.charAt(0).toUpperCase() : '?');
   }
+  const grand = document.getElementById('profil-avatar-grand');
+  if (grand) {
+    if (url) {
+      grand.innerHTML = `<img src="${url}" class="profil-avatar-grand-img" alt="">`;
+      grand.style.cssText += ';padding:0;overflow:hidden';
+    } else {
+      grand.textContent = prenomEleve ? prenomEleve.charAt(0).toUpperCase() : '?';
+      grand.style.padding = '';
+      grand.style.overflow = '';
+    }
+  }
+  const supprBtn = document.getElementById('profil-avatar-suppr');
+  if (supprBtn) supprBtn.style.display = url ? '' : 'none';
 }
 
 // ── PANNEAU PROFIL ──
@@ -66,8 +84,8 @@ function ouvrirProfil() {
   panel.classList.add('ouvert');
 
   document.getElementById('profil-input-prenom').value   = prenomEleve;
-  document.getElementById('profil-avatar-grand').textContent = prenomEleve.charAt(0).toUpperCase();
-  document.getElementById('profil-nom-affiche').textContent  = prenomEleve;
+  document.getElementById('profil-nom-affiche').textContent = prenomEleve;
+  mettreAJourAvatarUI();
 
   const xpData    = chargerXP();
   const totalXP   = Object.values(xpData).reduce((a, b) => a + b, 0);
@@ -78,7 +96,7 @@ function ouvrirProfil() {
   document.getElementById('profil-palier').textContent      = palier.emoji + ' ' + palier.label;
   document.getElementById('profil-nb-chapitres').textContent = nbChapitres;
 
-  ['email','mdp'].forEach(t => {
+  ['email','mdp','avatar'].forEach(t => {
     const b = document.getElementById(`profil-${t}-body`);
     if (b) b.style.display = 'none';
   });
@@ -1862,6 +1880,9 @@ function repondreDictee(correct, corrects, total) {
 
 // ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
 // Fonctions appelées via onclick="..." dans le HTML ou dans des chaînes template
+window.supprimerAvatar          = supprimerAvatar;
+window.changerAvatarFichier     = changerAvatarFichier;
+window.changerAvatarUrl         = changerAvatarUrl;
 window.toggleProfilAccordeon    = toggleProfilAccordeon;
 window.toggleMdpVisible         = toggleMdpVisible;
 window.profilChangerEmail       = profilChangerEmail;
@@ -1903,6 +1924,50 @@ window.validerDictee            = validerDictee;
 window.basculerVisibiliteChapitre = basculerVisibiliteChapitre;
 window.ouvrirSousChapitre         = ouvrirSousChapitre;
 window.retourSousChapitres        = retourSousChapitres;
+
+// ── AVATAR ──
+function sauvegarderAvatar(url) {
+  if (url) localStorage.setItem('mathentrain_avatar', url);
+  else     localStorage.removeItem('mathentrain_avatar');
+  fbSauvegarder('avatar', url || null);
+  mettreAJourAvatarUI();
+}
+
+function supprimerAvatar() {
+  sauvegarderAvatar(null);
+  document.getElementById('profil-avatar-body').style.display = 'none';
+}
+
+function changerAvatarFichier(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const max = 200;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > max) { h = Math.round(h * max / w); w = max; } }
+      else        { if (h > max) { w = Math.round(w * max / h); h = max; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      sauvegarderAvatar(canvas.toDataURL('image/jpeg', 0.82));
+      document.getElementById('profil-avatar-body').style.display = 'none';
+      input.value = '';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function changerAvatarUrl() {
+  const url = document.getElementById('profil-avatar-url-input').value.trim();
+  if (!url) return;
+  sauvegarderAvatar(url);
+  document.getElementById('profil-avatar-url-input').value = '';
+  document.getElementById('profil-avatar-body').style.display = 'none';
+}
 
 // ── OEIL MOT DE PASSE ──
 const _SVG_EYE_OPEN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;

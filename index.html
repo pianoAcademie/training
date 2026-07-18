@@ -36,6 +36,23 @@
         </div>
       </div>
 
+      <div id="profil-section-avatar">
+        <button class="btn-primaire profil-btn-action" onclick="toggleProfilAccordeon('avatar', this)">
+          📷 Changer ma photo
+        </button>
+        <div id="profil-avatar-body" class="profil-accordeon-body" style="display:none">
+          <label class="profil-avatar-galerie-btn">
+            🖼️ Depuis ma galerie
+            <input type="file" accept="image/*" style="display:none" onchange="changerAvatarFichier(this)" />
+          </label>
+          <div class="profil-avatar-url-row">
+            <input type="url" id="profil-avatar-url-input" class="input-mdp" placeholder="…ou colle une URL d'image" />
+            <button class="profil-btn-confirmer" style="white-space:nowrap;padding:9px 14px;width:auto" onclick="changerAvatarUrl()">OK</button>
+          </div>
+          <button id="profil-avatar-suppr" class="profil-avatar-suppr-btn" onclick="supprimerAvatar()" style="display:none">Supprimer la photo</button>
+        </div>
+      </div>
+
       <div id="profil-section-email" style="display:none">
         <button class="btn-primaire profil-btn-action" onclick="toggleProfilAccordeon('email', this)">
           ✏️ Changer mon e-mail
