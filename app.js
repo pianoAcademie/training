@@ -141,7 +141,7 @@ const PROFS = [
   },
   {
     id: 'bruno', nom: 'Coach Bruno', emoji: '💪', couleur: '#dc2626',
-    description: 'Le coach qui crie',
+    description: 'Le coach survitaminé',
     pitch: 1.05, rate: 1.0,
     correct: [
       'COUP DE BOL ! Recommence et prouve-le !',
@@ -199,6 +199,27 @@ let profActuel     = localStorage.getItem('mathentrain_prof') || 'none';
 let voixProfActive = localStorage.getItem('mathentrain_voix_prof') !== 'false';
 
 let _voixFR = null;
+let _audioEnCours = null;
+
+// Map message text → chemin MP3 pour les profs avec fichiers pré-générés
+const _mp3Map = {};
+function _indexerMp3(profId, tableau, prefixe) {
+  tableau.forEach((msg, i) => {
+    _mp3Map[msg] = `audio/${profId}/${profId}_${prefixe}${i + 1}.mp3`;
+  });
+}
+const _dubois = PROFS.find(p => p.id === 'dubois');
+if (_dubois) {
+  _indexerMp3('dubois', _dubois.correct,   'c');
+  _indexerMp3('dubois', _dubois.incorrect, 'i');
+  _indexerMp3('dubois', _dubois.timeout,   't');
+}
+const _bruno = PROFS.find(p => p.id === 'bruno');
+if (_bruno) {
+  _indexerMp3('bruno', _bruno.correct,   'c');
+  _indexerMp3('bruno', _bruno.incorrect, 'i');
+  _indexerMp3('bruno', _bruno.timeout,   't');
+}
 
 function _chargerVoixFR() {
   const voix = window.speechSynthesis.getVoices();
@@ -212,26 +233,24 @@ function _chargerVoixFR() {
          || null;
 }
 
-function parlerProf(msg, prof) {
-  if (!voixProfActive || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  if (!_voixFR) _chargerVoixFR();
+function _stopAudio() {
+  if (_audioEnCours) { _audioEnCours.pause(); _audioEnCours = null; }
+  window.speechSynthesis && window.speechSynthesis.cancel();
+}
 
-  // Découper sur les pauses naturelles : chaque fragment a son propre pitch/rate
-  // → reproduit les micro-variations du discours humain
+function _parlerWebSpeech(msg, prof) {
+  if (!window.speechSynthesis) return;
+  if (!_voixFR) _chargerVoixFR();
   const fragments = msg.split(/(?<=[.!?,;…»])\s+/).filter(f => f.trim());
   const parties   = fragments.length > 1 ? fragments : [msg];
-
   parties.forEach(partie => {
     const u = new SpeechSynthesisUtterance(partie.trim());
     u.lang = 'fr-FR';
     if (_voixFR) u.voice = _voixFR;
     if (prof.id === 'aria') {
-      // ARIA : monotone intentionnel
       u.pitch = prof.pitch ?? 1.0;
       u.rate  = prof.rate  ?? 0.85;
     } else {
-      // Variation par fragment : pitch ET vitesse bougent indépendamment
       u.pitch = (prof.pitch ?? 1.0) + (Math.random() * 0.22 - 0.11);
       u.rate  = (prof.rate  ?? 0.85) + (Math.random() * 0.18 - 0.09);
     }
@@ -239,10 +258,26 @@ function parlerProf(msg, prof) {
   });
 }
 
+function parlerProf(msg, prof) {
+  if (!voixProfActive) return;
+  _stopAudio();
+  const mp3 = _mp3Map[msg];
+  if (mp3) {
+    const audio = new Audio(mp3);
+    _audioEnCours = audio;
+    audio.play().catch(() => {
+      _audioEnCours = null;
+      _parlerWebSpeech(msg, prof);
+    });
+    return;
+  }
+  _parlerWebSpeech(msg, prof);
+}
+
 function toggleVoixProf() {
   voixProfActive = !voixProfActive;
   localStorage.setItem('mathentrain_voix_prof', voixProfActive);
-  if (!voixProfActive) window.speechSynthesis && window.speechSynthesis.cancel();
+  if (!voixProfActive) _stopAudio();
   renderProfSelector();
 }
 
