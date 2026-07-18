@@ -1445,6 +1445,28 @@ header p {
 .btn-oeil:hover { color: #4f46e5; }
 .btn-oeil svg { width: 18px; height: 18px; }
 
+/* ── Accordéon profil (email / mdp) ── */
+.profil-accordeon-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.profil-btn-confirmer {
+  background: none;
+  border: 1.5px solid #6366f1;
+  border-radius: 10px;
+  color: #6366f1;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  width: 100%;
+}
+.profil-btn-confirmer:hover { background: #6366f1; color: #fff; }
+
 /* ── Profil msg succès/erreur ── */
 .profil-msg {
   font-size: 0.82rem;
