@@ -202,11 +202,12 @@ let _voixFR = null;
 
 function _chargerVoixFR() {
   const voix = window.speechSynthesis.getVoices();
-  // Préférer les voix Google/Microsoft (beaucoup plus naturelles)
-  _voixFR = voix.find(v => v.lang === 'fr-FR' && /google/i.test(v.name))
+  // Ordre de priorité : voix "Natural/Online" Microsoft (Windows 11) > Neural > Google > autres
+  _voixFR = voix.find(v => v.lang === 'fr-FR' && /natural|online.*natural|naturelle/i.test(v.name))
+         || voix.find(v => v.lang === 'fr-FR' && /neural/i.test(v.name))
+         || voix.find(v => v.lang === 'fr-FR' && /google/i.test(v.name))
          || voix.find(v => v.lang === 'fr-FR' && /microsoft/i.test(v.name))
-         || voix.find(v => v.lang === 'fr-FR' && !/espeak/i.test(v.name))
-         || voix.find(v => v.lang.startsWith('fr') && /google/i.test(v.name))
+         || voix.find(v => v.lang === 'fr-FR' && !/espeak|sapi/i.test(v.name))
          || voix.find(v => v.lang.startsWith('fr'))
          || null;
 }
@@ -215,14 +216,27 @@ function parlerProf(msg, prof) {
   if (!voixProfActive || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   if (!_voixFR) _chargerVoixFR();
-  const u = new SpeechSynthesisUtterance(msg);
-  u.lang   = 'fr-FR';
-  // Légère variation aléatoire pour moins de monotonie (sauf ARIA, volontairement plate)
-  const variation = prof.id === 'aria' ? 0 : (Math.random() * 0.12 - 0.06);
-  u.pitch  = (prof.pitch ?? 1.0) + variation;
-  u.rate   = prof.rate ?? 1.0;
-  if (_voixFR) u.voice = _voixFR;
-  window.speechSynthesis.speak(u);
+
+  // Découper sur les pauses naturelles : chaque fragment a son propre pitch/rate
+  // → reproduit les micro-variations du discours humain
+  const fragments = msg.split(/(?<=[.!?,;…»])\s+/).filter(f => f.trim());
+  const parties   = fragments.length > 1 ? fragments : [msg];
+
+  parties.forEach(partie => {
+    const u = new SpeechSynthesisUtterance(partie.trim());
+    u.lang = 'fr-FR';
+    if (_voixFR) u.voice = _voixFR;
+    if (prof.id === 'aria') {
+      // ARIA : monotone intentionnel
+      u.pitch = prof.pitch ?? 1.0;
+      u.rate  = prof.rate  ?? 0.85;
+    } else {
+      // Variation par fragment : pitch ET vitesse bougent indépendamment
+      u.pitch = (prof.pitch ?? 1.0) + (Math.random() * 0.22 - 0.11);
+      u.rate  = (prof.rate  ?? 0.85) + (Math.random() * 0.18 - 0.09);
+    }
+    window.speechSynthesis.speak(u);
+  });
 }
 
 function toggleVoixProf() {
