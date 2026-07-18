@@ -1842,6 +1842,7 @@ function repondreDictee(correct, corrects, total) {
 window.authSwitchTab            = authSwitchTab;
 window.authSoumettre            = authSoumettre;
 window.authGoogle               = authGoogle;
+window.authMdpOublie            = authMdpOublie;
 window.seDeconnecter            = seDeconnecter;
 window.validerPrenom            = validerPrenom;
 window.ouvrirProfil             = ouvrirProfil;
@@ -1892,7 +1893,9 @@ function authSwitchTab(tab) {
   document.getElementById('auth-prenom-zone').style.display = tab === 'inscription' ? '' : 'none';
   document.getElementById('auth-btn-submit').textContent = tab === 'connexion' ? 'Se connecter' : 'Créer mon compte';
   document.getElementById('auth-mdp').autocomplete = tab === 'connexion' ? 'current-password' : 'new-password';
+  document.getElementById('auth-oubli-zone').style.display = tab === 'connexion' ? '' : 'none';
   document.getElementById('auth-erreur').style.display = 'none';
+  document.getElementById('auth-erreur').style.color = '';
 }
 
 function _authErreurFR(code) {
@@ -1930,6 +1933,26 @@ async function authSoumettre() {
   } catch (e) {
     errEl.textContent = _authErreurFR(e.code); errEl.style.display = '';
     btn.disabled = false; btn.textContent = _authTab === 'connexion' ? 'Se connecter' : 'Créer mon compte';
+  }
+}
+
+async function authMdpOublie() {
+  const email = document.getElementById('auth-email').value.trim();
+  const errEl = document.getElementById('auth-erreur');
+  if (!email) {
+    errEl.textContent = 'Entre ton adresse e-mail, puis clique sur "Mot de passe oublié ?".';
+    errEl.style.display = '';
+    return;
+  }
+  try {
+    await fbAuth.sendPasswordResetEmail(email);
+    errEl.style.color = '#16a34a';
+    errEl.textContent = 'E-mail de réinitialisation envoyé ! Vérifie ta boîte mail.';
+    errEl.style.display = '';
+  } catch (e) {
+    errEl.style.color = '';
+    errEl.textContent = _authErreurFR(e.code);
+    errEl.style.display = '';
   }
 }
 

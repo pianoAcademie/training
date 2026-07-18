@@ -1989,6 +1989,19 @@ header p {
 }
 .auth-tab:not(.actif):hover { color: #1e293b; }
 
+/* Lien mot de passe oublié */
+.auth-oubli-lien {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.auth-oubli-lien:hover { color: #4338ca; }
+
 /* Séparateur ou */
 .auth-separateur { text-align: center; margin: 16px 0; color: #94a3b8; font-size: .85rem; position: relative; }
 .auth-separateur::before, .auth-separateur::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #e2e8f0; }
