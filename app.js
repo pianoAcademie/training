@@ -1900,13 +1900,15 @@ function _authErreurFR(code) {
     'auth/invalid-email':       'Adresse e-mail invalide.',
     'auth/user-not-found':      'Aucun compte avec cet e-mail.',
     'auth/wrong-password':      'Mot de passe incorrect.',
-    'auth/invalid-credential':  'E-mail ou mot de passe incorrect.',
-    'auth/email-already-in-use':'Un compte existe déjà avec cet e-mail.',
-    'auth/weak-password':       'Le mot de passe doit faire au moins 6 caractères.',
-    'auth/too-many-requests':   'Trop de tentatives. Réessaie plus tard.',
-    'auth/popup-closed-by-user':'Connexion Google annulée.',
+    'auth/invalid-credential':         'E-mail ou mot de passe incorrect.',
+    'auth/invalid-login-credentials':  'E-mail ou mot de passe incorrect.',
+    'auth/email-already-in-use':       'Un compte existe déjà avec cet e-mail.',
+    'auth/weak-password':              'Le mot de passe doit faire au moins 6 caractères.',
+    'auth/too-many-requests':          'Trop de tentatives. Réessaie plus tard.',
+    'auth/popup-closed-by-user':       'Connexion Google annulée.',
+    'auth/network-request-failed':     'Problème de connexion réseau.',
   };
-  return m[code] || 'Une erreur est survenue. Réessaie.';
+  return m[code] || `Erreur : ${code}`;
 }
 
 async function authSoumettre() {
