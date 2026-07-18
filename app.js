@@ -1963,10 +1963,23 @@ function changerAvatarFichier(input) {
 
 function changerAvatarUrl() {
   const url = document.getElementById('profil-avatar-url-input').value.trim();
+  const msg = document.getElementById('profil-msg-avatar');
   if (!url) return;
-  sauvegarderAvatar(url);
-  document.getElementById('profil-avatar-url-input').value = '';
-  document.getElementById('profil-avatar-body').style.display = 'none';
+  msg.textContent = 'Vérification…';
+  msg.style.color = '#64748b';
+  msg.style.display = '';
+  const test = new Image();
+  test.onload = function() {
+    sauvegarderAvatar(url);
+    document.getElementById('profil-avatar-url-input').value = '';
+    document.getElementById('profil-avatar-body').style.display = 'none';
+    msg.style.display = 'none';
+  };
+  test.onerror = function() {
+    msg.textContent = "Cette URL ne fonctionne pas (image inaccessible ou bloquée). Essaie une autre URL ou utilise ta galerie.";
+    msg.style.color = '#dc2626';
+  };
+  test.src = url;
 }
 
 // ── OEIL MOT DE PASSE ──
