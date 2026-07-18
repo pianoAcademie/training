@@ -1419,6 +1419,86 @@ header p {
   gap: 6px;
 }
 
+/* ── Oeil mot de passe ── */
+.input-mdp-wrapper {
+  position: relative;
+}
+.input-mdp-wrapper .input-mdp {
+  padding-right: 42px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.btn-oeil {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+.btn-oeil:hover { color: #4f46e5; }
+.btn-oeil svg { width: 18px; height: 18px; }
+
+/* ── Profil msg succès/erreur ── */
+.profil-msg {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+/* ── Bouton action profil ── */
+.profil-btn-action {
+  width: 100%;
+  font-size: 0.88rem;
+  padding: 10px;
+}
+
+/* ── Modal reset progression ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-carte {
+  background: white;
+  border-radius: 20px;
+  padding: 36px 32px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: modalPop .2s cubic-bezier(0.34,1.4,0.64,1);
+}
+@keyframes modalPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modal-icone { font-size: 2.8rem; margin-bottom: 12px; }
+.modal-titre { font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 10px; }
+.modal-texte { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 24px; }
+.modal-texte strong { color: #1e293b; }
+.modal-btns  { display: flex; gap: 10px; }
+.modal-btns .btn-secondaire,
+.modal-btns .btn-danger { flex: 1; padding: 12px; border-radius: 12px; font-size: .9rem; font-weight: 700; cursor: pointer; border: none; transition: opacity .15s, transform .1s; }
+.modal-btns .btn-secondaire { background: #f1f5f9; color: #475569; }
+.modal-btns .btn-secondaire:hover { background: #e2e8f0; }
+.modal-btns .btn-danger { background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
+.modal-btns .btn-danger:hover  { opacity: .9; }
+.modal-btns .btn-danger:active { transform: scale(.97); }
+
 .profil-deconnexion-btn:hover {
   border-color: #fca5a5;
   color: #dc2626;

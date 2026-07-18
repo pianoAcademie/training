@@ -77,6 +77,15 @@ function ouvrirProfil() {
   document.getElementById('profil-xp-total').textContent    = totalXP + ' XP';
   document.getElementById('profil-palier').textContent      = palier.emoji + ' ' + palier.label;
   document.getElementById('profil-nb-chapitres').textContent = nbChapitres;
+
+  const isEmailUser = fbAuth.currentUser?.providerData.some(p => p.providerId === 'password');
+  document.getElementById('profil-section-email').style.display = isEmailUser ? '' : 'none';
+  document.getElementById('profil-section-mdp').style.display   = isEmailUser ? '' : 'none';
+  ['profil-msg-email','profil-msg-mdp'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.style.color = '';
+  });
 }
 
 function fermerProfil() {
@@ -98,10 +107,19 @@ function sauvegarderProfil() {
 }
 
 function reinitialiserProgression() {
-  if (!confirm(`Réinitialiser toute la progression de ${prenomEleve} ? Cette action est irréversible.`)) return;
+  fermerProfil();
+  document.getElementById('modal-reset-prenom').textContent = prenomEleve || 'cet élève';
+  document.getElementById('modal-reset').style.display = 'flex';
+}
+
+function fermerModalReset() {
+  document.getElementById('modal-reset').style.display = 'none';
+}
+
+function confirmerReset() {
+  fermerModalReset();
   localStorage.removeItem('mathentrain_xp');
   fbSupprimerProgression();
-  fermerProfil();
   renderAccueil();
 }
 
@@ -1839,6 +1857,11 @@ function repondreDictee(correct, corrects, total) {
 
 // ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
 // Fonctions appelées via onclick="..." dans le HTML ou dans des chaînes template
+window.toggleMdpVisible         = toggleMdpVisible;
+window.profilChangerEmail       = profilChangerEmail;
+window.profilChangerMdp         = profilChangerMdp;
+window.fermerModalReset         = fermerModalReset;
+window.confirmerReset           = confirmerReset;
 window.authSwitchTab            = authSwitchTab;
 window.authSoumettre            = authSoumettre;
 window.authGoogle               = authGoogle;
@@ -1874,6 +1897,61 @@ window.validerDictee            = validerDictee;
 window.basculerVisibiliteChapitre = basculerVisibiliteChapitre;
 window.ouvrirSousChapitre         = ouvrirSousChapitre;
 window.retourSousChapitres        = retourSousChapitres;
+
+// ── OEIL MOT DE PASSE ──
+const _SVG_EYE_OPEN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const _SVG_EYE_OFF  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
+function toggleMdpVisible(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn   = document.getElementById(btnId);
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  btn.innerHTML = show ? _SVG_EYE_OFF : _SVG_EYE_OPEN;
+}
+
+// ── PROFIL : CHANGER EMAIL / MDP ──
+function _profilMsg(id, txt, ok) {
+  const el = document.getElementById(id);
+  el.textContent   = txt;
+  el.style.color   = ok ? '#16a34a' : '#dc2626';
+  el.style.display = '';
+}
+
+async function profilChangerEmail() {
+  const newEmail = document.getElementById('profil-input-email').value.trim();
+  const mdp      = document.getElementById('profil-mdp-pour-email').value;
+  if (!newEmail || !mdp) { _profilMsg('profil-msg-email', 'Remplis les deux champs.', false); return; }
+  const user = fbAuth.currentUser;
+  try {
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, mdp);
+    await user.reauthenticateWithCredential(cred);
+    await user.updateEmail(newEmail);
+    _profilMsg('profil-msg-email', 'E-mail mis à jour !', true);
+    document.getElementById('profil-input-email').value = '';
+    document.getElementById('profil-mdp-pour-email').value = '';
+  } catch(e) {
+    _profilMsg('profil-msg-email', _authErreurFR(e.code), false);
+  }
+}
+
+async function profilChangerMdp() {
+  const actuel = document.getElementById('profil-mdp-actuel').value;
+  const nouv   = document.getElementById('profil-mdp-nouveau').value;
+  if (!actuel || !nouv) { _profilMsg('profil-msg-mdp', 'Remplis les deux champs.', false); return; }
+  if (nouv.length < 6)  { _profilMsg('profil-msg-mdp', 'Le nouveau mot de passe doit faire au moins 6 caractères.', false); return; }
+  const user = fbAuth.currentUser;
+  try {
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, actuel);
+    await user.reauthenticateWithCredential(cred);
+    await user.updatePassword(nouv);
+    _profilMsg('profil-msg-mdp', 'Mot de passe mis à jour !', true);
+    document.getElementById('profil-mdp-actuel').value  = '';
+    document.getElementById('profil-mdp-nouveau').value = '';
+  } catch(e) {
+    _profilMsg('profil-msg-mdp', _authErreurFR(e.code), false);
+  }
+}
 
 // ── DÉCONNEXION ──
 async function seDeconnecter() {
