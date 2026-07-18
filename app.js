@@ -111,7 +111,7 @@ const PROFS = [
   {
     id: 'dubois', nom: 'M. Dubois', emoji: '😤', couleur: '#7c3aed',
     description: 'Le sarcastique classique',
-    pitch: 0.72, rate: 0.70,
+    pitch: 0.90, rate: 0.75,
     correct: [
       'C\'était de la chance, profites-en.',
       'Même toi tu y arrives parfois.',
@@ -142,7 +142,7 @@ const PROFS = [
   {
     id: 'bruno', nom: 'Coach Bruno', emoji: '💪', couleur: '#dc2626',
     description: 'Le coach qui crie',
-    pitch: 1.15, rate: 0.95,
+    pitch: 1.05, rate: 1.0,
     correct: [
       'COUP DE BOL ! Recommence et prouve-le !',
       'Chance de débutant ! J\'ai l\'œil sur toi !',
@@ -202,7 +202,11 @@ let _voixFR = null;
 
 function _chargerVoixFR() {
   const voix = window.speechSynthesis.getVoices();
-  _voixFR = voix.find(v => v.lang === 'fr-FR')
+  // Préférer les voix Google/Microsoft (beaucoup plus naturelles)
+  _voixFR = voix.find(v => v.lang === 'fr-FR' && /google/i.test(v.name))
+         || voix.find(v => v.lang === 'fr-FR' && /microsoft/i.test(v.name))
+         || voix.find(v => v.lang === 'fr-FR' && !/espeak/i.test(v.name))
+         || voix.find(v => v.lang.startsWith('fr') && /google/i.test(v.name))
          || voix.find(v => v.lang.startsWith('fr'))
          || null;
 }
@@ -213,8 +217,10 @@ function parlerProf(msg, prof) {
   if (!_voixFR) _chargerVoixFR();
   const u = new SpeechSynthesisUtterance(msg);
   u.lang   = 'fr-FR';
-  u.pitch  = prof.pitch ?? 1.0;
-  u.rate   = prof.rate  ?? 1.0;
+  // Légère variation aléatoire pour moins de monotonie (sauf ARIA, volontairement plate)
+  const variation = prof.id === 'aria' ? 0 : (Math.random() * 0.12 - 0.06);
+  u.pitch  = (prof.pitch ?? 1.0) + variation;
+  u.rate   = prof.rate ?? 1.0;
   if (_voixFR) u.voice = _voixFR;
   window.speechSynthesis.speak(u);
 }
