@@ -1883,6 +1883,10 @@ function repondreDictee(correct, corrects, total) {
 window.supprimerAvatar          = supprimerAvatar;
 window.changerAvatarFichier     = changerAvatarFichier;
 window.changerAvatarUrl         = changerAvatarUrl;
+window.ouvrirCrop               = ouvrirCrop;
+window.fermerCrop               = fermerCrop;
+window.cropZoomChange           = cropZoomChange;
+window.confirmerCrop            = confirmerCrop;
 window.toggleProfilAccordeon    = toggleProfilAccordeon;
 window.toggleMdpVisible         = toggleMdpVisible;
 window.profilChangerEmail       = profilChangerEmail;
@@ -1942,23 +1946,9 @@ function changerAvatarFichier(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const max = 200;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > max) { h = Math.round(h * max / w); w = max; } }
-      else        { if (h > max) { w = Math.round(w * max / h); h = max; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      sauvegarderAvatar(canvas.toDataURL('image/jpeg', 0.82));
-      document.getElementById('profil-avatar-body').style.display = 'none';
-      input.value = '';
-    };
-    img.src = e.target.result;
-  };
+  reader.onload = e => ouvrirCrop(e.target.result);
   reader.readAsDataURL(file);
+  input.value = '';
 }
 
 function changerAvatarUrl() {
@@ -1970,16 +1960,152 @@ function changerAvatarUrl() {
   msg.style.display = '';
   const test = new Image();
   test.onload = function() {
-    sauvegarderAvatar(url);
-    document.getElementById('profil-avatar-url-input').value = '';
-    document.getElementById('profil-avatar-body').style.display = 'none';
     msg.style.display = 'none';
+    document.getElementById('profil-avatar-url-input').value = '';
+    ouvrirCrop(url);
   };
   test.onerror = function() {
     msg.textContent = "Cette URL ne fonctionne pas (image inaccessible ou bloquée). Essaie une autre URL ou utilise ta galerie.";
     msg.style.color = '#dc2626';
   };
   test.src = url;
+}
+
+// ── RECADRAGE PHOTO ──
+const _CROP_VS = 260;
+let _cropState = { x: 0, y: 0, scale: 1, minScale: 1, startX: 0, startY: 0, dragging: false, src: '' };
+
+function ouvrirCrop(src) {
+  _cropState.src = src;
+  _cropState.x = 0; _cropState.y = 0; _cropState.scale = 1;
+  _cropState.dragging = false;
+  const img = document.getElementById('crop-img');
+  const slider = document.getElementById('crop-zoom');
+  img.onload = function() {
+    const vs = _CROP_VS;
+    const minS = Math.max(vs / img.naturalWidth, vs / img.naturalHeight);
+    _cropState.minScale = minS;
+    _cropState.scale = minS;
+    slider.min = minS;
+    slider.max = Math.max(minS * 4, 3);
+    slider.value = minS;
+    _cropState.x = (vs - img.naturalWidth  * minS) / 2;
+    _cropState.y = (vs - img.naturalHeight * minS) / 2;
+    _applyCropTransform();
+  };
+  img.src = src;
+  document.getElementById('modal-crop').style.display = 'flex';
+  document.getElementById('profil-avatar-body').style.display = 'none';
+}
+
+function fermerCrop() {
+  document.getElementById('modal-crop').style.display = 'none';
+}
+
+function _clampCrop() {
+  const vs = _CROP_VS, s = _cropState.scale;
+  const img = document.getElementById('crop-img');
+  _cropState.x = Math.min(0, Math.max(vs - img.naturalWidth  * s, _cropState.x));
+  _cropState.y = Math.min(0, Math.max(vs - img.naturalHeight * s, _cropState.y));
+}
+
+function _applyCropTransform() {
+  _clampCrop();
+  const img = document.getElementById('crop-img');
+  img.style.width  = img.naturalWidth  + 'px';
+  img.style.height = img.naturalHeight + 'px';
+  img.style.transform = `translate(${_cropState.x}px,${_cropState.y}px) scale(${_cropState.scale})`;
+}
+
+function cropZoomChange(newS) {
+  const vs = _CROP_VS;
+  const oldS = _cropState.scale;
+  const cx = vs / 2, cy = vs / 2;
+  _cropState.x = cx - (cx - _cropState.x) * (newS / oldS);
+  _cropState.y = cy - (cy - _cropState.y) * (newS / oldS);
+  _cropState.scale = newS;
+  _applyCropTransform();
+}
+
+function confirmerCrop() {
+  const img = document.getElementById('crop-img');
+  const vs = _CROP_VS, s = _cropState.scale;
+  const cropX = -_cropState.x / s;
+  const cropY = -_cropState.y / s;
+  const cropSize = vs / s;
+  const canvas = document.createElement('canvas');
+  canvas.width = 200; canvas.height = 200;
+  try {
+    canvas.getContext('2d').drawImage(img, cropX, cropY, cropSize, cropSize, 0, 0, 200, 200);
+    sauvegarderAvatar(canvas.toDataURL('image/jpeg', 0.85));
+  } catch(e) {
+    sauvegarderAvatar(_cropState.src);
+  }
+  fermerCrop();
+}
+
+function _initCropDrag() {
+  const vp = document.getElementById('crop-viewport');
+  if (!vp) return;
+  let lastPinchDist = null;
+
+  vp.addEventListener('mousedown', e => {
+    e.preventDefault();
+    _cropState.dragging = true;
+    _cropState.startX = e.clientX - _cropState.x;
+    _cropState.startY = e.clientY - _cropState.y;
+  });
+
+  vp.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      _cropState.dragging = true;
+      _cropState.startX = e.touches[0].clientX - _cropState.x;
+      _cropState.startY = e.touches[0].clientY - _cropState.y;
+    } else if (e.touches.length === 2) {
+      _cropState.dragging = false;
+      lastPinchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: true });
+
+  window.addEventListener('mousemove', e => {
+    if (!_cropState.dragging) return;
+    _cropState.x = e.clientX - _cropState.startX;
+    _cropState.y = e.clientY - _cropState.startY;
+    _applyCropTransform();
+  });
+
+  window.addEventListener('touchmove', e => {
+    if (e.touches.length === 1 && _cropState.dragging) {
+      _cropState.x = e.touches[0].clientX - _cropState.startX;
+      _cropState.y = e.touches[0].clientY - _cropState.startY;
+      _applyCropTransform();
+    } else if (e.touches.length === 2 && lastPinchDist !== null) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const slider = document.getElementById('crop-zoom');
+      const newS = Math.min(Math.max(_cropState.scale * (dist / lastPinchDist), _cropState.minScale), parseFloat(slider.max));
+      cropZoomChange(newS);
+      slider.value = newS;
+      lastPinchDist = dist;
+    }
+  }, { passive: true });
+
+  window.addEventListener('mouseup',  () => { _cropState.dragging = false; });
+  window.addEventListener('touchend', () => { _cropState.dragging = false; lastPinchDist = null; });
+
+  vp.addEventListener('wheel', e => {
+    e.preventDefault();
+    const slider = document.getElementById('crop-zoom');
+    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+    const newS = Math.min(Math.max(_cropState.scale + delta, _cropState.minScale), parseFloat(slider.max));
+    cropZoomChange(newS);
+    slider.value = newS;
+  }, { passive: false });
 }
 
 // ── OEIL MOT DE PASSE ──
@@ -2133,6 +2259,7 @@ async function authGoogle() {
 
 // ── INIT ACCUEIL ──
 window.addEventListener('DOMContentLoaded', () => {
+  _initCropDrag();
   initVoixFR();
   _chargerVoixFR();
   if (!_voixFR) window.speechSynthesis && window.speechSynthesis.addEventListener('voiceschanged', _chargerVoixFR, { once: true });

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
 
@@ -464,6 +464,26 @@
     <div id="admin-contenu" class="admin-contenu"></div>
   </div>
 
+  <!-- ══ MODAL RECADRAGE PHOTO ══ -->
+  <div id="modal-crop" class="modal-overlay" style="display:none" onclick="if(event.target===this)fermerCrop()">
+    <div class="modal-carte crop-carte" onclick="event.stopPropagation()">
+      <h3 class="modal-titre">Recadrer la photo</h3>
+      <p class="modal-texte" style="margin-bottom:14px">Déplace · Molette ou slider pour zoomer</p>
+      <div class="crop-viewport" id="crop-viewport">
+        <img id="crop-img" class="crop-img" alt="" draggable="false" />
+      </div>
+      <div class="crop-zoom-bar">
+        <span>🔍</span>
+        <input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1" oninput="cropZoomChange(parseFloat(this.value))" />
+        <span style="font-size:1.15rem">🔍</span>
+      </div>
+      <div class="modal-btns" style="margin-top:20px">
+        <button class="btn-secondaire" onclick="fermerCrop()">Annuler</button>
+        <button class="btn-primaire" style="flex:1;padding:12px" onclick="confirmerCrop()">✓ Utiliser</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ MODAL RESET PROGRESSION ══ -->
   <div id="modal-reset" class="modal-overlay" style="display:none" onclick="fermerModalReset()">
     <div class="modal-carte" onclick="event.stopPropagation()">
@@ -482,6 +502,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=1"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

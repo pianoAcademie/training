@@ -1564,6 +1564,54 @@ header p {
 .modal-btns .btn-danger:hover  { opacity: .9; }
 .modal-btns .btn-danger:active { transform: scale(.97); }
 
+/* ── Crop modal ── */
+.crop-carte {
+  max-width: 320px;
+  padding: 24px 20px 20px;
+}
+
+.crop-viewport {
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 16px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: grab;
+  background: #0f172a;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 0 0 3px #6366f1, 0 0 0 6px rgba(99,102,241,.15);
+  touch-action: none;
+}
+.crop-viewport:active { cursor: grabbing; }
+
+.crop-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  display: block;
+  max-width: none;
+  max-height: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+.crop-zoom-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 2px;
+  font-size: .95rem;
+}
+.crop-zoom-bar input[type=range] {
+  flex: 1;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
 .profil-deconnexion-btn:hover {
   border-color: #fca5a5;
   color: #dc2626;
