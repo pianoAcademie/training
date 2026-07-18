@@ -65,6 +65,45 @@
     <div id="levelup-label" class="levelup-label"></div>
   </div>
 
+  <!-- ══ ÉCRAN AUTH ══ -->
+  <div id="ecran-auth" class="ecran actif">
+    <div class="carte-auth">
+      <div class="auth-logo">📐</div>
+      <h2 class="auth-titre">Training</h2>
+
+      <div class="auth-tabs">
+        <button id="auth-tab-connexion" class="auth-tab actif" onclick="authSwitchTab('connexion')">Se connecter</button>
+        <button id="auth-tab-inscription" class="auth-tab" onclick="authSwitchTab('inscription')">Créer un compte</button>
+      </div>
+
+      <div id="auth-prenom-zone" style="display:none;margin-bottom:10px">
+        <input type="text" id="auth-prenom" class="input-mdp" placeholder="Ton prénom..." autocomplete="given-name" />
+      </div>
+
+      <input type="email" id="auth-email" class="input-mdp" placeholder="Adresse e-mail..." autocomplete="email" style="margin-bottom:10px" />
+      <input type="password" id="auth-mdp" class="input-mdp" placeholder="Mot de passe..." autocomplete="current-password"
+             onkeydown="if(event.key==='Enter') authSoumettre()" />
+
+      <p id="auth-erreur" class="erreur-mdp" style="display:none;margin-top:8px"></p>
+
+      <button id="auth-btn-submit" class="btn-primaire" style="width:100%;margin-top:14px" onclick="authSoumettre()">
+        Se connecter
+      </button>
+
+      <div class="auth-separateur"><span>ou</span></div>
+
+      <button class="btn-google" onclick="authGoogle()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18" height="18" style="margin-right:8px;flex-shrink:0">
+          <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l6-6C34.5 6.3 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-7.9 19.7-20 0-1.3-.1-2.7-.4-4z"/>
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.7 1.1 7.8 2.9l6-6C34.5 6.3 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+          <path fill="#4CAF50" d="M24 44c5.2 0 10-1.9 13.7-5l-6.3-5.4C29.4 35.3 26.8 36 24 36c-5.2 0-9.5-2.9-11.2-7.1l-6.6 5.1C9.8 39.9 16.4 44 24 44z"/>
+          <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.3-2.4 4.3-4.5 5.6l6.3 5.4C41.3 35.8 44 30.4 44 24c0-1.3-.1-2.7-.4-4z"/>
+        </svg>
+        Continuer avec Google
+      </button>
+    </div>
+  </div>
+
   <!-- ══ ÉCRAN PRÉNOM ══ -->
   <div id="ecran-prenom" class="ecran actif">
     <div class="carte-prenom">
@@ -366,7 +405,11 @@
     <div id="admin-contenu" class="admin-contenu"></div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase.js?v=1"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

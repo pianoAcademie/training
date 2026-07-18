@@ -34,6 +34,8 @@ function validerPrenom() {
   erreur.style.display = 'none';
   prenomEleve = prenom;
   localStorage.setItem('mathentrain_prenom', prenom);
+  fbSauvegarder('prenom', prenom);
+  if (fbAuth.currentUser) fbAuth.currentUser.updateProfile({ displayName: prenom });
   afficherEcran('ecran-landing');
   mettreAJourHeader();
   mettreAJourBtnProfil();
@@ -88,6 +90,8 @@ function sauvegarderProfil() {
   input.style.borderColor = '';
   prenomEleve = nouveau;
   localStorage.setItem('mathentrain_prenom', nouveau);
+  fbSauvegarder('prenom', nouveau);
+  if (fbAuth.currentUser) fbAuth.currentUser.updateProfile({ displayName: nouveau });
   mettreAJourHeader();
   mettreAJourBtnProfil();
   fermerProfil();
@@ -96,6 +100,7 @@ function sauvegarderProfil() {
 function reinitialiserProgression() {
   if (!confirm(`Réinitialiser toute la progression de ${prenomEleve} ? Cette action est irréversible.`)) return;
   localStorage.removeItem('mathentrain_xp');
+  fbSupprimerProgression();
   fermerProfil();
   renderAccueil();
 }
@@ -353,7 +358,9 @@ function chargerXP() {
 }
 
 function sauvegarderXP(data) {
-  localStorage.setItem('mathentrain_xp', JSON.stringify(data));
+  const json = JSON.stringify(data);
+  localStorage.setItem('mathentrain_xp', json);
+  fbSauvegarder('xp', json);
 }
 
 function getXPTheme(theme) {
@@ -543,7 +550,9 @@ const PLANCHER_CLASSE = { '6eme': 1, '5eme': 1, '4eme': 1, '3eme': 2, 'seconde':
 function sauvegarderPerfExamen(themeId, parNiveau) {
   const data = {};
   [1, 2, 3].forEach(n => { if (parNiveau[n].t > 0) data[n] = parNiveau[n]; });
-  localStorage.setItem('mathentrain_exam_perf_' + themeId, JSON.stringify({ data, ts: Date.now() }));
+  const json = JSON.stringify({ data, ts: Date.now() });
+  localStorage.setItem('mathentrain_exam_perf_' + themeId, json);
+  fbSauvegarderExamPerf(themeId, json);
 }
 
 function chargerPerfExamen(themeId) {
@@ -1830,6 +1839,9 @@ function repondreDictee(correct, corrects, total) {
 
 // ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
 // Fonctions appelées via onclick="..." dans le HTML ou dans des chaînes template
+window.authSwitchTab            = authSwitchTab;
+window.authSoumettre            = authSoumettre;
+window.authGoogle               = authGoogle;
 window.validerPrenom            = validerPrenom;
 window.ouvrirProfil             = ouvrirProfil;
 window.fermerProfil             = fermerProfil;
@@ -1861,6 +1873,61 @@ window.basculerVisibiliteChapitre = basculerVisibiliteChapitre;
 window.ouvrirSousChapitre         = ouvrirSousChapitre;
 window.retourSousChapitres        = retourSousChapitres;
 
+// ── AUTH SCREEN ──
+let _authTab = 'connexion';
+
+function authSwitchTab(tab) {
+  _authTab = tab;
+  document.getElementById('auth-tab-connexion').classList.toggle('actif', tab === 'connexion');
+  document.getElementById('auth-tab-inscription').classList.toggle('actif', tab === 'inscription');
+  document.getElementById('auth-prenom-zone').style.display = tab === 'inscription' ? '' : 'none';
+  document.getElementById('auth-btn-submit').textContent = tab === 'connexion' ? 'Se connecter' : 'Créer mon compte';
+  document.getElementById('auth-mdp').autocomplete = tab === 'connexion' ? 'current-password' : 'new-password';
+  document.getElementById('auth-erreur').style.display = 'none';
+}
+
+function _authErreurFR(code) {
+  const m = {
+    'auth/invalid-email':       'Adresse e-mail invalide.',
+    'auth/user-not-found':      'Aucun compte avec cet e-mail.',
+    'auth/wrong-password':      'Mot de passe incorrect.',
+    'auth/invalid-credential':  'E-mail ou mot de passe incorrect.',
+    'auth/email-already-in-use':'Un compte existe déjà avec cet e-mail.',
+    'auth/weak-password':       'Le mot de passe doit faire au moins 6 caractères.',
+    'auth/too-many-requests':   'Trop de tentatives. Réessaie plus tard.',
+    'auth/popup-closed-by-user':'Connexion Google annulée.',
+  };
+  return m[code] || 'Une erreur est survenue. Réessaie.';
+}
+
+async function authSoumettre() {
+  const email = document.getElementById('auth-email').value.trim();
+  const mdp   = document.getElementById('auth-mdp').value;
+  const errEl = document.getElementById('auth-erreur');
+  const btn   = document.getElementById('auth-btn-submit');
+  errEl.style.display = 'none';
+  if (!email || !mdp) { errEl.textContent = 'Remplis tous les champs.'; errEl.style.display = ''; return; }
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    if (_authTab === 'connexion') {
+      await fbConnexionEmail(email, mdp);
+    } else {
+      const prenom = document.getElementById('auth-prenom').value.trim();
+      if (!prenom) { errEl.textContent = 'Entre ton prénom.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
+      await fbInscriptionEmail(email, mdp, prenom);
+    }
+  } catch (e) {
+    errEl.textContent = _authErreurFR(e.code); errEl.style.display = '';
+    btn.disabled = false; btn.textContent = _authTab === 'connexion' ? 'Se connecter' : 'Créer mon compte';
+  }
+}
+
+async function authGoogle() {
+  document.getElementById('auth-erreur').style.display = 'none';
+  try { await fbConnexionGoogle(); }
+  catch (e) { const el = document.getElementById('auth-erreur'); el.textContent = _authErreurFR(e.code); el.style.display = ''; }
+}
+
 // ── INIT ACCUEIL ──
 window.addEventListener('DOMContentLoaded', () => {
   initVoixFR();
@@ -1868,17 +1935,24 @@ window.addEventListener('DOMContentLoaded', () => {
   if (!_voixFR) window.speechSynthesis && window.speechSynthesis.addEventListener('voiceschanged', _chargerVoixFR, { once: true });
   renderAccueil();
   renderProfSelector();
-  // Afficher le picker chrono (Mode Chrono actif par défaut)
   const picker = document.getElementById('chrono-picker');
   if (picker) picker.classList.add('visible');
 
-  // Écran prénom : sauter si déjà connu
-  if (prenomEleve) {
-    afficherEcran('ecran-landing');
-    mettreAJourHeader();
-    mettreAJourBtnProfil();
-  } else {
-    afficherEcran('ecran-prenom');
-    setTimeout(() => document.getElementById('input-prenom')?.focus(), 150);
-  }
+  fbAuth.onAuthStateChanged(async user => {
+    if (user) {
+      await fbChargerEtSyncer();
+      prenomEleve = user.displayName || localStorage.getItem('mathentrain_prenom') || '';
+      if (!prenomEleve) {
+        afficherEcran('ecran-prenom');
+        setTimeout(() => document.getElementById('input-prenom')?.focus(), 150);
+      } else {
+        localStorage.setItem('mathentrain_prenom', prenomEleve);
+        mettreAJourHeader();
+        mettreAJourBtnProfil();
+        afficherEcran('ecran-landing');
+      }
+    } else {
+      afficherEcran('ecran-auth');
+    }
+  });
 });
