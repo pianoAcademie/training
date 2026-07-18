@@ -111,7 +111,7 @@ const PROFS = [
   {
     id: 'dubois', nom: 'M. Dubois', emoji: '😤', couleur: '#7c3aed',
     description: 'Le sarcastique classique',
-    pitch: 0.72, rate: 0.87,
+    pitch: 0.72, rate: 0.70,
     correct: [
       'C\'était de la chance, profites-en.',
       'Même toi tu y arrives parfois.',
@@ -142,7 +142,7 @@ const PROFS = [
   {
     id: 'bruno', nom: 'Coach Bruno', emoji: '💪', couleur: '#dc2626',
     description: 'Le coach qui crie',
-    pitch: 1.15, rate: 1.28,
+    pitch: 1.15, rate: 0.95,
     correct: [
       'COUP DE BOL ! Recommence et prouve-le !',
       'Chance de débutant ! J\'ai l\'œil sur toi !',
@@ -169,7 +169,7 @@ const PROFS = [
   {
     id: 'aria', nom: 'ARIA', emoji: '🤖', couleur: '#0d9488',
     description: 'L\'IA condescendante',
-    pitch: 1.05, rate: 0.80,
+    pitch: 1.05, rate: 0.68,
     correct: [
       'Résultat : correct. Probabilité de fluke : 61%. Mérite : discutable.',
       'Réponse correcte détectée. Ne vous en félicitez pas.',
