@@ -1963,6 +1963,11 @@ window.addEventListener('DOMContentLoaded', () => {
         afficherEcran('ecran-landing');
       }
     } else {
+      prenomEleve = '';
+      const btnP = document.getElementById('btn-profil');
+      if (btnP) btnP.style.display = 'none';
+      const sous = document.getElementById('header-sous-titre');
+      if (sous) sous.textContent = "Entraîne-toi à ton rythme — les questions s'adaptent à ton niveau";
       afficherEcran('ecran-auth');
     }
   });
