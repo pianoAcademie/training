@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body>
 
@@ -484,15 +484,28 @@
   <!-- ══ ÉCRAN ADMIN PANEL ══ -->
   <div id="ecran-admin" class="ecran">
     <div class="admin-topbar">
-      <h2 class="admin-titre">Administration — Questions</h2>
+      <h2 class="admin-titre">Administration</h2>
+      <div class="admin-tabs">
+        <button id="admin-tab-questions" class="admin-tab actif" onclick="adminAfficherOnglet('questions')">📚 Questions</button>
+        <button id="admin-tab-comptes"   class="admin-tab"       onclick="adminAfficherOnglet('comptes')">👥 Comptes</button>
+      </div>
       <button class="btn-deconnexion" onclick="deconnecterAdmin()">Déconnexion</button>
     </div>
 
-    <!-- Onglets thèmes -->
+    <!-- Onglets thèmes (questions) -->
     <div id="admin-onglets" class="admin-onglets"></div>
 
-    <!-- Contenu thème sélectionné -->
+    <!-- Contenu thème sélectionné (questions) -->
     <div id="admin-contenu" class="admin-contenu"></div>
+
+    <!-- Contenu comptes -->
+    <div id="admin-comptes" class="admin-comptes" style="display:none">
+      <div class="admin-comptes-header">
+        <input type="text" id="admin-comptes-search" class="admin-comptes-search" placeholder="🔍 Rechercher par nom ou identifiant…" oninput="filtrerComptes(this.value)" />
+        <span id="admin-comptes-count" class="admin-comptes-count"></span>
+      </div>
+      <div id="admin-comptes-liste" class="admin-comptes-liste"></div>
+    </div>
   </div>
 
   <!-- ══ MODAL RECADRAGE PHOTO ══ -->
@@ -533,6 +546,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=3"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=21"></script>
 </body>
 </html>

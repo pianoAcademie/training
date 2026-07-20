@@ -1215,7 +1215,71 @@ function construireAdminPanel() {
   adminNiveauOuvert   = null;
   adminMatiereOuverte = null;
   adminChapitreOuvert = null;
-  renderAdminNav();
+  adminAfficherOnglet('questions');
+}
+
+// ── ADMIN — ONGLETS ──
+function adminAfficherOnglet(onglet) {
+  const estQuestions = onglet === 'questions';
+  document.getElementById('admin-onglets').style.display  = estQuestions ? '' : 'none';
+  document.getElementById('admin-contenu').style.display  = estQuestions ? '' : 'none';
+  document.getElementById('admin-comptes').style.display  = estQuestions ? 'none' : '';
+  document.getElementById('admin-tab-questions').classList.toggle('actif', estQuestions);
+  document.getElementById('admin-tab-comptes').classList.toggle('actif', !estQuestions);
+  if (estQuestions) renderAdminNav();
+  else chargerComptes();
+}
+
+// ── ADMIN — COMPTES ──
+let _adminTousComptes = [];
+
+async function chargerComptes() {
+  const liste = document.getElementById('admin-comptes-liste');
+  const count = document.getElementById('admin-comptes-count');
+  liste.innerHTML = '<p class="admin-chargement">Chargement…</p>';
+  count.textContent = '';
+  document.getElementById('admin-comptes-search').value = '';
+  try {
+    const snap = await fbDb.collection('users').get();
+    _adminTousComptes = snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+    _adminTousComptes.sort((a, b) => (a.prenom || '').localeCompare(b.prenom || ''));
+    afficherComptes(_adminTousComptes);
+  } catch(e) {
+    liste.innerHTML = `<p class="admin-erreur">Impossible de charger les comptes.<br><small>${e.message}</small><br><br>Vérifiez les règles Firestore (voir instructions).</p>`;
+  }
+}
+
+function filtrerComptes(q) {
+  const ql = q.toLowerCase();
+  afficherComptes(_adminTousComptes.filter(u =>
+    (u.prenom || '').toLowerCase().includes(ql) ||
+    (u.identifiant || '').toLowerCase().includes(ql)
+  ));
+}
+
+function afficherComptes(comptes) {
+  const count = document.getElementById('admin-comptes-count');
+  count.textContent = `${comptes.length} compte${comptes.length !== 1 ? 's' : ''}`;
+  const liste = document.getElementById('admin-comptes-liste');
+  if (comptes.length === 0) {
+    liste.innerHTML = '<p class="admin-vide">Aucun compte trouvé.</p>';
+    return;
+  }
+  liste.innerHTML = comptes.map(u => {
+    const xpObj = u.xp ? (typeof u.xp === 'string' ? JSON.parse(u.xp) : u.xp) : {};
+    const totalXP = Object.values(xpObj).reduce((a, b) => a + (Number(b) || 0), 0);
+    const avatar = u.avatar
+      ? `<img src="${u.avatar}" class="admin-cpt-avatar-img" alt="">`
+      : `<span class="admin-cpt-avatar-lettre">${(u.prenom || '?').charAt(0).toUpperCase()}</span>`;
+    const badge = u.identifiant ? `<span class="admin-cpt-badge">@${u.identifiant}</span>` : '';
+    return `<div class="admin-cpt-carte">
+      <div class="admin-cpt-avatar">${avatar}</div>
+      <div class="admin-cpt-info">
+        <div class="admin-cpt-nom">${u.prenom || '—'} ${badge}</div>
+        <div class="admin-cpt-xp">⭐ ${totalXP} XP</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderAdminNav() {
@@ -1935,6 +1999,8 @@ window.retourChapitresDepuisExamen = retourChapitresDepuisExamen;
 window.verifierMdp              = verifierMdp;
 window.deconnecterAdmin         = deconnecterAdmin;
 window.renderAdminNav           = renderAdminNav;
+window.adminAfficherOnglet      = adminAfficherOnglet;
+window.filtrerComptes           = filtrerComptes;
 window.lancerPreview            = lancerPreview;
 window.retourNiveaux            = retourNiveaux;
 window.retourMatieres           = retourMatieres;
