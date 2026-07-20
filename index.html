@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=8" />
 </head>
 <body>
 
@@ -501,7 +501,7 @@
       <h3 class="modal-titre">Recadrer la photo</h3>
       <p class="modal-texte" style="margin-bottom:14px">Déplace · Molette ou slider pour zoomer</p>
       <div class="crop-viewport" id="crop-viewport">
-        <img id="crop-img" class="crop-img" alt="" draggable="false" />
+        <canvas id="crop-canvas" width="260" height="260" class="crop-canvas"></canvas>
       </div>
       <div class="crop-zoom-bar">
         <span>🔍</span>
@@ -531,8 +531,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js?v=2"></script>
+  <script src="firebase.js?v=3"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=17"></script>
+  <script src="app.js?v=18"></script>
 </body>
 </html>

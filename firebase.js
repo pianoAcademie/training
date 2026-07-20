@@ -63,6 +63,7 @@ async function fbChargerEtSyncer() {
     if (!snap.exists) return;
     const d = snap.data();
     if (d.avatar)           localStorage.setItem('mathentrain_avatar',           d.avatar);
+    if (d.avatarOriginal)   localStorage.setItem('mathentrain_avatar_src',       d.avatarOriginal);
     if (d.identifiant)      localStorage.setItem('mathentrain_identifiant',      d.identifiant);
     if (d.prenom)           localStorage.setItem('mathentrain_prenom',          d.prenom);
     if (d.xp)               localStorage.setItem('mathentrain_xp',              typeof d.xp === 'string' ? d.xp : JSON.stringify(d.xp));

@@ -1972,18 +1972,32 @@ function changerAvatarFichier(input) {
   reader.onload = e => {
     const img = new Image();
     img.onload = function() {
-      const canvas = document.createElement('canvas');
+      // 800px local (pour recadrage haute qualité)
+      const c800 = document.createElement('canvas');
       const max = 800;
       let w = img.width, h = img.height;
       if (w > max || h > max) {
         if (w > h) { h = Math.round(h * max / w); w = max; }
         else        { w = Math.round(w * max / h); h = max; }
       }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const src = canvas.toDataURL('image/jpeg', 0.9);
-      localStorage.setItem('mathentrain_avatar_src', src);
-      ouvrirCrop(src);
+      c800.width = w; c800.height = h;
+      c800.getContext('2d').drawImage(img, 0, 0, w, h);
+      const src800 = c800.toDataURL('image/jpeg', 0.9);
+      localStorage.setItem('mathentrain_avatar_src', src800);
+
+      // 400px pour Firestore (persiste après reconnexion)
+      const max2 = 400;
+      let w2 = img.width, h2 = img.height;
+      if (w2 > max2 || h2 > max2) {
+        if (w2 > h2) { h2 = Math.round(h2 * max2 / w2); w2 = max2; }
+        else          { w2 = Math.round(w2 * max2 / h2); h2 = max2; }
+      }
+      const c400 = document.createElement('canvas');
+      c400.width = w2; c400.height = h2;
+      c400.getContext('2d').drawImage(img, 0, 0, w2, h2);
+      fbSauvegarder('avatarOriginal', c400.toDataURL('image/jpeg', 0.85));
+
+      ouvrirCrop(src800);
     };
     img.src = e.target.result;
   };
@@ -2014,103 +2028,93 @@ function changerAvatarUrl() {
 
 // ── RECADRAGE PHOTO ──
 const _CROP_VS = 260;
-let _cropState = { x: 0, y: 0, scale: 1, minScale: 1, startX: 0, startY: 0, dragging: false, src: '' };
+let _crop = { img: null, src: '', x: 0, y: 0, scale: 1, minScale: 1, dragging: false, lastX: 0, lastY: 0 };
 
 function ouvrirCrop(src) {
-  _cropState.src = src;
-  _cropState.x = 0; _cropState.y = 0; _cropState.scale = 1;
-  _cropState.dragging = false;
-  const img = document.getElementById('crop-img');
-  const slider = document.getElementById('crop-zoom');
+  _crop.src = src;
+  _crop.img = null;
+  _crop.dragging = false;
+  document.getElementById('modal-crop').style.display = 'flex';
+  document.getElementById('profil-avatar-body').style.display = 'none';
 
-  function initCrop() {
+  const img = new Image();
+  img.onload = function() {
+    _crop.img = img;
     const vs = _CROP_VS;
     const minS = Math.max(vs / img.naturalWidth, vs / img.naturalHeight);
-    _cropState.minScale = minS;
-    _cropState.scale = minS;
+    _crop.minScale = minS;
+    _crop.scale = minS;
+    _crop.x = (vs - img.naturalWidth  * minS) / 2;
+    _crop.y = (vs - img.naturalHeight * minS) / 2;
+    const slider = document.getElementById('crop-zoom');
     slider.min = minS;
     slider.max = Math.max(minS * 4, 3);
     slider.value = minS;
-    _cropState.x = (vs - img.naturalWidth  * minS) / 2;
-    _cropState.y = (vs - img.naturalHeight * minS) / 2;
-    _applyCropTransform();
-  }
-
-  img.onload = null;
-  img.src = '';
-  img.onload = initCrop;
+    _renderCropCanvas();
+  };
   img.src = src;
-  if (img.complete && img.naturalWidth > 0) initCrop();
-
-  document.getElementById('modal-crop').style.display = 'flex';
-  document.getElementById('profil-avatar-body').style.display = 'none';
 }
 
 function fermerCrop() {
   document.getElementById('modal-crop').style.display = 'none';
 }
 
-function _clampCrop() {
-  const vs = _CROP_VS, s = _cropState.scale;
-  const img = document.getElementById('crop-img');
-  _cropState.x = Math.min(0, Math.max(vs - img.naturalWidth  * s, _cropState.x));
-  _cropState.y = Math.min(0, Math.max(vs - img.naturalHeight * s, _cropState.y));
-}
-
-function _applyCropTransform() {
-  _clampCrop();
-  const img = document.getElementById('crop-img');
-  img.style.width  = img.naturalWidth  + 'px';
-  img.style.height = img.naturalHeight + 'px';
-  img.style.transform = `translate(${_cropState.x}px,${_cropState.y}px) scale(${_cropState.scale})`;
+function _renderCropCanvas() {
+  if (!_crop.img) return;
+  const vs = _CROP_VS, s = _crop.scale;
+  _crop.x = Math.min(0, Math.max(vs - _crop.img.naturalWidth  * s, _crop.x));
+  _crop.y = Math.min(0, Math.max(vs - _crop.img.naturalHeight * s, _crop.y));
+  const canvas = document.getElementById('crop-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, vs, vs);
+  ctx.save();
+  ctx.translate(_crop.x, _crop.y);
+  ctx.scale(s, s);
+  ctx.drawImage(_crop.img, 0, 0);
+  ctx.restore();
 }
 
 function cropZoomChange(newS) {
-  const vs = _CROP_VS;
-  const oldS = _cropState.scale;
-  const cx = vs / 2, cy = vs / 2;
-  _cropState.x = cx - (cx - _cropState.x) * (newS / oldS);
-  _cropState.y = cy - (cy - _cropState.y) * (newS / oldS);
-  _cropState.scale = newS;
-  _applyCropTransform();
+  const vs = _CROP_VS, cx = vs / 2, cy = vs / 2;
+  _crop.x = cx - (cx - _crop.x) * (newS / _crop.scale);
+  _crop.y = cy - (cy - _crop.y) * (newS / _crop.scale);
+  _crop.scale = newS;
+  _renderCropCanvas();
 }
 
 function confirmerCrop() {
-  const img = document.getElementById('crop-img');
-  const vs = _CROP_VS, s = _cropState.scale;
-  const cropX = -_cropState.x / s;
-  const cropY = -_cropState.y / s;
-  const cropSize = vs / s;
-  const canvas = document.createElement('canvas');
-  canvas.width = 200; canvas.height = 200;
+  const srcCanvas = document.getElementById('crop-canvas');
+  const out = document.createElement('canvas');
+  out.width = 200; out.height = 200;
   try {
-    canvas.getContext('2d').drawImage(img, cropX, cropY, cropSize, cropSize, 0, 0, 200, 200);
-    sauvegarderAvatar(canvas.toDataURL('image/jpeg', 0.85));
+    out.getContext('2d').drawImage(srcCanvas, 0, 0, _CROP_VS, _CROP_VS, 0, 0, 200, 200);
+    sauvegarderAvatar(out.toDataURL('image/jpeg', 0.85));
   } catch(e) {
-    sauvegarderAvatar(_cropState.src);
+    console.warn('[crop] erreur canvas:', e);
+    sauvegarderAvatar(_crop.src);
   }
   fermerCrop();
 }
 
 function _initCropDrag() {
-  const vp = document.getElementById('crop-viewport');
-  if (!vp) return;
+  const canvas = document.getElementById('crop-canvas');
+  if (!canvas) return;
   let lastPinchDist = null;
 
-  vp.addEventListener('mousedown', e => {
+  canvas.addEventListener('mousedown', e => {
     e.preventDefault();
-    _cropState.dragging = true;
-    _cropState.startX = e.clientX - _cropState.x;
-    _cropState.startY = e.clientY - _cropState.y;
+    _crop.dragging = true;
+    _crop.lastX = e.clientX;
+    _crop.lastY = e.clientY;
   });
 
-  vp.addEventListener('touchstart', e => {
+  canvas.addEventListener('touchstart', e => {
     if (e.touches.length === 1) {
-      _cropState.dragging = true;
-      _cropState.startX = e.touches[0].clientX - _cropState.x;
-      _cropState.startY = e.touches[0].clientY - _cropState.y;
+      _crop.dragging = true;
+      _crop.lastX = e.touches[0].clientX;
+      _crop.lastY = e.touches[0].clientY;
     } else if (e.touches.length === 2) {
-      _cropState.dragging = false;
+      _crop.dragging = false;
       lastPinchDist = Math.hypot(
         e.touches[0].clientX - e.touches[1].clientX,
         e.touches[0].clientY - e.touches[1].clientY
@@ -2119,38 +2123,42 @@ function _initCropDrag() {
   }, { passive: true });
 
   window.addEventListener('mousemove', e => {
-    if (!_cropState.dragging) return;
-    _cropState.x = e.clientX - _cropState.startX;
-    _cropState.y = e.clientY - _cropState.startY;
-    _applyCropTransform();
+    if (!_crop.dragging) return;
+    _crop.x += e.clientX - _crop.lastX;
+    _crop.y += e.clientY - _crop.lastY;
+    _crop.lastX = e.clientX;
+    _crop.lastY = e.clientY;
+    _renderCropCanvas();
   });
 
   window.addEventListener('touchmove', e => {
-    if (e.touches.length === 1 && _cropState.dragging) {
-      _cropState.x = e.touches[0].clientX - _cropState.startX;
-      _cropState.y = e.touches[0].clientY - _cropState.startY;
-      _applyCropTransform();
+    if (e.touches.length === 1 && _crop.dragging) {
+      _crop.x += e.touches[0].clientX - _crop.lastX;
+      _crop.y += e.touches[0].clientY - _crop.lastY;
+      _crop.lastX = e.touches[0].clientX;
+      _crop.lastY = e.touches[0].clientY;
+      _renderCropCanvas();
     } else if (e.touches.length === 2 && lastPinchDist !== null) {
       const dist = Math.hypot(
         e.touches[0].clientX - e.touches[1].clientX,
         e.touches[0].clientY - e.touches[1].clientY
       );
       const slider = document.getElementById('crop-zoom');
-      const newS = Math.min(Math.max(_cropState.scale * (dist / lastPinchDist), _cropState.minScale), parseFloat(slider.max));
+      const newS = Math.min(Math.max(_crop.scale * (dist / lastPinchDist), _crop.minScale), parseFloat(slider.max));
       cropZoomChange(newS);
       slider.value = newS;
       lastPinchDist = dist;
     }
   }, { passive: true });
 
-  window.addEventListener('mouseup',  () => { _cropState.dragging = false; });
-  window.addEventListener('touchend', () => { _cropState.dragging = false; lastPinchDist = null; });
+  window.addEventListener('mouseup',  () => { _crop.dragging = false; });
+  window.addEventListener('touchend', () => { _crop.dragging = false; lastPinchDist = null; });
 
-  vp.addEventListener('wheel', e => {
+  canvas.addEventListener('wheel', e => {
     e.preventDefault();
     const slider = document.getElementById('crop-zoom');
     const delta = e.deltaY > 0 ? -0.08 : 0.08;
-    const newS = Math.min(Math.max(_cropState.scale + delta, _cropState.minScale), parseFloat(slider.max));
+    const newS = Math.min(Math.max(_crop.scale + _crop.scale * delta, _crop.minScale), parseFloat(slider.max));
     cropZoomChange(newS);
     slider.value = newS;
   }, { passive: false });
