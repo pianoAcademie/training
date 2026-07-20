@@ -83,6 +83,7 @@
         </div>
       </div>
 
+      <!-- Choisir un identifiant (utilisateurs sans identifiant) -->
       <div id="profil-section-identifiant" style="display:none">
         <button class="btn-primaire profil-btn-action" onclick="toggleProfilAccordeon('identifiant', this)">
           🪪 Choisir un identifiant
@@ -92,6 +93,20 @@
           <p class="auth-identifiant-hint" style="margin-bottom:6px">3 à 20 caractères, lettres, chiffres, _ ou -</p>
           <div class="profil-msg" id="profil-msg-identifiant" style="display:none"></div>
           <button class="profil-btn-confirmer" onclick="profilAjouterIdentifiant()">Confirmer</button>
+        </div>
+      </div>
+
+      <!-- Changer l'identifiant (utilisateurs avec identifiant) -->
+      <div id="profil-section-changer-identifiant" style="display:none">
+        <button class="btn-primaire profil-btn-action" onclick="toggleProfilAccordeon('changer-identifiant', this)">
+          🪪 Changer mon identifiant
+        </button>
+        <div id="profil-changer-identifiant-body" class="profil-accordeon-body" style="display:none">
+          <p id="profil-identifiant-actuel" class="auth-identifiant-hint" style="margin-bottom:8px"></p>
+          <input type="text" id="profil-input-changer-identifiant" class="input-mdp" placeholder="Nouvel identifiant..." />
+          <p class="auth-identifiant-hint" style="margin-bottom:6px">3 à 20 caractères, lettres, chiffres, _ ou -</p>
+          <div class="profil-msg" id="profil-msg-changer-identifiant" style="display:none"></div>
+          <button class="profil-btn-confirmer" onclick="profilChangerIdentifiant()">Confirmer</button>
         </div>
       </div>
 
@@ -518,6 +533,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=2"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>

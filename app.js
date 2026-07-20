@@ -98,7 +98,7 @@ function ouvrirProfil() {
   document.getElementById('profil-palier').textContent      = palier.emoji + ' ' + palier.label;
   document.getElementById('profil-nb-chapitres').textContent = nbChapitres;
 
-  ['email','mdp','avatar','identifiant'].forEach(t => {
+  ['email','mdp','avatar','identifiant','changer-identifiant'].forEach(t => {
     const b = document.getElementById(`profil-${t}-body`);
     if (b) b.style.display = 'none';
   });
@@ -111,10 +111,17 @@ function ouvrirProfil() {
     if (el) { el.style.display = 'none'; el.style.color = ''; }
   });
 
-  // Montrer la section identifiant seulement si l'utilisateur n'en a pas encore
-  const hasIdentifiant = !!localStorage.getItem('mathentrain_identifiant');
-  const secId = document.getElementById('profil-section-identifiant');
-  if (secId) secId.style.display = (isEmailUser && !hasIdentifiant) ? '' : 'none';
+  const identifiantActuel = localStorage.getItem('mathentrain_identifiant');
+  const secId      = document.getElementById('profil-section-identifiant');
+  const secChanger = document.getElementById('profil-section-changer-identifiant');
+  if (secId)      secId.style.display      = (isEmailUser && !identifiantActuel) ? '' : 'none';
+  if (secChanger) secChanger.style.display = (isEmailUser && !!identifiantActuel) ? '' : 'none';
+  const affichageActuel = document.getElementById('profil-identifiant-actuel');
+  if (affichageActuel && identifiantActuel) affichageActuel.textContent = 'Identifiant actuel : ' + identifiantActuel;
+  ['profil-msg-changer-identifiant','profil-msg-identifiant'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.style.color = ''; }
+  });
 }
 
 function fermerProfil() {
@@ -1899,6 +1906,7 @@ window.toggleMdpVisible         = toggleMdpVisible;
 window.profilChangerEmail       = profilChangerEmail;
 window.profilChangerMdp         = profilChangerMdp;
 window.profilAjouterIdentifiant = profilAjouterIdentifiant;
+window.profilChangerIdentifiant = profilChangerIdentifiant;
 window.fermerModalReset         = fermerModalReset;
 window.confirmerReset           = confirmerReset;
 window.authSwitchTab            = authSwitchTab;
@@ -2182,6 +2190,32 @@ async function profilChangerMdp() {
     document.getElementById('profil-mdp-nouveau').value = '';
   } catch(e) {
     _profilMsg('profil-msg-mdp', _authErreurFR(e.code), false);
+  }
+}
+
+async function profilChangerIdentifiant() {
+  const nouvel = document.getElementById('profil-input-changer-identifiant').value.trim();
+  if (!nouvel) { _profilMsg('profil-msg-changer-identifiant', 'Entre un identifiant.', false); return; }
+  if (!/^[a-zA-Z0-9_-]{3,20}$/.test(nouvel)) {
+    _profilMsg('profil-msg-changer-identifiant', 'Identifiant invalide (3-20 caractères, lettres, chiffres, _ ou -).', false); return;
+  }
+  const ancien = localStorage.getItem('mathentrain_identifiant');
+  if (nouvel.toLowerCase() === ancien) { _profilMsg('profil-msg-changer-identifiant', 'C\'est déjà ton identifiant actuel.', false); return; }
+  try {
+    const dispo = await fbIdentifiantDisponible(nouvel);
+    if (!dispo) { _profilMsg('profil-msg-changer-identifiant', 'Cet identifiant est déjà pris.', false); return; }
+    const user = fbAuth.currentUser;
+    const id = nouvel.toLowerCase();
+    if (ancien) await fbDb.collection('usernames').doc(ancien).delete();
+    await fbDb.collection('usernames').doc(id).set({ email: user.email, uid: user.uid });
+    await fbDb.collection('users').doc(user.uid).set({ identifiant: id }, { merge: true });
+    localStorage.setItem('mathentrain_identifiant', id);
+    _profilMsg('profil-msg-changer-identifiant', 'Identifiant mis à jour !', true);
+    document.getElementById('profil-identifiant-actuel').textContent = 'Identifiant actuel : ' + id;
+    document.getElementById('profil-input-changer-identifiant').value = '';
+  } catch(e) {
+    console.error('[changerIdentifiant]', e);
+    _profilMsg('profil-msg-changer-identifiant', 'Erreur : ' + (e.message || e.code || e), false);
   }
 }
 
