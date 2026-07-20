@@ -2181,18 +2181,23 @@ async function profilAjouterIdentifiant() {
   if (!/^[a-zA-Z0-9_-]{3,20}$/.test(identifiant)) {
     _profilMsg('profil-msg-identifiant', 'Identifiant invalide (3-20 caractères, lettres, chiffres, _ ou -).', false); return;
   }
-  const dispo = await fbIdentifiantDisponible(identifiant);
-  if (!dispo) { _profilMsg('profil-msg-identifiant', 'Cet identifiant est déjà pris.', false); return; }
-  const user = fbAuth.currentUser;
-  const id = identifiant.toLowerCase();
-  await fbDb.collection('usernames').doc(id).set({ email: user.email, uid: user.uid });
-  await fbDb.collection('users').doc(user.uid).set({ identifiant: id }, { merge: true });
-  localStorage.setItem('mathentrain_identifiant', id);
-  _profilMsg('profil-msg-identifiant', 'Identifiant enregistré !', true);
-  document.getElementById('profil-input-identifiant').value = '';
-  setTimeout(() => {
-    document.getElementById('profil-section-identifiant').style.display = 'none';
-  }, 1500);
+  try {
+    const dispo = await fbIdentifiantDisponible(identifiant);
+    if (!dispo) { _profilMsg('profil-msg-identifiant', 'Cet identifiant est déjà pris.', false); return; }
+    const user = fbAuth.currentUser;
+    const id = identifiant.toLowerCase();
+    await fbDb.collection('usernames').doc(id).set({ email: user.email, uid: user.uid });
+    await fbDb.collection('users').doc(user.uid).set({ identifiant: id }, { merge: true });
+    localStorage.setItem('mathentrain_identifiant', id);
+    _profilMsg('profil-msg-identifiant', 'Identifiant enregistré !', true);
+    document.getElementById('profil-input-identifiant').value = '';
+    setTimeout(() => {
+      document.getElementById('profil-section-identifiant').style.display = 'none';
+    }, 1500);
+  } catch(e) {
+    console.error('[identifiant]', e);
+    _profilMsg('profil-msg-identifiant', 'Erreur : ' + (e.message || e.code || e), false);
+  }
 }
 
 // ── DÉCONNEXION ──
