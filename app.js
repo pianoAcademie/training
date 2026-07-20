@@ -1954,9 +1954,9 @@ function sauvegarderAvatar(url) {
 }
 
 function recadrerAvatarActuel() {
-  const url = localStorage.getItem('mathentrain_avatar');
-  if (!url) return;
-  ouvrirCrop(url);
+  const src = localStorage.getItem('mathentrain_avatar_src') || localStorage.getItem('mathentrain_avatar');
+  if (!src) return;
+  ouvrirCrop(src);
   document.getElementById('profil-avatar-body').style.display = 'none';
 }
 
@@ -1969,7 +1969,24 @@ function changerAvatarFichier(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => ouvrirCrop(e.target.result);
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const max = 800;
+      let w = img.width, h = img.height;
+      if (w > max || h > max) {
+        if (w > h) { h = Math.round(h * max / w); w = max; }
+        else        { w = Math.round(w * max / h); h = max; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const src = canvas.toDataURL('image/jpeg', 0.9);
+      localStorage.setItem('mathentrain_avatar_src', src);
+      ouvrirCrop(src);
+    };
+    img.src = e.target.result;
+  };
   reader.readAsDataURL(file);
   input.value = '';
 }
@@ -1985,6 +2002,7 @@ function changerAvatarUrl() {
   test.onload = function() {
     msg.style.display = 'none';
     document.getElementById('profil-avatar-url-input').value = '';
+    localStorage.setItem('mathentrain_avatar_src', url);
     ouvrirCrop(url);
   };
   test.onerror = function() {
