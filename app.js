@@ -2057,6 +2057,8 @@ function ouvrirCrop(src) {
 
 function fermerCrop() {
   document.getElementById('modal-crop').style.display = 'none';
+  const body = document.getElementById('profil-avatar-body');
+  if (body) body.style.display = '';
 }
 
 function _renderCropCanvas() {
