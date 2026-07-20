@@ -96,7 +96,7 @@ function ouvrirProfil() {
   document.getElementById('profil-palier').textContent      = palier.emoji + ' ' + palier.label;
   document.getElementById('profil-nb-chapitres').textContent = nbChapitres;
 
-  ['email','mdp','avatar'].forEach(t => {
+  ['email','mdp','avatar','identifiant'].forEach(t => {
     const b = document.getElementById(`profil-${t}-body`);
     if (b) b.style.display = 'none';
   });
@@ -104,11 +104,15 @@ function ouvrirProfil() {
   const isEmailUser = fbAuth.currentUser?.providerData.some(p => p.providerId === 'password');
   document.getElementById('profil-section-email').style.display = isEmailUser ? '' : 'none';
   document.getElementById('profil-section-mdp').style.display   = isEmailUser ? '' : 'none';
-  ['profil-msg-email','profil-msg-mdp'].forEach(id => {
+  ['profil-msg-email','profil-msg-mdp','profil-msg-identifiant'].forEach(id => {
     const el = document.getElementById(id);
-    el.style.display = 'none';
-    el.style.color = '';
+    if (el) { el.style.display = 'none'; el.style.color = ''; }
   });
+
+  // Montrer la section identifiant seulement si l'utilisateur n'en a pas encore
+  const hasIdentifiant = !!localStorage.getItem('mathentrain_identifiant');
+  const secId = document.getElementById('profil-section-identifiant');
+  if (secId) secId.style.display = (isEmailUser && !hasIdentifiant) ? '' : 'none';
 }
 
 function fermerProfil() {
@@ -1891,6 +1895,7 @@ window.toggleProfilAccordeon    = toggleProfilAccordeon;
 window.toggleMdpVisible         = toggleMdpVisible;
 window.profilChangerEmail       = profilChangerEmail;
 window.profilChangerMdp         = profilChangerMdp;
+window.profilAjouterIdentifiant = profilAjouterIdentifiant;
 window.fermerModalReset         = fermerModalReset;
 window.confirmerReset           = confirmerReset;
 window.authSwitchTab            = authSwitchTab;
@@ -2168,6 +2173,26 @@ async function profilChangerMdp() {
   } catch(e) {
     _profilMsg('profil-msg-mdp', _authErreurFR(e.code), false);
   }
+}
+
+async function profilAjouterIdentifiant() {
+  const identifiant = document.getElementById('profil-input-identifiant').value.trim();
+  if (!identifiant) { _profilMsg('profil-msg-identifiant', 'Entre un identifiant.', false); return; }
+  if (!/^[a-zA-Z0-9_-]{3,20}$/.test(identifiant)) {
+    _profilMsg('profil-msg-identifiant', 'Identifiant invalide (3-20 caractères, lettres, chiffres, _ ou -).', false); return;
+  }
+  const dispo = await fbIdentifiantDisponible(identifiant);
+  if (!dispo) { _profilMsg('profil-msg-identifiant', 'Cet identifiant est déjà pris.', false); return; }
+  const user = fbAuth.currentUser;
+  const id = identifiant.toLowerCase();
+  await fbDb.collection('usernames').doc(id).set({ email: user.email, uid: user.uid });
+  await fbDb.collection('users').doc(user.uid).set({ identifiant: id }, { merge: true });
+  localStorage.setItem('mathentrain_identifiant', id);
+  _profilMsg('profil-msg-identifiant', 'Identifiant enregistré !', true);
+  document.getElementById('profil-input-identifiant').value = '';
+  setTimeout(() => {
+    document.getElementById('profil-section-identifiant').style.display = 'none';
+  }, 1500);
 }
 
 // ── DÉCONNEXION ──

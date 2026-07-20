@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
 
@@ -79,6 +79,18 @@
           </div>
           <div class="profil-msg" id="profil-msg-mdp" style="display:none"></div>
           <button class="profil-btn-confirmer" onclick="profilChangerMdp()">Confirmer</button>
+        </div>
+      </div>
+
+      <div id="profil-section-identifiant" style="display:none">
+        <button class="btn-primaire profil-btn-action" onclick="toggleProfilAccordeon('identifiant', this)">
+          🪪 Choisir un identifiant
+        </button>
+        <div id="profil-identifiant-body" class="profil-accordeon-body" style="display:none">
+          <input type="text" id="profil-input-identifiant" class="input-mdp" placeholder="Choisis un identifiant..." />
+          <p class="auth-identifiant-hint" style="margin-bottom:6px">3 à 20 caractères, lettres, chiffres, _ ou -</p>
+          <div class="profil-msg" id="profil-msg-identifiant" style="display:none"></div>
+          <button class="profil-btn-confirmer" onclick="profilAjouterIdentifiant()">Confirmer</button>
         </div>
       </div>
 
@@ -504,6 +516,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=1"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
