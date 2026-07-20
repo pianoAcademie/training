@@ -76,6 +76,8 @@ function mettreAJourAvatarUI() {
   }
   const supprBtn = document.getElementById('profil-avatar-suppr');
   if (supprBtn) supprBtn.style.display = url ? '' : 'none';
+  const recadrerBtn = document.getElementById('profil-avatar-recadrer');
+  if (recadrerBtn) recadrerBtn.style.display = url ? '' : 'none';
 }
 
 // ── PANNEAU PROFIL ──
@@ -1885,6 +1887,7 @@ function repondreDictee(correct, corrects, total) {
 // ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
 // Fonctions appelées via onclick="..." dans le HTML ou dans des chaînes template
 window.supprimerAvatar          = supprimerAvatar;
+window.recadrerAvatarActuel     = recadrerAvatarActuel;
 window.changerAvatarFichier     = changerAvatarFichier;
 window.changerAvatarUrl         = changerAvatarUrl;
 window.ouvrirCrop               = ouvrirCrop;
@@ -1940,6 +1943,13 @@ function sauvegarderAvatar(url) {
   else     localStorage.removeItem('mathentrain_avatar');
   fbSauvegarder('avatar', url || null);
   mettreAJourAvatarUI();
+}
+
+function recadrerAvatarActuel() {
+  const url = localStorage.getItem('mathentrain_avatar');
+  if (!url) return;
+  ouvrirCrop(url);
+  document.getElementById('profil-avatar-body').style.display = 'none';
 }
 
 function supprimerAvatar() {

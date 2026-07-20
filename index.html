@@ -49,6 +49,7 @@
             <input type="url" id="profil-avatar-url-input" class="input-mdp" placeholder="…ou colle une URL d'image" />
             <button class="profil-btn-confirmer" style="white-space:nowrap;padding:9px 14px;width:auto" onclick="changerAvatarUrl()">OK</button>
           </div>
+          <button id="profil-avatar-recadrer" class="profil-btn-confirmer" onclick="recadrerAvatarActuel()" style="display:none">✂️ Recadrer la photo actuelle</button>
           <button id="profil-avatar-suppr" class="profil-avatar-suppr-btn" onclick="supprimerAvatar()" style="display:none">Supprimer la photo</button>
         </div>
       </div>
@@ -517,6 +518,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=2"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
