@@ -2083,14 +2083,19 @@ function cropZoomChange(newS) {
 }
 
 function confirmerCrop() {
-  const srcCanvas = document.getElementById('crop-canvas');
+  if (!_crop.img) { fermerCrop(); return; }
+  const vs = _CROP_VS, s = _crop.scale;
+  const ratio = 200 / vs;
   const out = document.createElement('canvas');
   out.width = 200; out.height = 200;
+  const ctx = out.getContext('2d');
+  ctx.translate(_crop.x * ratio, _crop.y * ratio);
+  ctx.scale(s * ratio, s * ratio);
+  ctx.drawImage(_crop.img, 0, 0);
   try {
-    out.getContext('2d').drawImage(srcCanvas, 0, 0, _CROP_VS, _CROP_VS, 0, 0, 200, 200);
     sauvegarderAvatar(out.toDataURL('image/jpeg', 0.85));
   } catch(e) {
-    console.warn('[crop] erreur canvas:', e);
+    console.warn('[crop]', e);
     sauvegarderAvatar(_crop.src);
   }
   fermerCrop();
