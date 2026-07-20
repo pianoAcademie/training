@@ -2219,6 +2219,8 @@ function authSwitchTab(tab) {
   const emailInput = document.getElementById('auth-email');
   emailInput.placeholder = tab === 'connexion' ? 'E-mail ou identifiant...' : 'Adresse e-mail...';
   emailInput.autocomplete = tab === 'connexion' ? 'username' : 'email';
+  const hint = document.getElementById('auth-email-hint');
+  if (hint) hint.style.display = tab === 'connexion' ? '' : 'none';
 }
 
 function _authErreurFR(code) {
