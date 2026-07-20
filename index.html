@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
 
@@ -502,6 +502,10 @@
     <div id="admin-comptes" class="admin-comptes" style="display:none">
       <div class="admin-comptes-header">
         <input type="text" id="admin-comptes-search" class="admin-comptes-search" placeholder="🔍 Rechercher par nom ou identifiant…" oninput="filtrerComptes(this.value)" />
+        <div class="admin-tri">
+          <button class="admin-tri-btn actif" data-tri="xp"  onclick="adminTrierComptes('xp')">⭐ XP</button>
+          <button class="admin-tri-btn"       data-tri="nom" onclick="adminTrierComptes('nom')">A–Z</button>
+        </div>
         <span id="admin-comptes-count" class="admin-comptes-count"></span>
       </div>
       <div id="admin-comptes-liste" class="admin-comptes-liste"></div>
@@ -546,6 +550,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=3"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=22"></script>
 </body>
 </html>

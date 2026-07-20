@@ -1257,6 +1257,8 @@ function filtrerComptes(q) {
   ));
 }
 
+let _adminTriActuel = 'xp';
+
 function afficherComptes(comptes) {
   const count = document.getElementById('admin-comptes-count');
   count.textContent = `${comptes.length} compte${comptes.length !== 1 ? 's' : ''}`;
@@ -1265,21 +1267,78 @@ function afficherComptes(comptes) {
     liste.innerHTML = '<p class="admin-vide">Aucun compte trouvé.</p>';
     return;
   }
-  liste.innerHTML = comptes.map(u => {
+
+  const sorted = [...comptes].sort((a, b) => {
+    if (_adminTriActuel === 'nom') return (a.prenom || '').localeCompare(b.prenom || '');
+    const xpA = _xpTotal(a.xp), xpB = _xpTotal(b.xp);
+    return xpB - xpA;
+  });
+
+  liste.innerHTML = sorted.map((u, i) => {
     const xpObj = u.xp ? (typeof u.xp === 'string' ? JSON.parse(u.xp) : u.xp) : {};
-    const totalXP = Object.values(xpObj).reduce((a, b) => a + (Number(b) || 0), 0);
+    const totalXP = _xpTotal(u.xp);
+    const nbThemes = Object.values(xpObj).filter(v => Number(v) > 0).length;
+    const examPerfs = u.examPerfs ? (typeof u.examPerfs === 'string' ? JSON.parse(u.examPerfs) : u.examPerfs) : {};
+    const nbExams = Object.keys(examPerfs).length;
     const avatar = u.avatar
       ? `<img src="${u.avatar}" class="admin-cpt-avatar-img" alt="">`
       : `<span class="admin-cpt-avatar-lettre">${(u.prenom || '?').charAt(0).toUpperCase()}</span>`;
-    const badge = u.identifiant ? `<span class="admin-cpt-badge">@${u.identifiant}</span>` : '';
-    return `<div class="admin-cpt-carte">
-      <div class="admin-cpt-avatar">${avatar}</div>
-      <div class="admin-cpt-info">
-        <div class="admin-cpt-nom">${u.prenom || '—'} ${badge}</div>
-        <div class="admin-cpt-xp">⭐ ${totalXP} XP</div>
+    const badge = u.identifiant ? `<span class="admin-cpt-badge">@${u.identifiant}</span>` : '<span class="admin-cpt-badge admin-cpt-badge-vide">sans identifiant</span>';
+
+    // Détail XP par thème
+    const xpLignes = Object.entries(xpObj)
+      .filter(([, v]) => Number(v) > 0)
+      .sort(([, a], [, b]) => Number(b) - Number(a))
+      .map(([id, v]) => {
+        const th = questionsBank[id];
+        const nom = th ? `${th.emoji || ''} ${th.nom}` : id;
+        return `<div class="admin-cpt-xp-ligne"><span>${nom}</span><span>${Number(v)} XP</span></div>`;
+      }).join('');
+
+    // Détail examens
+    const examLignes = Object.entries(examPerfs)
+      .sort(([, a], [, b]) => (b.score || 0) - (a.score || 0))
+      .map(([id, p]) => {
+        const th = questionsBank[id];
+        const nom = th ? `${th.emoji || ''} ${th.nom}` : id;
+        const score = typeof p === 'object' ? `${p.score ?? '?'}/${p.total ?? '?'}` : p;
+        return `<div class="admin-cpt-xp-ligne"><span>${nom}</span><span>${score}</span></div>`;
+      }).join('');
+
+    return `<div class="admin-cpt-carte" onclick="adminToggleCarte(this)">
+      <div class="admin-cpt-resume">
+        <div class="admin-cpt-avatar">${avatar}</div>
+        <div class="admin-cpt-info">
+          <div class="admin-cpt-nom">${u.prenom || '—'} ${badge}</div>
+          <div class="admin-cpt-stats">⭐ ${totalXP} XP &nbsp;·&nbsp; ${nbThemes} thème${nbThemes !== 1 ? 's' : ''} &nbsp;·&nbsp; ${nbExams} examen${nbExams !== 1 ? 's' : ''}</div>
+        </div>
+        <span class="admin-cpt-chevron">›</span>
+      </div>
+      <div class="admin-cpt-detail" style="display:none">
+        ${xpLignes ? `<div class="admin-cpt-section-titre">XP par thème</div>${xpLignes}` : '<div class="admin-cpt-vide">Aucune progression</div>'}
+        ${examLignes ? `<div class="admin-cpt-section-titre" style="margin-top:10px">Examens</div>${examLignes}` : ''}
       </div>
     </div>`;
   }).join('');
+}
+
+function _xpTotal(xp) {
+  const obj = xp ? (typeof xp === 'string' ? JSON.parse(xp) : xp) : {};
+  return Object.values(obj).reduce((a, b) => a + (Number(b) || 0), 0);
+}
+
+function adminToggleCarte(carte) {
+  const detail = carte.querySelector('.admin-cpt-detail');
+  const chevron = carte.querySelector('.admin-cpt-chevron');
+  const ouvert = detail.style.display !== 'none';
+  detail.style.display = ouvert ? 'none' : '';
+  chevron.style.transform = ouvert ? '' : 'rotate(90deg)';
+}
+
+function adminTrierComptes(tri) {
+  _adminTriActuel = tri;
+  document.querySelectorAll('.admin-tri-btn').forEach(b => b.classList.toggle('actif', b.dataset.tri === tri));
+  filtrerComptes(document.getElementById('admin-comptes-search').value);
 }
 
 function renderAdminNav() {
@@ -2001,6 +2060,8 @@ window.deconnecterAdmin         = deconnecterAdmin;
 window.renderAdminNav           = renderAdminNav;
 window.adminAfficherOnglet      = adminAfficherOnglet;
 window.filtrerComptes           = filtrerComptes;
+window.adminToggleCarte         = adminToggleCarte;
+window.adminTrierComptes        = adminTrierComptes;
 window.lancerPreview            = lancerPreview;
 window.retourNiveaux            = retourNiveaux;
 window.retourMatieres           = retourMatieres;
