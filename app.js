@@ -2004,7 +2004,8 @@ function ouvrirCrop(src) {
   _cropState.dragging = false;
   const img = document.getElementById('crop-img');
   const slider = document.getElementById('crop-zoom');
-  img.onload = function() {
+
+  function initCrop() {
     const vs = _CROP_VS;
     const minS = Math.max(vs / img.naturalWidth, vs / img.naturalHeight);
     _cropState.minScale = minS;
@@ -2015,8 +2016,14 @@ function ouvrirCrop(src) {
     _cropState.x = (vs - img.naturalWidth  * minS) / 2;
     _cropState.y = (vs - img.naturalHeight * minS) / 2;
     _applyCropTransform();
-  };
+  }
+
+  img.onload = null;
+  img.src = '';
+  img.onload = initCrop;
   img.src = src;
+  if (img.complete && img.naturalWidth > 0) initCrop();
+
   document.getElementById('modal-crop').style.display = 'flex';
   document.getElementById('profil-avatar-body').style.display = 'none';
 }
