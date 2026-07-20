@@ -2210,20 +2210,38 @@ function _authErreurFR(code) {
 }
 
 async function authSoumettre() {
-  const email = document.getElementById('auth-email').value.trim();
-  const mdp   = document.getElementById('auth-mdp').value;
-  const errEl = document.getElementById('auth-erreur');
-  const btn   = document.getElementById('auth-btn-submit');
+  const emailOuId = document.getElementById('auth-email').value.trim();
+  const mdp       = document.getElementById('auth-mdp').value;
+  const errEl     = document.getElementById('auth-erreur');
+  const btn       = document.getElementById('auth-btn-submit');
   errEl.style.display = 'none';
-  if (!email || !mdp) { errEl.textContent = 'Remplis tous les champs.'; errEl.style.display = ''; return; }
+  if (!emailOuId || !mdp) { errEl.textContent = 'Remplis tous les champs.'; errEl.style.display = ''; return; }
   btn.disabled = true; btn.textContent = '...';
   try {
     if (_authTab === 'connexion') {
+      let email = emailOuId;
+      if (!emailOuId.includes('@')) {
+        email = await fbGetEmailParIdentifiant(emailOuId);
+        if (!email) {
+          errEl.textContent = 'Identifiant introuvable.';
+          errEl.style.display = '';
+          btn.disabled = false; btn.textContent = 'Se connecter';
+          return;
+        }
+      }
       await fbConnexionEmail(email, mdp);
     } else {
-      const prenom = document.getElementById('auth-prenom').value.trim();
+      const prenom      = document.getElementById('auth-prenom').value.trim();
+      const identifiant = document.getElementById('auth-identifiant').value.trim();
       if (!prenom) { errEl.textContent = 'Entre ton prénom.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
-      await fbInscriptionEmail(email, mdp, prenom);
+      if (!identifiant) { errEl.textContent = 'Choisis un identifiant.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
+      if (!/^[a-zA-Z0-9_-]{3,20}$/.test(identifiant)) {
+        errEl.textContent = 'Identifiant invalide (3-20 caractères, lettres, chiffres, _ ou -).';
+        errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return;
+      }
+      const dispo = await fbIdentifiantDisponible(identifiant);
+      if (!dispo) { errEl.textContent = 'Cet identifiant est déjà pris. Choisis-en un autre.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
+      await fbInscriptionEmail(emailOuId, mdp, prenom, identifiant);
     }
   } catch (e) {
     errEl.textContent = _authErreurFR(e.code); errEl.style.display = '';
@@ -2232,12 +2250,17 @@ async function authSoumettre() {
 }
 
 async function authMdpOublie() {
-  const email = document.getElementById('auth-email').value.trim();
+  let email   = document.getElementById('auth-email').value.trim();
   const errEl = document.getElementById('auth-erreur');
   if (!email) {
-    errEl.textContent = 'Entre ton adresse e-mail, puis clique sur "Mot de passe oublié ?".';
+    errEl.textContent = 'Entre ton e-mail ou identifiant, puis clique sur "Mot de passe oublié ?".';
     errEl.style.display = '';
     return;
+  }
+  if (!email.includes('@')) {
+    const found = await fbGetEmailParIdentifiant(email);
+    if (!found) { errEl.textContent = 'Identifiant introuvable.'; errEl.style.display = ''; return; }
+    email = found;
   }
   try {
     await fbAuth.sendPasswordResetEmail(email);

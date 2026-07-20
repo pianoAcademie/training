@@ -17,9 +17,25 @@ function fbConnexionEmail(email, mdp) {
   return fbAuth.signInWithEmailAndPassword(email, mdp);
 }
 
-function fbInscriptionEmail(email, mdp, prenom) {
-  return fbAuth.createUserWithEmailAndPassword(email, mdp)
-    .then(cred => cred.user.updateProfile({ displayName: prenom }).then(() => cred));
+async function fbInscriptionEmail(email, mdp, prenom, identifiant) {
+  const cred = await fbAuth.createUserWithEmailAndPassword(email, mdp);
+  await cred.user.updateProfile({ displayName: prenom });
+  if (identifiant) {
+    const id = identifiant.toLowerCase();
+    await fbDb.collection('usernames').doc(id).set({ email, uid: cred.user.uid });
+    await fbDb.collection('users').doc(cred.user.uid).set({ identifiant: id }, { merge: true });
+  }
+  return cred;
+}
+
+async function fbIdentifiantDisponible(identifiant) {
+  const snap = await fbDb.collection('usernames').doc(identifiant.toLowerCase()).get();
+  return !snap.exists;
+}
+
+async function fbGetEmailParIdentifiant(identifiant) {
+  const snap = await fbDb.collection('usernames').doc(identifiant.toLowerCase()).get();
+  return snap.exists ? snap.data().email : null;
 }
 
 function fbConnexionGoogle() {

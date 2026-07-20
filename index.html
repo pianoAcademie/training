@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
 
@@ -127,10 +127,12 @@
       </div>
 
       <div id="auth-prenom-zone" style="display:none;margin-bottom:10px">
-        <input type="text" id="auth-prenom" class="input-mdp" placeholder="Ton prénom..." autocomplete="given-name" />
+        <input type="text" id="auth-prenom" class="input-mdp" placeholder="Ton prénom..." autocomplete="given-name" style="margin-bottom:10px" />
+        <input type="text" id="auth-identifiant" class="input-mdp" placeholder="Choisis un identifiant (ex: jean42)..." autocomplete="username" />
+        <p class="auth-identifiant-hint">3 à 20 caractères, lettres, chiffres, _ ou -</p>
       </div>
 
-      <input type="email" id="auth-email" class="input-mdp" placeholder="Adresse e-mail..." autocomplete="email" style="margin-bottom:10px" />
+      <input type="text" id="auth-email" class="input-mdp" placeholder="E-mail ou identifiant..." autocomplete="username" style="margin-bottom:10px" />
       <div class="input-mdp-wrapper">
         <input type="password" id="auth-mdp" class="input-mdp" placeholder="Mot de passe..." autocomplete="current-password"
                onkeydown="if(event.key==='Enter') authSoumettre()" />
@@ -502,6 +504,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=1"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>
