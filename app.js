@@ -2216,6 +2216,9 @@ function authSwitchTab(tab) {
   document.getElementById('auth-oubli-zone').style.display = tab === 'connexion' ? '' : 'none';
   document.getElementById('auth-erreur').style.display = 'none';
   document.getElementById('auth-erreur').style.color = '';
+  const emailInput = document.getElementById('auth-email');
+  emailInput.placeholder = tab === 'connexion' ? 'E-mail ou identifiant...' : 'Adresse e-mail...';
+  emailInput.autocomplete = tab === 'connexion' ? 'username' : 'email';
 }
 
 function _authErreurFR(code) {
@@ -2256,6 +2259,7 @@ async function authSoumettre() {
       }
       await fbConnexionEmail(email, mdp);
     } else {
+      if (!emailOuId.includes('@')) { errEl.textContent = 'Entre une adresse e-mail valide.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
       const prenom      = document.getElementById('auth-prenom').value.trim();
       const identifiant = document.getElementById('auth-identifiant').value.trim();
       if (!prenom) { errEl.textContent = 'Entre ton prénom.'; errEl.style.display = ''; btn.disabled = false; btn.textContent = 'Créer mon compte'; return; }
