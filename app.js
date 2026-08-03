@@ -1285,24 +1285,34 @@ function afficherComptes(comptes) {
       : `<span class="admin-cpt-avatar-lettre">${(u.prenom || '?').charAt(0).toUpperCase()}</span>`;
     const badge = u.identifiant ? `<span class="admin-cpt-badge">@${u.identifiant}</span>` : '<span class="admin-cpt-badge admin-cpt-badge-vide">sans identifiant</span>';
 
-    // Détail XP par thème
-    const xpLignes = Object.entries(xpObj)
-      .filter(([, v]) => Number(v) > 0)
-      .sort(([, a], [, b]) => Number(b) - Number(a))
-      .map(([id, v]) => {
-        const th = questionsBank[id];
-        const nom = th ? `${th.emoji || ''} ${th.nom}` : id;
-        return `<div class="admin-cpt-xp-ligne"><span>${nom}</span><span>${Number(v)} XP</span></div>`;
-      }).join('');
+    // Détail XP par thème avec barres de progression
+    const xpEntries = Object.entries(xpObj).filter(([, v]) => Number(v) > 0).sort(([, a], [, b]) => Number(b) - Number(a));
+    const xpMax = xpEntries.length ? Number(xpEntries[0][1]) : 1;
+    const xpLignes = xpEntries.map(([id, v]) => {
+      const th = questionsBank[id];
+      const nom = th ? `${th.emoji || ''} ${th.nom}` : id;
+      const couleur = th?.couleur || '#6366f1';
+      const pct = Math.round(Number(v) / xpMax * 100);
+      return `<div class="admin-cpt-xp-row">
+        <div class="admin-cpt-xp-top"><span class="admin-cpt-xp-nom">${nom}</span><span class="admin-cpt-xp-val">${Number(v)} XP</span></div>
+        <div class="admin-cpt-xp-bar-bg"><div class="admin-cpt-xp-bar" style="width:${pct}%;background:${couleur}"></div></div>
+      </div>`;
+    }).join('');
 
-    // Détail examens
+    // Détail examens avec score coloré
     const examLignes = Object.entries(examPerfs)
       .sort(([, a], [, b]) => (b.score || 0) - (a.score || 0))
       .map(([id, p]) => {
         const th = questionsBank[id];
         const nom = th ? `${th.emoji || ''} ${th.nom}` : id;
-        const score = typeof p === 'object' ? `${p.score ?? '?'}/${p.total ?? '?'}` : p;
-        return `<div class="admin-cpt-xp-ligne"><span>${nom}</span><span>${score}</span></div>`;
+        const sc = typeof p === 'object' ? (p.score ?? 0) : Number(p);
+        const tot = typeof p === 'object' ? (p.total ?? 10) : 10;
+        const pct = Math.round(sc / tot * 100);
+        const cls = pct >= 80 ? 'vert' : pct >= 50 ? 'orange' : 'rouge';
+        return `<div class="admin-cpt-exam-row">
+          <span class="admin-cpt-exam-nom">${nom}</span>
+          <span class="admin-cpt-exam-score ${cls}">${sc}/${tot} <small>${pct}%</small></span>
+        </div>`;
       }).join('');
 
     return `<div class="admin-cpt-carte" onclick="adminToggleCarte(this)">
@@ -1315,8 +1325,8 @@ function afficherComptes(comptes) {
         <span class="admin-cpt-chevron">›</span>
       </div>
       <div class="admin-cpt-detail" style="display:none">
-        ${xpLignes ? `<div class="admin-cpt-section-titre">XP par thème</div>${xpLignes}` : '<div class="admin-cpt-vide">Aucune progression</div>'}
-        ${examLignes ? `<div class="admin-cpt-section-titre" style="margin-top:10px">Examens</div>${examLignes}` : ''}
+        ${xpLignes ? `<div class="admin-cpt-section-titre">Progression par thème</div>${xpLignes}` : '<div class="admin-cpt-vide">Aucune progression encore</div>'}
+        ${examLignes ? `<div class="admin-cpt-section-titre" style="margin-top:14px">Examens passés</div>${examLignes}` : ''}
       </div>
     </div>`;
   }).join('');
