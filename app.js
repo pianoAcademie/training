@@ -1319,7 +1319,8 @@ function afficherComptes(comptes) {
       <div class="admin-cpt-resume">
         <div class="admin-cpt-avatar">${avatar}</div>
         <div class="admin-cpt-info">
-          <div class="admin-cpt-nom">${u.prenom || '—'} ${badge}</div>
+          <div class="admin-cpt-nom">${u.prenom || '<span class="admin-cpt-nom-vide">sans prénom</span>'}</div>
+          <div class="admin-cpt-ident">${badge}</div>
           <div class="admin-cpt-stats">⭐ ${totalXP} XP &nbsp;·&nbsp; ${nbThemes} thème${nbThemes !== 1 ? 's' : ''} &nbsp;·&nbsp; ${nbExams} examen${nbExams !== 1 ? 's' : ''}</div>
         </div>
         <span class="admin-cpt-chevron">›</span>

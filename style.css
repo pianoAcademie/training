@@ -1790,8 +1790,10 @@ header p {
   font-weight: 700;
   font-size: .95rem;
   color: #1e293b;
-  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  line-height: 1.2;
 }
+.admin-cpt-nom-vide { font-weight: 400; color: #94a3b8; font-style: italic; }
+.admin-cpt-ident { margin-top: 2px; }
 .admin-cpt-badge {
   font-size: .72rem;
   background: #ede9fe;
