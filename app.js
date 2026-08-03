@@ -2552,12 +2552,13 @@ window.addEventListener('DOMContentLoaded', () => {
   fbAuth.onAuthStateChanged(async user => {
     if (user) {
       await fbChargerEtSyncer();
-      prenomEleve = user.displayName || localStorage.getItem('mathentrain_prenom') || '';
+      prenomEleve = localStorage.getItem('mathentrain_prenom') || user.displayName || '';
       if (!prenomEleve) {
         afficherEcran('ecran-prenom');
         setTimeout(() => document.getElementById('input-prenom')?.focus(), 150);
       } else {
         localStorage.setItem('mathentrain_prenom', prenomEleve);
+        fbSauvegarder('prenom', prenomEleve);
         mettreAJourHeader();
         mettreAJourBtnProfil();
         afficherEcran('ecran-landing');

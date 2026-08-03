@@ -20,10 +20,15 @@ function fbConnexionEmail(email, mdp) {
 async function fbInscriptionEmail(email, mdp, prenom, identifiant) {
   const cred = await fbAuth.createUserWithEmailAndPassword(email, mdp);
   await cred.user.updateProfile({ displayName: prenom });
+  const userData = {};
+  if (prenom) userData.prenom = prenom;
   if (identifiant) {
     const id = identifiant.toLowerCase();
     await fbDb.collection('usernames').doc(id).set({ email, uid: cred.user.uid });
-    await fbDb.collection('users').doc(cred.user.uid).set({ identifiant: id }, { merge: true });
+    userData.identifiant = id;
+  }
+  if (Object.keys(userData).length) {
+    await fbDb.collection('users').doc(cred.user.uid).set(userData, { merge: true });
   }
   return cred;
 }
