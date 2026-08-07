@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
 
@@ -393,6 +393,9 @@
         <div id="xp-progression-texte" class="xp-progression-texte"></div>
       </div>
 
+      <!-- Programme guidé -->
+      <div id="programme-resultat" class="programme-zone"></div>
+
       <div class="boutons-fin">
         <button class="btn-primaire" onclick="rejouer()">
           Recommencer — <span id="nom-theme-fin"></span>
@@ -443,6 +446,9 @@
           <div class="libelle">Temps total</div>
         </div>
       </div>
+
+      <!-- Programme guidé -->
+      <div id="exam-programme" class="programme-zone"></div>
 
       <div class="boutons-fin">
         <button class="btn-primaire" onclick="demarrerExamenNote(etat.theme)">
@@ -597,6 +603,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=4"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=27"></script>
+  <script src="app.js?v=29"></script>
 </body>
 </html>

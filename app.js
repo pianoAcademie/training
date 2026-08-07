@@ -1064,6 +1064,8 @@ function afficherResultats() {
   document.getElementById('xp-progression-texte').textContent = prochain
     ? `${xpActuel} / ${prochain.min} XP → ${prochain.emoji} ${prochain.label}`
     : `${xpActuel} XP · Niveau maximum atteint 👑`;
+
+  genererProgramme('programme-resultat', etat.theme, pct, null);
 }
 
 // ── BOUTON SUIVANT — DISPATCHER ──
@@ -1147,6 +1149,126 @@ function afficherResultatsExamen() {
 
   // Sauvegarder la perf par niveau pour influencer les exercices libres
   sauvegarderPerfExamen(etat.theme, parNiveau);
+
+  genererProgramme('exam-programme', etat.theme, Math.round((bonnes / (total || 1)) * 100), parNiveau);
+}
+
+function lancerSurMesureDirect(themeId, niveaux, nbQ) {
+  const questions = piocherQuestionsSurMesure(themeId, niveaux, nbQ);
+  etat.theme = themeId; etat.mode = 'surmesure';
+  etat.questionIndex = 0; etat.bonnesReponses = 0; etat.mauvaiesReponses = 0;
+  etat.questionsVues = { 1: [], 2: [], 3: [] }; etat.questionsFixees = questions;
+  etat.reponsesExamen = []; etat.reponduA = false; etat.xpGagneSession = 0;
+  arreterTimer();
+  document.getElementById('timer-zone').style.display = 'none';
+  document.getElementById('barre-progression-zone').style.display = 'block';
+  document.getElementById('btn-terminer').style.display = 'none';
+  document.getElementById('zone-passer').style.display = 'none';
+  document.getElementById('btn-retour-quiz').textContent = '← Choisir un autre thème';
+  const ba = document.getElementById('badge-apercu'); if (ba) ba.remove();
+  etat.tempsDebut = Date.now();
+  afficherEcran('ecran-quiz');
+  poserQuestion();
+}
+
+function _etapeHtml(num, titre, desc, btnLabel, onclick) {
+  return `<div class="prog-etape">
+    <div class="prog-num">${num}</div>
+    <div class="prog-corps">
+      <div class="prog-titre">${titre}</div>
+      <div class="prog-desc">${desc}</div>
+    </div>
+    <button class="prog-btn" onclick="${onclick}">${btnLabel}</button>
+  </div>`;
+}
+
+function genererProgramme(zoneId, theme, pct, parNiveau) {
+  const zone = document.getElementById(zoneId);
+  if (!zone) return;
+  const etapes = [];
+
+  if (parNiveau) {
+    // Résultats examen noté — données par niveau disponibles
+    const pct1 = parNiveau[1].t ? parNiveau[1].b / parNiveau[1].t : 1;
+    const pct2 = parNiveau[2].t ? parNiveau[2].b / parNiveau[2].t : 1;
+    const pct3 = parNiveau[3].t ? parNiveau[3].b / parNiveau[3].t : 1;
+
+    if (pct1 < 0.5) {
+      etapes.push(_etapeHtml(etapes.length + 1,
+        '⭐ Consolide le niveau Facile',
+        'Tu as raté plus de la moitié des questions faciles — retravailler les bases en priorité.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[1],10)`));
+    }
+    if (pct2 < 0.5) {
+      etapes.push(_etapeHtml(etapes.length + 1,
+        '⭐⭐ Renforce le niveau Moyen',
+        'Le niveau moyen est encore difficile — quelques sessions ciblées vont vite aider.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[${pct1 < 0.5 ? '1,2' : '2'}],10)`));
+    }
+    if (pct3 < 0.5 && parNiveau[3].t > 0) {
+      etapes.push(_etapeHtml(etapes.length + 1,
+        '⭐⭐⭐ Entraîne-toi sur le Difficile',
+        'Les questions difficiles te posent problème — travaille-les séparément.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[3],8)`));
+    }
+    if (!etapes.length) {
+      etapes.push(_etapeHtml(1,
+        '🏆 Excellent niveau !',
+        'Tu maîtrises tous les niveaux. Essaie de battre ton score ou passe au chapitre suivant.',
+        'Refaire →',
+        `demarrerExamenNote('${theme}')`));
+    } else {
+      etapes.push(_etapeHtml(etapes.length + 1,
+        '📋 Repasse l\'examen',
+        'Une fois ces points travaillés, repasse l\'examen pour valider ta progression.',
+        'Examen →',
+        `demarrerExamenNote('${theme}')`));
+    }
+  } else {
+    // Résultats simples (examen chrono / libre / surmesure)
+    if (pct < 40) {
+      etapes.push(_etapeHtml(1,
+        '⭐ Retravailler les bases',
+        'Commence par les questions faciles pour reprendre confiance.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[1],10)`));
+      etapes.push(_etapeHtml(2,
+        '⭐⭐ Passe au niveau Moyen',
+        'Quand le Facile est maîtrisé, attaque le niveau Moyen.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[1,2],10)`));
+    } else if (pct < 70) {
+      etapes.push(_etapeHtml(1,
+        '⭐⭐ Entraîne-toi sur le Moyen',
+        'Tu y es presque — quelques sessions ciblées sur le niveau Moyen feront la différence.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[2],10)`));
+      etapes.push(_etapeHtml(2,
+        '📋 Passe l\'examen noté',
+        'Mesure ta progression avec un examen officiel une fois que tu te sens prêt.',
+        'Examen →',
+        `demarrerExamenNote('${theme}')`));
+    } else {
+      etapes.push(_etapeHtml(1,
+        '⭐⭐⭐ Défie-toi au niveau Difficile',
+        'Tu gères bien — pousse-toi avec les questions les plus difficiles.',
+        'Lancer →',
+        `lancerSurMesureDirect('${theme}',[3],10)`));
+      etapes.push(_etapeHtml(2,
+        '📋 Valide avec l\'examen noté',
+        'Confirme ta maîtrise complète avec un examen officiel.',
+        'Examen →',
+        `demarrerExamenNote('${theme}')`));
+    }
+  }
+
+  zone.innerHTML = `
+    <div class="prog-titre-zone">📋 Ton programme personnalisé</div>
+    ${etapes.join('')}
+  `;
 }
 
 function rejouer() {
@@ -2163,6 +2285,7 @@ window.sauvegarderProfil        = sauvegarderProfil;
 window.reinitialiserProgression = reinitialiserProgression;
 window.allerEleveAccueil        = allerEleveAccueil;
 window.allerAdminLogin          = allerAdminLogin;
+window.lancerSurMesureDirect    = lancerSurMesureDirect;
 window.ouvrirSurMesure          = ouvrirSurMesure;
 window.fermerSurMesure          = fermerSurMesure;
 window.demarrerSurMesure        = demarrerSurMesure;

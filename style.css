@@ -890,6 +890,45 @@ header p {
 
 .btn-secondaire:hover { background: #e2e8f0; }
 
+/* ── PROGRAMME GUIDÉ ── */
+.programme-zone {
+  margin: 20px 0 8px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: left;
+}
+.prog-titre-zone {
+  font-size: .75rem; font-weight: 700; color: #64748b;
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 14px;
+}
+.prog-etape {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.prog-etape:last-child { border-bottom: none; }
+.prog-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #6366f1; color: white;
+  font-size: .8rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.prog-corps { flex: 1; min-width: 0; }
+.prog-titre { font-size: .88rem; font-weight: 700; color: #1e293b; }
+.prog-desc { font-size: .78rem; color: #64748b; margin-top: 2px; line-height: 1.4; }
+.prog-btn {
+  padding: 7px 14px; border-radius: 8px;
+  background: #6366f1; color: white;
+  border: none; font-size: .8rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity .15s;
+  flex-shrink: 0;
+}
+.prog-btn:hover { opacity: .85; }
+
 /* ── MODE SUR MESURE ── */
 .surmesure-boite { max-width: 440px !important; }
 .surmesure-section { margin-bottom: 20px; }
