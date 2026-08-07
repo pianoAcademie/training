@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=16" />
+  <link rel="stylesheet" href="style.css?v=17" />
 </head>
 <body>
 
@@ -451,6 +451,9 @@
       <div id="exam-programme" class="programme-zone"></div>
 
       <div class="boutons-fin">
+        <button class="btn-fiche" onclick="ouvrirFicheTheme(etat.theme)">
+          📚 Ce que je dois savoir
+        </button>
         <button class="btn-primaire" onclick="demarrerExamenNote(etat.theme)">
           Refaire l'examen
         </button>
@@ -585,6 +588,34 @@
     </div>
   </div>
 
+  <!-- ══ MODAL FICHE DE RÉVISION ══ -->
+  <div id="modal-fiche" class="modal-overlay" style="display:none" onclick="if(event.target===this)fermerFicheModal()">
+    <div class="fiche-boite" onclick="event.stopPropagation()">
+
+      <!-- Vue : liste des points à savoir -->
+      <div id="fiche-vue-liste">
+        <div class="fiche-header">
+          <div>
+            <div class="fiche-header-label">📚 Ce que tu dois savoir</div>
+            <div id="fiche-header-theme" class="fiche-header-theme"></div>
+          </div>
+          <button class="fiche-fermer" onclick="fermerFicheModal()">✕</button>
+        </div>
+        <div id="fiche-liste-points" class="fiche-liste"></div>
+      </div>
+
+      <!-- Vue : détail d'un point -->
+      <div id="fiche-vue-detail" style="display:none">
+        <div class="fiche-header">
+          <button class="fiche-retour-btn" onclick="retourListeFiches()">← Retour</button>
+          <button class="fiche-fermer" onclick="fermerFicheModal()">✕</button>
+        </div>
+        <div id="fiche-detail-contenu" class="fiche-detail"></div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ══ MODAL RESET PROGRESSION ══ -->
   <div id="modal-reset" class="modal-overlay" style="display:none" onclick="fermerModalReset()">
     <div class="modal-carte" onclick="event.stopPropagation()">
@@ -603,6 +634,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=4"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=29"></script>
+  <script src="fiches.js?v=1"></script>
+  <script src="app.js?v=30"></script>
 </body>
 </html>

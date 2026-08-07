@@ -1271,6 +1271,65 @@ function genererProgramme(zoneId, theme, pct, parNiveau) {
   `;
 }
 
+// ── FICHES DE RÉVISION ──
+let _ficheThemeActuel = null;
+
+function ouvrirFicheTheme(themeId) {
+  _ficheThemeActuel = themeId;
+  const points = (fichesRevision && fichesRevision[themeId]) || fichesRevision._default;
+  const themNom = (questionsBank[themeId] && questionsBank[themeId].nom) || themeId;
+  const couleur = (questionsBank[themeId] && questionsBank[themeId].couleur) || '#4f46e5';
+
+  document.getElementById('fiche-header-theme').textContent = themNom;
+  document.getElementById('fiche-header-theme').style.color = couleur;
+
+  const liste = document.getElementById('fiche-liste-points');
+  liste.innerHTML = points.map((p, i) => `
+    <div class="fiche-point">
+      <div class="fiche-point-info">
+        <div class="fiche-point-num" style="background:${couleur}">${i + 1}</div>
+        <div class="fiche-point-titre">${p.titre}</div>
+      </div>
+      <button class="fiche-point-fleche" onclick="ouvrirDetailFiche(${i})" aria-label="Voir la fiche">→</button>
+    </div>
+  `).join('');
+
+  document.getElementById('fiche-vue-liste').style.display = '';
+  document.getElementById('fiche-vue-detail').style.display = 'none';
+  document.getElementById('modal-fiche').style.display = 'flex';
+}
+
+function ouvrirDetailFiche(idx) {
+  const themeId = _ficheThemeActuel;
+  const points = (fichesRevision && fichesRevision[themeId]) || fichesRevision._default;
+  const p = points[idx];
+  const couleur = (questionsBank[themeId] && questionsBank[themeId].couleur) || '#4f46e5';
+
+  document.getElementById('fiche-detail-contenu').innerHTML = `
+    <div class="fiche-detail-titre" style="border-left:4px solid ${couleur}">${p.titre}</div>
+    <div class="fiche-detail-corps">${p.corps}</div>
+    ${p.exemple ? `<div class="fiche-detail-exemple"><span class="fiche-exemple-label">Exemple</span>${p.exemple}</div>` : ''}
+    ${p.astuce  ? `<div class="fiche-detail-astuce"><span class="fiche-astuce-label">💡 Astuce</span>${p.astuce}</div>` : ''}
+  `;
+
+  document.getElementById('fiche-vue-liste').style.display = 'none';
+  document.getElementById('fiche-vue-detail').style.display = '';
+}
+
+function retourListeFiches() {
+  document.getElementById('fiche-vue-liste').style.display = '';
+  document.getElementById('fiche-vue-detail').style.display = 'none';
+}
+
+function fermerFicheModal() {
+  document.getElementById('modal-fiche').style.display = 'none';
+}
+
+window.ouvrirFicheTheme   = ouvrirFicheTheme;
+window.ouvrirDetailFiche  = ouvrirDetailFiche;
+window.retourListeFiches  = retourListeFiches;
+window.fermerFicheModal   = fermerFicheModal;
+
 function rejouer() {
   choisirTheme(etat.theme);
 }
