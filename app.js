@@ -392,7 +392,7 @@ function afficherMessageProf(type) {
   bulle.classList.remove('prof-bulle-anim');
   void bulle.offsetWidth;
   bulle.classList.add('prof-bulle-anim');
-  parlerProf(msg, prof);
+  setTimeout(() => parlerProf(msg, prof), 350);
 }
 
 // ── SYSTÈME XP ──
@@ -973,9 +973,10 @@ function repondre(choix, btnClique) {
   const expli = document.getElementById('explication');
   expli.style.display = 'block';
   expli.className = 'boite-explication ' + (correct ? 'bonne' : 'mauvaise');
+  const bonneReponse = !correct ? `<div class="expli-bonne-rep">La bonne réponse était : <strong>${etat.questionCourante.answer}</strong></div>` : '';
   expli.innerHTML = `
     <strong>${correct ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
-    ${etat.questionCourante.explication}
+    ${bonneReponse}${etat.questionCourante.explication || ''}
   `;
 
   // Message du prof virtuel
@@ -2002,9 +2003,10 @@ function repondreDictee(correct, corrects, total) {
   const expli = document.getElementById('explication');
   expli.style.display = 'block';
   expli.className = 'boite-explication ' + (correct ? 'bonne' : 'mauvaise');
+  const bonneRepDictee = !correct && etat.questionCourante.answer ? `<div class="expli-bonne-rep">La bonne réponse était : <strong>${etat.questionCourante.answer}</strong></div>` : '';
   expli.innerHTML = `
     <strong>${correct ? `✓ Bonne dictée ! (${corrects}/${total} mots)` : `✗ À améliorer (${corrects}/${total} mots)`}</strong>
-    ${etat.questionCourante.explication}
+    ${bonneRepDictee}${etat.questionCourante.explication || ''}
   `;
 
   // Message du prof virtuel

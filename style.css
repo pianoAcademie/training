@@ -761,6 +761,11 @@ header p {
   margin-bottom: 4px;
   font-size: 1rem;
 }
+.expli-bonne-rep {
+  margin: 6px 0 8px;
+  font-size: .92rem;
+  opacity: .9;
+}
 
 .btn-suivant {
   display: none;
