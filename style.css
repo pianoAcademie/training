@@ -929,6 +929,61 @@ header p {
 }
 .prog-btn:hover { opacity: .85; }
 
+/* ── DIAGNOSTIC DE NIVEAU ── */
+.btn-diagnostic-lancer {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+}
+.btn-diagnostic-lancer:hover { opacity: .9; transform: translateY(-1px); }
+.btn-diagnostic-lancer:active { transform: scale(.98); }
+
+.badge-diagnostic {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  letter-spacing: .04em;
+}
+
+.diag-resultat-boite {
+  background: white;
+  border: 2px solid #4f46e5;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 12px;
+}
+.diag-resultat-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.diag-resultat-niveau {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.diag-resultat-conseil {
+  font-size: .9rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 /* ── MODE SUR MESURE ── */
 .surmesure-boite { max-width: 440px !important; }
 .surmesure-section { margin-bottom: 20px; }

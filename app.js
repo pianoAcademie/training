@@ -842,9 +842,11 @@ function piocherQuestionsExamen(themeId) {
 function poserQuestion() {
   let resultat;
 
-  if (etat.mode === 'examen_note' || etat.mode === 'surmesure') {
+  if (etat.mode === 'examen_note' || etat.mode === 'surmesure' || etat.mode === 'diagnostic') {
     if (etat.questionIndex >= etat.questionsFixees.length) {
-      return etat.mode === 'examen_note' ? afficherResultatsExamen() : afficherResultats();
+      if (etat.mode === 'examen_note') return afficherResultatsExamen();
+      if (etat.mode === 'diagnostic')  return afficherResultatsDiagnostic();
+      return afficherResultats();
     }
     resultat = etat.questionsFixees[etat.questionIndex];
   } else {
@@ -860,16 +862,17 @@ function poserQuestion() {
   const modeExamen     = etat.mode === 'examen';
   const modeExamenNote = etat.mode === 'examen_note';
   const modeSurMesure  = etat.mode === 'surmesure';
-  const totalQuest     = (modeExamenNote || modeSurMesure) ? etat.questionsFixees.length : etat.totalQuestions;
+  const modeDiag       = etat.mode === 'diagnostic';
+  const totalQuest     = (modeExamenNote || modeSurMesure || modeDiag) ? etat.questionsFixees.length : etat.totalQuestions;
 
   // Barre de progression
-  if (modeExamen || modeExamenNote || modeSurMesure) {
+  if (modeExamen || modeExamenNote || modeSurMesure || modeDiag) {
     const pct = (etat.questionIndex / totalQuest) * 100;
     document.getElementById('barre-remplie').style.width = pct + '%';
   }
 
   document.getElementById('quiz-theme-nom').textContent = themeData.nom;
-  document.getElementById('quiz-compteur').textContent = (modeExamen || modeExamenNote || modeSurMesure)
+  document.getElementById('quiz-compteur').textContent = (modeExamen || modeExamenNote || modeSurMesure || modeDiag)
     ? `Question ${etat.questionIndex + 1} / ${totalQuest}`
     : `Question ${etat.questionIndex + 1}`;
 
@@ -961,11 +964,13 @@ function repondre(choix, btnClique) {
   if (correct) {
     btnClique.classList.add('correcte');
     etat.bonnesReponses++;
-    const { xp: xpGain, vitesse } = calculerXPQuestion(etat.niveauActuel);
-    const resultatXP = ajouterXP(etat.theme, xpGain);
-    etat.xpGagneSession += xpGain;
-    const levelUp = resultatXP.palierApres.niveau > resultatXP.palierAvant.niveau;
-    afficherGainXP(xpGain, vitesse, levelUp, resultatXP.palierApres);
+    if (etat.mode !== 'diagnostic') {
+      const { xp: xpGain, vitesse } = calculerXPQuestion(etat.niveauActuel);
+      const resultatXP = ajouterXP(etat.theme, xpGain);
+      etat.xpGagneSession += xpGain;
+      const levelUp = resultatXP.palierApres.niveau > resultatXP.palierAvant.niveau;
+      afficherGainXP(xpGain, vitesse, levelUp, resultatXP.palierApres);
+    }
   } else {
     btnClique.classList.add('incorrecte');
     etat.mauvaiesReponses++;
@@ -984,8 +989,8 @@ function repondre(choix, btnClique) {
   // Message du prof virtuel
   afficherMessageProf(correct ? 'correct' : 'incorrect');
 
-  // Suivi examen noté
-  if (etat.mode === 'examen_note') {
+  // Suivi examen noté et diagnostic
+  if (etat.mode === 'examen_note' || etat.mode === 'diagnostic') {
     etat.reponsesExamen.push({ niveau: etat.niveauActuel, correct });
   }
 
@@ -997,7 +1002,8 @@ function repondre(choix, btnClique) {
   const finExamen     = etat.mode === 'examen'      && etat.questionIndex >= etat.totalQuestions;
   const finExamenNote = etat.mode === 'examen_note' && etat.questionIndex >= (etat.questionsFixees || []).length;
   const finSurMesure  = etat.mode === 'surmesure'   && etat.questionIndex >= (etat.questionsFixees || []).length;
-  btnSuivant.textContent = (finExamen || finExamenNote || finSurMesure) ? 'Voir mes résultats →' : 'Question suivante →';
+  const finDiag       = etat.mode === 'diagnostic'  && etat.questionIndex >= (etat.questionsFixees || []).length;
+  btnSuivant.textContent = (finExamen || finExamenNote || finSurMesure || finDiag) ? 'Voir mon niveau →' : 'Question suivante →';
 }
 
 // ── RÉSULTATS ──
@@ -1074,6 +1080,8 @@ function btnSuivantClick() {
     afficherResultatsExamen();
   } else if (etat.mode === 'surmesure' && etat.questionIndex >= (etat.questionsFixees || []).length) {
     afficherResultats();
+  } else if (etat.mode === 'diagnostic' && etat.questionIndex >= (etat.questionsFixees || []).length) {
+    afficherResultatsDiagnostic();
   } else if (etat.mode === 'examen' && etat.questionIndex >= etat.totalQuestions) {
     afficherResultats();
   } else {
@@ -1329,6 +1337,135 @@ window.ouvrirFicheTheme   = ouvrirFicheTheme;
 window.ouvrirDetailFiche  = ouvrirDetailFiche;
 window.retourListeFiches  = retourListeFiches;
 window.fermerFicheModal   = fermerFicheModal;
+
+// ── DIAGNOSTIC DE NIVEAU ──
+function lancerDiagnostic(themeId) {
+  fermerSurMesure();
+  const theme = questionsBank[themeId];
+  if (!theme) return;
+
+  // 1 question par niveau disponible (ordre croissant)
+  const qs = [];
+  [1, 2, 3].forEach(n => {
+    const pool = theme[n] || [];
+    if (pool.length) {
+      const q = pool[Math.floor(Math.random() * pool.length)];
+      qs.push({ question: q, niveau: n });
+    }
+  });
+  if (!qs.length) return;
+
+  etat.theme = themeId;
+  etat.mode  = 'diagnostic';
+  etat.questionIndex    = 0;
+  etat.bonnesReponses   = 0;
+  etat.mauvaiesReponses = 0;
+  etat.questionsVues    = { 1: [], 2: [], 3: [] };
+  etat.questionsFixees  = qs;
+  etat.reponsesExamen   = [];
+  etat.reponduA         = false;
+  etat.xpGagneSession   = 0;
+  arreterTimer();
+
+  document.getElementById('timer-zone').style.display = 'none';
+  document.getElementById('barre-progression-zone').style.display = 'block';
+  document.getElementById('btn-terminer').style.display = 'none';
+  document.getElementById('zone-passer').style.display = 'none';
+  document.getElementById('btn-retour-quiz').textContent = '← Choisir un autre thème';
+  const ba = document.getElementById('badge-apercu'); if (ba) ba.remove();
+
+  // Badge diagnostic
+  const bdiag = document.getElementById('badge-diagnostic') || document.createElement('span');
+  bdiag.id = 'badge-diagnostic';
+  bdiag.className = 'badge-diagnostic';
+  bdiag.textContent = '🔍 Test de positionnement';
+  const header = document.querySelector('.quiz-header');
+  if (header && !document.getElementById('badge-diagnostic')) header.prepend(bdiag);
+
+  etat.tempsDebut = Date.now();
+  afficherEcran('ecran-quiz');
+  poserQuestion();
+}
+
+function afficherResultatsDiagnostic() {
+  const reponses = etat.reponsesExamen;
+  const themeId  = etat.theme;
+
+  // Performance par niveau
+  const parNiv = {};
+  reponses.forEach(r => {
+    if (!parNiv[r.niveau]) parNiv[r.niveau] = { b: 0, t: 0 };
+    parNiv[r.niveau].t++;
+    if (r.correct) parNiv[r.niveau].b++;
+  });
+
+  const ok = n => parNiv[n] ? parNiv[n].b / parNiv[n].t >= 0.5 : false;
+
+  let niveauxCibles, labelNiveau, emoji, conseil;
+  if (!ok(1)) {
+    niveauxCibles = [1];
+    labelNiveau   = 'Facile ⭐';
+    emoji         = '🌱';
+    conseil       = 'On commence par les bases — tu vas progresser vite !';
+  } else if (!ok(2)) {
+    niveauxCibles = [1, 2];
+    labelNiveau   = 'Facile + Moyen ⭐⭐';
+    emoji         = '📈';
+    conseil       = 'Bonne maîtrise du niveau 1 ! On consolide le niveau 2.';
+  } else if (!ok(3)) {
+    niveauxCibles = [2, 3];
+    labelNiveau   = 'Moyen + Difficile ⭐⭐⭐';
+    emoji         = '🚀';
+    conseil       = 'Excellent niveau ! On te challenge avec les questions difficiles.';
+  } else {
+    niveauxCibles = [3];
+    labelNiveau   = 'Difficile ⭐⭐⭐';
+    emoji         = '🏆';
+    conseil       = 'Tu maîtrises tout ! Session sur les questions les plus dures.';
+  }
+
+  // Afficher l'écran résultat avec contenu diagnostic
+  afficherEcran('ecran-resultat');
+  const couleur = (questionsBank[themeId] && questionsBank[themeId].couleur) || '#4f46e5';
+
+  document.getElementById('score-chiffre').textContent = emoji;
+  document.getElementById('score-chiffre').style.fontSize = '2.5rem';
+  document.getElementById('nb-bonnes').textContent    = reponses.filter(r => r.correct).length;
+  document.getElementById('nb-mauvaises').textContent = reponses.filter(r => !r.correct).length;
+  document.getElementById('temps-ecoule').textContent = '—';
+  document.getElementById('message-resultat').textContent = 'Niveau détecté !';
+  document.getElementById('sous-message').textContent = conseil;
+  document.getElementById('nom-theme-fin').textContent = questionsBank[themeId].nom;
+  const vitesseZone = document.getElementById('vitesse-zone');
+  if (vitesseZone) vitesseZone.style.display = 'none';
+
+  // Zone programme → on y affiche le niveau détecté + countdown
+  const progZone = document.getElementById('programme-resultat');
+  if (progZone) {
+    progZone.innerHTML = `
+      <div class="diag-resultat-boite" style="border-color:${couleur}">
+        <div class="diag-resultat-label">🎯 Niveau détecté</div>
+        <div class="diag-resultat-niveau" style="color:${couleur}">${labelNiveau}</div>
+        <p class="diag-resultat-conseil">${conseil}</p>
+        <button class="btn-primaire" style="width:100%;margin-top:12px"
+          onclick="lancerSurMesureDirect('${themeId}', [${niveauxCibles.join(',')}], 10)">
+          Commencer la session →
+        </button>
+      </div>`;
+  }
+
+  // Masquer XP et boutons standard
+  const xpZone = document.getElementById('xp-zone-resultat');
+  if (xpZone) xpZone.style.display = 'none';
+  const boutFin = document.querySelector('#ecran-resultat .boutons-fin');
+  if (boutFin) boutFin.style.display = 'none';
+
+  // Supprimer le badge diagnostic
+  const bdiag = document.getElementById('badge-diagnostic');
+  if (bdiag) bdiag.remove();
+}
+
+window.lancerDiagnostic = lancerDiagnostic;
 
 function rejouer() {
   choisirTheme(etat.theme);

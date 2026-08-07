@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=18" />
+  <link rel="stylesheet" href="style.css?v=19" />
 </head>
 <body>
 
@@ -589,9 +589,14 @@
       </div>
 
       <div id="sm-erreur" class="sm-erreur" style="display:none">Sélectionne au moins un niveau.</div>
-      <div class="modal-btns">
-        <button class="btn-secondaire" onclick="fermerSurMesure()">Annuler</button>
-        <button class="btn-primaire" onclick="demarrerSurMesure()">Commencer →</button>
+      <div class="modal-btns" style="flex-direction:column;gap:8px">
+        <button class="btn-diagnostic-lancer" onclick="lancerDiagnostic(_smTheme)">
+          🔍 Détecter mon niveau d'abord
+        </button>
+        <div style="display:flex;gap:8px">
+          <button class="btn-secondaire" style="flex:1" onclick="fermerSurMesure()">Annuler</button>
+          <button class="btn-primaire" style="flex:2" onclick="demarrerSurMesure()">Configurer moi-même →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -643,6 +648,6 @@
   <script src="firebase.js?v=5"></script>
   <script src="questions.js?v=2"></script>
   <script src="fiches.js?v=1"></script>
-  <script src="app.js?v=31"></script>
+  <script src="app.js?v=32"></script>
 </body>
 </html>
