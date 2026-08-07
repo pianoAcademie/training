@@ -2867,5 +2867,8 @@ window.addEventListener('DOMContentLoaded', () => {
       if (sous) sous.textContent = "Entraîne-toi à ton rythme — les questions s'adaptent à ton niveau";
       afficherEcran('ecran-auth');
     }
+  }, () => {
+    // En cas d'erreur Firebase, afficher l'écran auth
+    afficherEcran('ecran-auth');
   });
 });

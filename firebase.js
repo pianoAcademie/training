@@ -12,6 +12,9 @@ firebase.initializeApp(firebaseConfig);
 const fbAuth = firebase.auth();
 const fbDb   = firebase.firestore();
 
+// Maintenir la session entre les rechargements de page
+fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
 // ── Auth ──
 function fbConnexionEmail(email, mdp) {
   return fbAuth.signInWithEmailAndPassword(email, mdp);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=17" />
+  <link rel="stylesheet" href="style.css?v=18" />
 </head>
 <body>
 
@@ -143,8 +143,16 @@
     <div id="levelup-label" class="levelup-label"></div>
   </div>
 
+  <!-- ══ ÉCRAN CHARGEMENT ══ -->
+  <div id="ecran-chargement" class="ecran actif">
+    <div class="chargement-centre">
+      <div class="chargement-spinner"></div>
+      <p class="chargement-texte">Chargement…</p>
+    </div>
+  </div>
+
   <!-- ══ ÉCRAN AUTH ══ -->
-  <div id="ecran-auth" class="ecran actif">
+  <div id="ecran-auth" class="ecran">
     <div class="carte-auth">
       <div class="auth-logo">📐</div>
       <h2 class="auth-titre">Training</h2>
@@ -632,9 +640,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js?v=4"></script>
+  <script src="firebase.js?v=5"></script>
   <script src="questions.js?v=2"></script>
   <script src="fiches.js?v=1"></script>
-  <script src="app.js?v=30"></script>
+  <script src="app.js?v=31"></script>
 </body>
 </html>
