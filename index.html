@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MathEntraîn — Site d'entraînement en maths</title>
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=15" />
 </head>
 <body>
 
@@ -532,6 +532,53 @@
     </div>
   </div>
 
+  <!-- ══ MODAL SUR MESURE ══ -->
+  <div id="modal-surmesure" class="modal-overlay" style="display:none" onclick="if(event.target===this)fermerSurMesure()">
+    <div class="modal-carte surmesure-boite" onclick="event.stopPropagation()">
+      <h3 class="modal-titre">⚙️ Mode sur mesure</h3>
+
+      <div class="surmesure-section">
+        <div class="surmesure-label">Niveaux à travailler</div>
+        <div class="surmesure-niveaux">
+          <label class="sm-niv-btn"><input type="checkbox" id="sm-facile" checked> ⭐ Facile</label>
+          <label class="sm-niv-btn"><input type="checkbox" id="sm-moyen" checked> ⭐⭐ Moyen</label>
+          <label class="sm-niv-btn"><input type="checkbox" id="sm-difficile" checked> ⭐⭐⭐ Difficile</label>
+        </div>
+      </div>
+
+      <div class="surmesure-section">
+        <div class="surmesure-label">Nombre de questions</div>
+        <div class="surmesure-nb-row">
+          <button class="sm-nb-btn actif" data-nb="5"  onclick="smChoisirNb(this)">5</button>
+          <button class="sm-nb-btn actif" data-nb="10" onclick="smChoisirNb(this)">10</button>
+          <button class="sm-nb-btn" data-nb="15" onclick="smChoisirNb(this)">15</button>
+          <button class="sm-nb-btn" data-nb="20" onclick="smChoisirNb(this)">20</button>
+        </div>
+      </div>
+
+      <div class="surmesure-section">
+        <div class="surmesure-label">Chronomètre</div>
+        <div class="surmesure-timer-row">
+          <label class="sm-toggle">
+            <input type="checkbox" id="sm-timer-toggle" onchange="smToggleTimer(this.checked)">
+            <span class="sm-toggle-label">Activer le timer</span>
+          </label>
+          <div id="sm-timer-config" class="chrono-controls" style="display:none">
+            <button class="chrono-btn" onclick="smChangerTemps(-5)">−</button>
+            <span id="sm-timer-valeur" class="chrono-valeur">30s</span>
+            <button class="chrono-btn" onclick="smChangerTemps(+5)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="sm-erreur" class="sm-erreur" style="display:none">Sélectionne au moins un niveau.</div>
+      <div class="modal-btns">
+        <button class="btn-secondaire" onclick="fermerSurMesure()">Annuler</button>
+        <button class="btn-primaire" onclick="demarrerSurMesure()">Commencer →</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ MODAL RESET PROGRESSION ══ -->
   <div id="modal-reset" class="modal-overlay" style="display:none" onclick="fermerModalReset()">
     <div class="modal-carte" onclick="event.stopPropagation()">
@@ -550,6 +597,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js?v=4"></script>
   <script src="questions.js?v=2"></script>
-  <script src="app.js?v=26"></script>
+  <script src="app.js?v=27"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 // ── ÉTAT DU JEU ──
 const etat = {
   theme: null,
-  mode: 'examen',         // 'examen' | 'libre' | 'apercu' | 'examen_note'
+  mode: 'examen',         // 'examen' | 'libre' | 'apercu' | 'examen_note' | 'surmesure'
   niveauActuel: 1,
   questionIndex: 0,
   totalQuestions: 10,
@@ -475,7 +475,7 @@ function afficherGainXP(gain, vitesse, levelUp, palierApres) {
 // ── XP AJUSTÉ AU TEMPS PAR QUESTION ──
 function calculerXPQuestion(difficulte) {
   const base = XP_PAR_DIFFICULTE[difficulte];
-  if (etat.mode !== 'examen' || tempsTotal <= 0) return { xp: base, vitesse: '' };
+  if ((etat.mode !== 'examen' && etat.mode !== 'surmesure') || tempsTotal <= 0) return { xp: base, vitesse: '' };
   const ratio = Math.max(0, tempsRestant) / tempsTotal;
   const xp = Math.round(base * (1 + ratio));
   let vitesse = '';
@@ -580,7 +580,8 @@ function tempsEcoule() {
   btnSuivant.style.display = 'block';
   const finExamen     = etat.mode === 'examen'      && etat.questionIndex >= etat.totalQuestions;
   const finExamenNote = etat.mode === 'examen_note' && etat.questionIndex >= (etat.questionsFixees || []).length;
-  btnSuivant.textContent = (finExamen || finExamenNote) ? 'Voir mes résultats →' : 'Question suivante →';
+  const finSurMesure  = etat.mode === 'surmesure'   && etat.questionIndex >= (etat.questionsFixees || []).length;
+  btnSuivant.textContent = (finExamen || finExamenNote || finSurMesure) ? 'Voir mes résultats →' : 'Question suivante →';
 }
 
 // ── NAVIGATION ──
@@ -841,9 +842,9 @@ function piocherQuestionsExamen(themeId) {
 function poserQuestion() {
   let resultat;
 
-  if (etat.mode === 'examen_note') {
+  if (etat.mode === 'examen_note' || etat.mode === 'surmesure') {
     if (etat.questionIndex >= etat.questionsFixees.length) {
-      return afficherResultatsExamen();
+      return etat.mode === 'examen_note' ? afficherResultatsExamen() : afficherResultats();
     }
     resultat = etat.questionsFixees[etat.questionIndex];
   } else {
@@ -858,16 +859,17 @@ function poserQuestion() {
   const themeData      = questionsBank[etat.theme];
   const modeExamen     = etat.mode === 'examen';
   const modeExamenNote = etat.mode === 'examen_note';
-  const totalQuest     = modeExamenNote ? etat.questionsFixees.length : etat.totalQuestions;
+  const modeSurMesure  = etat.mode === 'surmesure';
+  const totalQuest     = (modeExamenNote || modeSurMesure) ? etat.questionsFixees.length : etat.totalQuestions;
 
   // Barre de progression
-  if (modeExamen || modeExamenNote) {
+  if (modeExamen || modeExamenNote || modeSurMesure) {
     const pct = (etat.questionIndex / totalQuest) * 100;
     document.getElementById('barre-remplie').style.width = pct + '%';
   }
 
   document.getElementById('quiz-theme-nom').textContent = themeData.nom;
-  document.getElementById('quiz-compteur').textContent = (modeExamen || modeExamenNote)
+  document.getElementById('quiz-compteur').textContent = (modeExamen || modeExamenNote || modeSurMesure)
     ? `Question ${etat.questionIndex + 1} / ${totalQuest}`
     : `Question ${etat.questionIndex + 1}`;
 
@@ -994,7 +996,8 @@ function repondre(choix, btnClique) {
   btnSuivant.style.display = 'block';
   const finExamen     = etat.mode === 'examen'      && etat.questionIndex >= etat.totalQuestions;
   const finExamenNote = etat.mode === 'examen_note' && etat.questionIndex >= (etat.questionsFixees || []).length;
-  btnSuivant.textContent = (finExamen || finExamenNote) ? 'Voir mes résultats →' : 'Question suivante →';
+  const finSurMesure  = etat.mode === 'surmesure'   && etat.questionIndex >= (etat.questionsFixees || []).length;
+  btnSuivant.textContent = (finExamen || finExamenNote || finSurMesure) ? 'Voir mes résultats →' : 'Question suivante →';
 }
 
 // ── RÉSULTATS ──
@@ -1067,6 +1070,8 @@ function afficherResultats() {
 function btnSuivantClick() {
   if (etat.mode === 'examen_note' && etat.questionIndex >= (etat.questionsFixees || []).length) {
     afficherResultatsExamen();
+  } else if (etat.mode === 'surmesure' && etat.questionIndex >= (etat.questionsFixees || []).length) {
+    afficherResultats();
   } else if (etat.mode === 'examen' && etat.questionIndex >= etat.totalQuestions) {
     afficherResultats();
   } else {
@@ -1613,6 +1618,91 @@ let matiereOuverte    = null;
 let chapitreOuvert    = null;
 let sousChapitreOuvert = null; // ID effectif passé à choisirTheme (null = pas encore choisi)
 
+// ── MODE SUR MESURE ──
+let _smTheme  = null;
+let _smNbQ    = 10;
+let _smTimerSec = 30;
+
+function ouvrirSurMesure(themeId) {
+  _smTheme = themeId;
+  // reset UI
+  document.getElementById('sm-facile').checked    = true;
+  document.getElementById('sm-moyen').checked     = true;
+  document.getElementById('sm-difficile').checked = true;
+  _smNbQ = 10;
+  document.querySelectorAll('.sm-nb-btn').forEach(b => b.classList.toggle('actif', b.dataset.nb === '10'));
+  document.getElementById('sm-timer-toggle').checked = false;
+  document.getElementById('sm-timer-config').style.display = 'none';
+  _smTimerSec = 30;
+  document.getElementById('sm-timer-valeur').textContent = '30s';
+  document.getElementById('sm-erreur').style.display = 'none';
+  document.getElementById('modal-surmesure').style.display = 'flex';
+}
+
+function fermerSurMesure() {
+  document.getElementById('modal-surmesure').style.display = 'none';
+}
+
+function smChoisirNb(btn) {
+  _smNbQ = parseInt(btn.dataset.nb);
+  document.querySelectorAll('.sm-nb-btn').forEach(b => b.classList.toggle('actif', b === btn));
+}
+
+function smToggleTimer(on) {
+  document.getElementById('sm-timer-config').style.display = on ? 'flex' : 'none';
+}
+
+function smChangerTemps(delta) {
+  _smTimerSec = Math.min(120, Math.max(5, _smTimerSec + delta));
+  document.getElementById('sm-timer-valeur').textContent = _smTimerSec + 's';
+}
+
+function piocherQuestionsSurMesure(themeId, niveaux, nbQ) {
+  const theme = questionsBank[themeId];
+  const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let pool = [];
+  niveaux.forEach(n => (theme[n] || []).forEach(q => pool.push({ question: q, niveau: n })));
+  return shuffle(pool).slice(0, nbQ);
+}
+
+function demarrerSurMesure() {
+  const niveaux = [];
+  if (document.getElementById('sm-facile').checked)    niveaux.push(1);
+  if (document.getElementById('sm-moyen').checked)     niveaux.push(2);
+  if (document.getElementById('sm-difficile').checked) niveaux.push(3);
+  if (!niveaux.length) { document.getElementById('sm-erreur').style.display = 'block'; return; }
+  document.getElementById('sm-erreur').style.display = 'none';
+
+  const avecTimer = document.getElementById('sm-timer-toggle').checked;
+  const questions = piocherQuestionsSurMesure(_smTheme, niveaux, _smNbQ);
+
+  etat.theme            = _smTheme;
+  etat.mode             = 'surmesure';
+  etat.questionIndex    = 0;
+  etat.bonnesReponses   = 0;
+  etat.mauvaiesReponses = 0;
+  etat.questionsVues    = { 1: [], 2: [], 3: [] };
+  etat.questionsFixees  = questions;
+  etat.reponsesExamen   = [];
+  etat.reponduA         = false;
+  etat.xpGagneSession   = 0;
+  arreterTimer();
+
+  document.getElementById('timer-zone').style.display             = avecTimer ? 'block' : 'none';
+  document.getElementById('barre-progression-zone').style.display = 'block';
+  document.getElementById('btn-terminer').style.display           = 'none';
+  document.getElementById('zone-passer').style.display            = 'none';
+  document.getElementById('btn-retour-quiz').textContent          = '← Choisir un autre thème';
+  const ba = document.getElementById('badge-apercu'); if (ba) ba.remove();
+
+  if (avecTimer) tempsPersonnalise = _smTimerSec;
+
+  fermerSurMesure();
+  etat.tempsDebut = Date.now();
+  afficherEcran('ecran-quiz');
+  poserQuestion();
+}
+
 function renderAccueil() {
   const grille     = document.getElementById('grille-themes');
   const breadcrumb = document.getElementById('breadcrumb-zone');
@@ -1848,8 +1938,23 @@ function renderAccueil() {
     carteExam.style.borderColor = '#dc2626' + '33';
     carteExam.onclick = () => demarrerExamenNote(themeId);
 
+    const carteSM = document.createElement('div');
+    carteSM.className = 'carte-type';
+    carteSM.style.setProperty('--tc', '#0891b2');
+    carteSM.innerHTML = `
+      <span class="type-emoji">⚙️</span>
+      <h3 class="type-titre">Sur mesure</h3>
+      <p class="type-desc">Choisis les niveaux, le nombre de questions et le timer</p>
+      <span class="type-badge" style="background:#ecfeff;color:#0891b2">Personnalisé</span>
+    `;
+    carteSM.addEventListener('mouseenter', () => carteSM.style.borderColor = '#0891b2');
+    carteSM.addEventListener('mouseleave', () => carteSM.style.borderColor = '#0891b2' + '33');
+    carteSM.style.borderColor = '#0891b2' + '33';
+    carteSM.onclick = () => ouvrirSurMesure(themeId);
+
     grille.appendChild(carteEx);
     grille.appendChild(carteExam);
+    grille.appendChild(carteSM);
   }
 }
 
@@ -2024,7 +2129,8 @@ function repondreDictee(correct, corrects, total) {
   btnSuivant.style.display = 'block';
   const finExamen     = etat.mode === 'examen'      && etat.questionIndex >= etat.totalQuestions;
   const finExamenNote = etat.mode === 'examen_note' && etat.questionIndex >= (etat.questionsFixees || []).length;
-  btnSuivant.textContent = (finExamen || finExamenNote) ? 'Voir mes résultats →' : 'Question suivante →';
+  const finSurMesure  = etat.mode === 'surmesure'   && etat.questionIndex >= (etat.questionsFixees || []).length;
+  btnSuivant.textContent = (finExamen || finExamenNote || finSurMesure) ? 'Voir mes résultats →' : 'Question suivante →';
 }
 
 // ── EXPOSITION GLOBALE (compatibilité Safari / navigateurs stricts) ──
@@ -2057,6 +2163,12 @@ window.sauvegarderProfil        = sauvegarderProfil;
 window.reinitialiserProgression = reinitialiserProgression;
 window.allerEleveAccueil        = allerEleveAccueil;
 window.allerAdminLogin          = allerAdminLogin;
+window.ouvrirSurMesure          = ouvrirSurMesure;
+window.fermerSurMesure          = fermerSurMesure;
+window.demarrerSurMesure        = demarrerSurMesure;
+window.smChoisirNb              = smChoisirNb;
+window.smToggleTimer            = smToggleTimer;
+window.smChangerTemps           = smChangerTemps;
 window.afficherEcran            = afficherEcran;
 window.choisirMode              = choisirMode;
 window.changerTemps             = changerTemps;
